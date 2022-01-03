@@ -103,7 +103,7 @@ if [ ! -d $HOME/.miniconda3 ]; then
     bash miniconda.sh -b -p $HOME/.miniconda3
     rm miniconda.sh
     $HOME/.miniconda3/bin/conda create --yes --name neovim python=3.9
-    $HOME/.miniconda3/envs/neovim/bin/pip install autoflake gitpython isort neovim pynvim toml yapf pyright
+    $HOME/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
 fi
 
 #------------------------------------------------------------------------------#
