@@ -31,15 +31,20 @@ abbr -ag gcl git clone
 abbr -ag gc git commit -m
 abbr -ag gd git diff
 abbr -ag gf git fetch
+abbr -ag gfp git fetch --prune
 abbr -ag gl git log
+abbr -ag gld git log -p
+abbr -ag gg git log --all --decorate --oneline --graph
 abbr -ag gpll git pull
 abbr -ag gpsh git push
+abbr -ag gpu git push -u origin \(git branch --show-current\)
 abbr -ag gs git status
 abbr -ag gsw git switch
-abbr -ag gst git stash
-abbr -ag gsta git stash
+abbr -ag gst git stash -u
+abbr -ag gstp git stash pop
 abbr -ag gr git restore
-abbr -ag gg git log --all --decorate --oneline --graph
+abbr -ag gm git merge
+abbr -ag gcln git clean -df
 
 # kb
 abbr -ag kbl kb list
@@ -60,5 +65,3 @@ abbr -ag grep rg
 # adding flags
 abbr -ag tma tmux -f ~/.config/tmux/tmux.conf attach-session -t 
 abbr -ag tmn tmux -f ~/.config/tmux/tmux.conf new -s 
-
-# ssh_agent
