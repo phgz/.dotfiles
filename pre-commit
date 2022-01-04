@@ -43,7 +43,7 @@ def libraries(conda_venv) -> Iterator[Tuple[Path, Path]]:
         os.environ["PATH"] = old_path
 
 
-conda_venv = Path(os.environ["HOME"]) / "miniconda3/envs/neovim"
+conda_venv = Path.home() / ".miniconda3/envs/neovim"
 
 with libraries(conda_venv):
     import git
