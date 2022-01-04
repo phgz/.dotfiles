@@ -61,6 +61,7 @@ abbr -ag ls exa
 abbr -ag ll exal
 abbr -ag la exal -a
 abbr -ag grep rg
+abbr -ag posh poetry shell
 
 # adding flags
 abbr -ag tma tmux -f ~/.config/tmux/tmux.conf attach-session -t 
