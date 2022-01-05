@@ -124,19 +124,20 @@ autoflake_opts = [
 
 to_process = [item.a_path for item in index if item.a_path.endswith(".py")]
 
-with libraries(conda_venv):
-    out = subprocess.run(
-        ["autoflake"] + autoflake_opts + to_process,
-        check=True,
-        cwd=project_root,
-        capture_output=True,
-    )
+if to_process:
+    with libraries(conda_venv):
+        out = subprocess.run(
+            ["autoflake"] + autoflake_opts + to_process,
+            check=True,
+            cwd=project_root,
+            capture_output=False,
+        )
 
-if out.stderr:
-    mod_files = [file.split()[1] for file in out.stderr.decode().split("\n")[:-1]]
+    if out.stderr:
+        mod_files = [file.split()[1] for file in out.stderr.decode().split("\n")[:-1]]
 
-    print(
-        "Autoflakes found unused imports or variables in the code. Check for the following modified files:"
-    )
-    print("\n".join(mod_files) + "\n")
-    exit_with_error()
+        print(
+            "Autoflakes found unused imports or variables in the code. Check for the following modified files:"
+        )
+        print("\n".join(mod_files) + "\n")
+        exit_with_error()
