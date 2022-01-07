@@ -130,7 +130,7 @@ if to_process:
             ["autoflake"] + autoflake_opts + to_process,
             check=True,
             cwd=project_root,
-            capture_output=False,
+            capture_output=True,
         )
 
     if out.stderr:
