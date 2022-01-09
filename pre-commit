@@ -77,9 +77,7 @@ setup_name = current_setup_file.split("/")[-1]
 HEAD = next(ref for ref in repo.remotes.origin.refs if ref.name == "origin/HEAD")
 default_branch = HEAD.ref.name.split("/")[-1]
 
-remote_master_setup_file = repo.remotes.origin.fetch(default_branch)[0].commit.tree[
-    setup_name
-]
+remote_master_setup_file = repo.remotes.origin.fetch(default_branch)[0].commit.tree[setup_name]
 
 with open(current_setup_file, "r") as f:
     current_content = f.read()
@@ -97,8 +95,7 @@ find_version = dict(
 )
 
 versions = [
-    find_version[setup_name](content)
-    for content in [current_content, remote_master_content]
+    find_version[setup_name](content) for content in [current_content, remote_master_content]
 ]
 
 parsed_current, parsed_remote_master = [list(map(int, v.split("."))) for v in versions]
@@ -122,7 +119,9 @@ autoflake_opts = [
     "--verbose",
 ]
 
-to_process = [item.a_path for item in index if item.a_path.endswith(".py")]
+to_process = [
+    item.a_path for item in index if item.a_path.endswith(".py") and Path(item.a_path).exists()
+]
 
 if to_process:
     with libraries(conda_venv):
