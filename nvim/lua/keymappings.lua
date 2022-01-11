@@ -46,5 +46,6 @@ utils.map('n', '<M-S-o>', 'mbO<Esc>`b')--< New line up
 utils.map('n', '<M-h>', 'i<space><esc><right>')--< Add space left
 utils.map('n', '<M-l>', 'a<space><esc><left>')--< Add space right
 utils.map('i', '<C-l>', '<C-o>:norm! "byl<cr><right>,<space><C-r>=@b[0].@b[0]<cr><left>')--< Add new string parameter
+utils.map('i', '<C-s>', '<space><space><left>')--< Add space after and before
 utils.map('', '<M-x>', 'm":norm kx<CR>`"')   --< Delete lastchar multiline
 utils.map('', '<M-S-x>', 'm":norm x<CR>`"')--< Delete firstchar multiline
