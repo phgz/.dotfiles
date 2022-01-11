@@ -4,7 +4,7 @@ require('nvim-treesitter.configs').setup {
     ensure_installed = 'maintained',
     highlight = {
         enable = true,
-        disable = {"toml", "json", "yaml"},
+        disable = {"toml"},
         additional_vim_regex_highlighting = {'python'},
     },
     indent = {
