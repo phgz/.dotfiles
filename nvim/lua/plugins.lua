@@ -70,7 +70,7 @@ return require('packer').startup(function()
     use { 'SirVer/ultisnips' }
 
     -- TMUX
-    use { 'roxma/vim-tmux-clipboard' }
+    --use { 'roxma/vim-tmux-clipboard' }
     use { 'ojroques/vim-oscyank' }
 
     -- Comments

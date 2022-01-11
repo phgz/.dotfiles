@@ -64,7 +64,7 @@ vim.o.statusline = status_line()
 -- Fold docstring
 --call matchadd('DiffText', '\%81v\|\%89v\|\%97v')
 vim.api.nvim_exec([[
-autocmd TextYankPost * silent! lua vim.highlight.on_yank {timeout=250}
+autocmd TextYankPost * silent! lua vim.highlight.on_yank {timeout=140}
 call matchadd('DiffText', '\%97v')
 autocmd FileType python setlocal foldenable foldmethod=syntax
     ]], false)

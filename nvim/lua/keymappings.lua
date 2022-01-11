@@ -12,7 +12,7 @@ utils.map('n', '<localleader>n', '<cmd>bnext<cr>')--< goto next buffer
 utils.map('n', '<localleader>p', '<cmd>bprevious<cr>')--< goto prev buffer
 utils.map('n', '<leader>d', '<cmd>bdelete<cr>')--< delete buffer
 utils.map('n', '<leader>a', 'mbgg=G`b')--< Autoindent document
-utils.map('v', '<leader>s', ':!sort<cr>')--< Sort selection
+utils.map('v', '<leader>s', ':sort<cr>')--< Sort selection
 
 -- Normal key
 utils.map('', ' ', '<Bslash>' , {noremap=false})--< Leader
