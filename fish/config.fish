@@ -1,4 +1,4 @@
-initialize_tmux
+test -t 0 && initialize_tmux
 
 set -g fish_greeting
 fish_add_path -g $HOME/.local/bin $HOME/.cargo/bin 
