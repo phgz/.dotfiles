@@ -12,7 +12,8 @@ set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 bind -M insert \ca beginning-of-line
 bind -M insert \ce end-of-line
 bind -M insert \ck kill-line
-bind -M insert \cb 'clear; commandline -f repaint'
+bind -M insert \cn kill-word
+bind -M insert \cs 'clear; commandline -f repaint'
 bind -M insert \cc kill-whole-line repaint
 
 # >>> conda initialize >>>
