@@ -1,0 +1,6 @@
+[user]
+	email = <<EMAIL>>
+	name = Philip Gaudreau
+
+[credential]
+	helper = store
