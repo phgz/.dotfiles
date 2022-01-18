@@ -30,7 +30,7 @@ if [ "$platform" == "Darwin" ]; then
     #------------------------------------------------------------------------------#
     #                              kitty fish neovim                               #
     #------------------------------------------------------------------------------#
-    $brew install kitty fish neovim tmux
+    $brew install kitty fish neovim tmux fontconfig
 
 
 #------------------------------------------------------------------------------#
@@ -110,7 +110,7 @@ fi
 #                                    Poetry                                    #
 #------------------------------------------------------------------------------#
 if [ ! -f $HOME/.local/bin/poetry ]; then
-    curl -sSL https://install.python-poetry.org | python3 - --yes
+    curl -sSL https://install.python-poetry.org | $HOME/.miniconda3/bin/python3 - --yes
 fi
 
 #------------------------------------------------------------------------------#

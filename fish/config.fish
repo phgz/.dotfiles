@@ -1,6 +1,7 @@
 test -t 0 && initialize_tmux
 
 set -g fish_greeting
+string match -q (uname -ms) "Darwin arm64" && fish_add_path -g /opt/homebrew/bin
 fish_add_path -g $HOME/.local/bin $HOME/.cargo/bin 
 set -gx STARSHIP_CONFIG ~/.config/starship/config.toml
 set -gx EDITOR nvim
