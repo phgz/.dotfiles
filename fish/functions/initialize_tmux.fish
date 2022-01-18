@@ -8,7 +8,7 @@ function tmux_new_session
 end
 
 function initialize_tmux
-    set PPID (ps --pid %self -o ppid --no-headers | xargs)
+    set PPID (ps -p %self -o ppid="" | xargs)
 
     if ps --pid $PPID | grep -q ssh
         tmux_attach
