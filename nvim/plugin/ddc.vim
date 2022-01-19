@@ -51,7 +51,7 @@ call ddc#custom#patch_global('sourceOptions', {
 call ddc#custom#patch_global('sourceParams', {
             \ 'around': {'maxSize': 500},
             \ 'tmux': {'currentWinOnly': v:false},
-            \ 'file': {'trailingSlash': v:true}
+            \ 'file': {'trailingSlash': v:false}
       \ })
 
 call ddc#custom#patch_global('completionMode', 'inline')
