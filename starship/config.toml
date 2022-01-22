@@ -1,9 +1,10 @@
 # ~/.config/starship/starship.toml
 
+# $username\
+# $hostname\
+# $shell\
+
 format = """
-$username\
-$hostname\
-$shell\
 $shlvl\
 $singularity\
 $kubernetes\
