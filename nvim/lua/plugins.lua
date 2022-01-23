@@ -20,16 +20,16 @@ return require('packer').startup(function()
 
     -- using Treesitter
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
+
     use { 'nvim-treesitter/playground' } -- See parsed tree
     use { 'nvim-treesitter/nvim-treesitter-textobjects' } -- More text motions
     use { 'nvim-treesitter/nvim-treesitter-refactor' } -- Highlight definitions, Rename
     use { 'romgrk/nvim-treesitter-context' } -- Keep context in sight
     use { 'p00f/nvim-ts-rainbow' } -- "Enclosers" coloring
     use { 's1n7ax/nvim-comment-frame' } -- Comment frame
-    use {
-        "SmiteshP/nvim-gps",
-        requires = "nvim-treesitter/nvim-treesitter",
-    }
+    use { "SmiteshP/nvim-gps" }
+    use { 'ThePrimeagen/refactoring.nvim' }
+    use { "danymat/neogen" }
 
     -- LSP and completion
     use { 'neovim/nvim-lspconfig' }
