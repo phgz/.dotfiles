@@ -10,7 +10,7 @@ end
 function status_line()
     local status = ' %{gitbranch#name()}%='
     status = status .. '%#PurpleStatusLine#%{luaeval("NvimGPS()")}'
-    status = status .. '%=%h%#RedStatusLine#%m%#BlueStatusLine#%r%#StatusLine# %F | %2c'
+    status = status .. '%=%h%#RedStatusLine#%m%#BlueStatusLine#%r%#StatusLine# %F ▏%2c'
     return status
 end
 
