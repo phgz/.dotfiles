@@ -24,6 +24,8 @@ utils.map('n', 'U', '<C-R>')--< Redo
 utils.map('n', '<M-s>', 'r<CR>')--< Split below
 utils.map('', 'j', '^') --< Swap document bengin/end with line
 utils.map('', 'k', '$')  --<
+utils.map('', 'h', 'zh')  --< Move screen to the left
+utils.map('', 'l', 'zl')  --< Move screen to the right
 utils.map('', '0', 'gg<cmd>goto 1<CR>')--<
 utils.map('', '-', 'G')  --<
 utils.map('n', 'Y', 'y$')--< Yank till end
