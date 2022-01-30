@@ -25,6 +25,7 @@ return require('packer').startup(function()
     use { 'nvim-treesitter/nvim-treesitter-textobjects' } -- More text motions
     use { 'nvim-treesitter/nvim-treesitter-refactor' } -- Highlight definitions, Rename
     use { 'romgrk/nvim-treesitter-context' } -- Keep context in sight
+    use { 'RRethy/nvim-treesitter-endwise' } -- Add `end` statement when opening a context
     use { 'p00f/nvim-ts-rainbow' } -- "Enclosers" coloring
     use { 's1n7ax/nvim-comment-frame' } -- Comment frame
     use { "SmiteshP/nvim-gps" }

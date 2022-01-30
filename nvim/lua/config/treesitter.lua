@@ -124,7 +124,10 @@ require('nvim-treesitter.configs').setup {
             goto_node = '<cr>',
             show_help = '?',
         },
-    }
+    },
+    endwise = {
+        enable = true,
+    },
 }
 
 vim.api.nvim_exec([[
