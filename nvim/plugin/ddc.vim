@@ -14,14 +14,14 @@ function! s:wise_tab() abort
     endif
 endfunction
 
-" 'matcher_length' <- only matches candidates > current word length.
-" 'rg', 'around', 'buffer', 'tmux'
 call ddc#custom#patch_global('sources', ['ultisnips', 'treesitter', 'file', 'nvim-lsp'])
 
+" 'matcher_length' <- only matches candidates > current word length.
 call ddc#custom#patch_global('sourceOptions', {
       \ '_': {
       \   'matchers': ['matcher_fuzzy'],
       \   'sorters': ['sorter_fuzzy'],
+      \   'converters': ['converter_remove_overlap'],
       \   'minAutoCompleteLength' : 1,
       \   'ignoreCase': v:false
       \     }
@@ -35,12 +35,8 @@ call ddc#custom#patch_global('filterParams', {
       
 call ddc#custom#patch_global('sourceOptions', {
       \ 'treesitter': {'mark': 'TS'},
-      \ 'around': {'mark': 'A'},
       \ 'ultisnips': {'mark': 'U'},
       \ 'omni': {'mark': 'O'},
-      \ 'tmux': {'mark': 'T'},
-      \ 'buffer': {'mark': 'B'},
-      \ 'rg': {'mark': 'rg', 'minAutoCompleteLength': 4,},
       \ 'nvim-lsp': {'forceCompletionPattern': '\.\w*|:\w*|->\w*'},
       \ 'file': {
       \ 'mark': 'F',
@@ -49,8 +45,6 @@ call ddc#custom#patch_global('sourceOptions', {
       \})
 
 call ddc#custom#patch_global('sourceParams', {
-            \ 'around': {'maxSize': 500},
-            \ 'tmux': {'currentWinOnly': v:false},
             \ 'file': {'trailingSlash': v:false}
       \ })
 
@@ -63,27 +57,19 @@ call ddc#custom#patch_global('completionMode', 'inline')
     "   return ddc#map#manual_complete([head])
     " endfunction
 
-inoremap <expr> <Tab> pumvisible() ? '<C-n>' : <SID>wise_tab()
-inoremap <silent><expr> <S-Tab> pumvisible() ? '<C-p>' : ddc#map#manual_complete('nvim-lsp')
-inoremap <silent><expr> <cr> pumvisible() ? '<C-y>' : '<Cr>'
-inoremap <silent><expr> <esc> pumvisible() ? '<C-e>' : '<esc>'
+inoremap <silent> <expr> <Tab> pumvisible() ? '<C-n>' : <SID>wise_tab()
+inoremap <silent> <expr> <S-Tab> pumvisible() ? '<C-p>' : ddc#map#manual_complete('nvim-lsp')
+inoremap <silent> <expr> <cr> pumvisible() ? '<C-y>' : '<Cr>'
+inoremap <silent> <expr> <esc> pumvisible() ? '<C-e>' : '<esc>'
 
-let g:ddc_nvim_lsp_doc_config = {
-        \ 'documentation': {
-        \   'enable': v:true,
-        \   'border': 'none',
+let g:popup_preview_config = {
+        \   'border': v:false,
         \   'winblend': 30,
-        \ },
-        \ 'signature': {
-        \   'enable': v:false,
-        \   'border': 'none',
-        \   'winblend': 30,
-        \   'maxHeight': 2,
-        \ },
+        \   'maxHeight': 20,
         \ }
 
-hi! link DdcNvimLspDocDocument Pmenu
-hi! link DdcNvimLspDocBorder Pmenu
+hi! link PopupPreviewDocument Pmenu
+hi! link PopupPreviewBorder Pmenu
 
-call ddc_nvim_lsp_doc#enable()
+call popup_preview#enable()
 call ddc#enable()

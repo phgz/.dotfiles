@@ -12,4 +12,4 @@ require("trouble").setup{
     }
 }
 
-utils.map('n', '<leader>t', '<cmd>UltestNearest<cr>')
+utils.map('n', '<leader>l', '<cmd>Trouble document_diagnostics<cr>')

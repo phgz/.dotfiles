@@ -57,6 +57,7 @@ utils.opt('w', 'linebreak', true) -- Avoid wrapping a line in the middle of a wo
 -- utils.opt('w', 'foldexpr', 'nvim_treesitter#foldexpr()')
 vim.opt.formatoptions = vim.opt.formatoptions - { "ro" }
 vim.opt.iskeyword = vim.opt.iskeyword + { "-" }
+vim.opt.shortmess = vim.opt.shortmess + { c = true }
 vim.o.statusline = status_line()
 --utils.opt('o', 'clipboard','unnamed,unnamedplus')
 

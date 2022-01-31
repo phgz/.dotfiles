@@ -49,13 +49,22 @@ function M.setup()
     use { 'nathom/filetype.nvim' }
     use { 'lewis6991/impatient.nvim' }
 
+    -- Lua functions
+    use { 'nvim-lua/plenary.nvim' }
+
+    -- Modules
+    use { 'philipGaudreau/popfix', module = 'popfix' }
+    use { 'vim-test/vim-test', module = 'vim-test' }
+    use { 'nvim-lua/popup.nvim', module = 'popup.nvim' }
+    use { 'kyazdani42/nvim-web-devicons', module = 'nvim-web-devicons' }
+
     -- Color scheme
     use { 'sainnhe/gruvbox-material' }
 
     -- Fuzzy finder
     use {
       'nvim-telescope/telescope.nvim',
-      requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
+      requires = {'popup.nvim', 'plenary.nvim'}
     }
 
     -- GitHub Copilot
@@ -72,8 +81,9 @@ function M.setup()
     use { 'p00f/nvim-ts-rainbow' } -- "Enclosers" coloring
     use { 's1n7ax/nvim-comment-frame' } -- Comment frame
     use { "SmiteshP/nvim-gps" }
-    use { 'ThePrimeagen/refactoring.nvim' }
+    use { 'ThePrimeagen/refactoring.nvim', requires = 'plenary.nvim' }
     use { "danymat/neogen" }
+
 
     -- LSP and completion
     use { 'neovim/nvim-lspconfig' }
@@ -81,14 +91,10 @@ function M.setup()
 
     use {
       'Shougo/ddc.vim',
-      requires = {'vim-denops/denops.vim', 'matsui54/ddc-ultisnips',
-        'Shougo/ddc-around', 'Shougo/ddc-omni', 'Shougo/ddc-sorter_rank',
-        'Shougo/ddc-matcher_head', 'Shougo/ddc-converter_remove_overlap',
-        'delphinus/ddc-tmux', 'LumaKernel/ddc-file', 'matsui54/ddc-buffer',
-        'delphinus/ddc-treesitter', 'Shougo/ddc-rg', 'Shougo/ddc-line',
-        'ddc-converter_remove_overlap', 'Shougo/ddc-matcher_length',
-        'Shougo/ddc-nvim-lsp', 'statiolake/ddc-ale', 'Shougo/pum.vim',
-        'tani/ddc-fuzzy', 'tani/ddc-onp', 'matsui54/ddc-nvim-lsp-doc'},
+      requires = {'vim-denops/denops.vim',
+        'matsui54/ddc-ultisnips', 'Shougo/ddc-omni', 'Shougo/ddc-nvim-lsp',
+        'Shougo/ddc-converter_remove_overlap', 'LumaKernel/ddc-file', 'delphinus/ddc-treesitter',
+        'Shougo/ddc-matcher_length', 'tani/ddc-fuzzy', 'matsui54/denops-popup-preview.vim'},
     }
 
     use { "beauwilliams/focus.nvim", 
@@ -107,7 +113,7 @@ function M.setup()
     -- use { 'tpope/vim-fugitive' }
     -- use { 'philipgaudreau/vim-gitgutter', branch = 'feature/win-border-option' }
     use { 'lewis6991/gitsigns.nvim' }
-    use { 'itchyny/vim-gitbranch' }
+    -- use { 'itchyny/vim-gitbranch' }
 
     -- Snippets
     use { 'honza/vim-snippets' }
@@ -140,15 +146,11 @@ function M.setup()
 
     use { 'metakirby5/codi.vim' } -- Scratch pad
 
-    use { 'vim-test/vim-test',
-      module = 'vim-test',
-    }
 
     use { "rcarriga/vim-ultest", 
       wants = {"vim-test"},
       cmd = { "UltestNearest" },
       run = ":UpdateRemotePlugins",
-
     } -- tests
 
     use {
@@ -191,14 +193,16 @@ function M.setup()
 
     use {
       'folke/trouble.nvim',
-      requires = 'kyazdani42/nvim-web-devicons',
+      requires = 'nvim-web-devicons',
     } -- Diagnistic list
+
 
     use {
       'philipGaudreau/nvim-cheat.sh',
       branch = 'feature/rounded-borders',
-      requires = 'RishabhRD/popfix'
+      requires = 'popfix'
     } -- cheat.sh
+
 
     -- Bootstrap Neovim
     if packer_bootstrap then
