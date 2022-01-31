@@ -30,7 +30,7 @@ if [ "$platform" == "Darwin" ]; then
     #------------------------------------------------------------------------------#
     #                              kitty fish neovim                               #
     #------------------------------------------------------------------------------#
-    $brew install kitty fish neovim tmux fontconfig
+    $brew install kitty fish node neovim tmux fontconfig
 
 
 #------------------------------------------------------------------------------#
@@ -46,6 +46,11 @@ elif [ "$platform" == "Linux" ]; then
     #sudo apt-add-repository ppa:fish-shell/release-3
     #sudo apt update
     #sudo apt install fish
+
+    #curl -fsSL https://deb.nodesource.com/setup_17.x | sudo -E bash -
+    #sudo apt-get install -y nodejs
+
+    #sudo apt install tmux
 
     curl -LJO https://github.com/neovim/neovim/releases/download/v0.6.1/nvim.appimage
     chmod u+x nvim.appimage

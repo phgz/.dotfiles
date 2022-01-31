@@ -14,7 +14,7 @@ utils.map('x', 'Ky', '<plug>NERDCommenterYank', {noremap = false})
 utils.map('x', 'KK', '<plug>NERDCommenterToggle', {noremap = false})
 utils.map('x', 'Ki', '<plug>NERDCommenterInvert', {noremap = false})
 
-utils.map('n', 'KK', '<plug>NERDCommenterToggle', {noremap = false})
+--utils.map('n', 'KK', '<plug>NERDCommenterToggle', {noremap = false})
 utils.map('n', 'Kc', '<plug>NERDCommenterComment', {noremap = false})
 utils.map('n', 'Ku', '<plug>NERDCommenterUncomment', {noremap = false})
 utils.map('n', 'Ke', '<plug>NERDCommenterToEOL', {noremap = false})

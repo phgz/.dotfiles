@@ -1,7 +1,7 @@
-let g:dsf_no_mappings = 1
+" let g:dsf_no_mappings = 1
 
-nmap dsf <Plug>DsfDelete
-nmap csf <Plug>DsfChange
+" nmap dsf <Plug>DsfDelete
+" nmap csf <Plug>DsfChange
 
-nmap dsnf <Plug>DsfNextDelete
-nmap csnf <Plug>DsfNextChange
+" nmap dsnf <Plug>DsfNextDelete
+" nmap csnf <Plug>DsfNextChange

@@ -4,14 +4,14 @@ local cmd = vim.cmd
 local indent = 4
 
 function NvimGPS()
-    return  gps.is_available() and ('  ' .. gps.get_location()) or ''
+  return  gps.is_available() and ('  ' .. gps.get_location()) or ''
 end
 
 function status_line()
-    local status = ' %{gitbranch#name()}%='
-    status = status .. '%#PurpleStatusLine#%{luaeval("NvimGPS()")}'
-    status = status .. '%=%h%#RedStatusLine#%m%#BlueStatusLine#%r%#StatusLine# %F ▏%2c'
-    return status
+  local status = " %{%get(b:,'gitsigns_status','')%}"
+  status = status .. '%=%#GreyStatusLine#%{luaeval("NvimGPS()")}'
+  status = status .. '%=%h%#RedStatusLine#%m%#BlueStatusLine#%r%#StatusLine# %F ▏%2c'
+  return status
 end
 
 vim.api.nvim_exec([[
@@ -21,8 +21,9 @@ set nohlsearch
 set history=100
 set shell=fish
 set foldtext=getline(v:foldstart+1)
-    ]], false)
+]], false)
 
+-- vim.g.mapleader = "<Space>"
 vim.g.maplocalleader = "!"
 
 utils.opt('b', 'expandtab', true)
@@ -67,4 +68,4 @@ vim.api.nvim_exec([[
 autocmd TextYankPost * silent! lua vim.highlight.on_yank {timeout=140}
 call matchadd('DiffText', '\%97v')
 autocmd FileType python setlocal foldenable foldmethod=syntax
-    ]], false)
+]], false)

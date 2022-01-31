@@ -4,9 +4,11 @@ import re
 
 import numpy as np
 
-os.
+
 class People(object):
-    """People class."""
+    """
+    People class.
+    """
 
     ret_ages = {"Half": 60, "AlmostFull": 65, "Full": 71}  # years
 
@@ -21,7 +23,8 @@ class People(object):
         self.ret_mode = ret_mode
 
     def get_remaining_years(self):
-        """Return how many years People have still to work before earning.
+        """
+        Return how many years People have still to work before earning.
 
         <rate> retirement. <rate> could be "Half", "Middle" or "Full".
         """
@@ -43,6 +46,7 @@ def main():
     )
 
     print(people_closer_to_ret.name, "will be retired soon !")
+
 
 if __name__ == "__main__":
     main()

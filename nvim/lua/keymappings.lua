@@ -11,7 +11,7 @@ utils.map('n', '<leader>b', 'obreakpoint()<Esc>')--< set Breakpoint
 utils.map('n', '<localleader>n', '<cmd>bnext<cr>')--< goto next buffer
 utils.map('n', '<localleader>p', '<cmd>bprevious<cr>')--< goto prev buffer
 utils.map('n', '<leader>d', '<cmd>bdelete<cr>')--< delete buffer
-utils.map('n', '<localleader>a', 'mbgg=G`b')--< Autoindent document
+utils.map('n', '<localleader>=', 'mbgg=G=G`b')--< Autoindent document
 utils.map('v', '<leader>s', ':sort<cr>')--< Sort selection
 
 -- Normal key
