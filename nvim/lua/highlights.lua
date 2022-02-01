@@ -5,7 +5,7 @@ hi WarningFloat guibg=None
 hi InfoFloat guibg=None
 hi HintFloat guibg=None
 
-hi def RedStatusLine guifg=Red guibg=#32302f
+hi def RedStatusLine guifg=#fb4934 guibg=#32302f
 hi def GreenStatusLine guifg=#afaf00 guibg=#32302f
 hi def BlueStatusLine guifg=#87afaf guibg=#32302f
 hi def TurquoiseStatusLine guifg=turquoise guibg=#32302f
