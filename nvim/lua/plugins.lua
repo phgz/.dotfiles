@@ -49,8 +49,7 @@ function M.setup()
     use { 'nathom/filetype.nvim' }
     use { 'lewis6991/impatient.nvim' }
 
-    -- Lua functions
-    use { 'nvim-lua/plenary.nvim' }
+    use { 'nvim-lua/plenary.nvim' } -- Lua functions
 
     -- Modules
     use { 'philipGaudreau/popfix', module = 'popfix' }
@@ -58,100 +57,81 @@ function M.setup()
     use { 'nvim-lua/popup.nvim', module = 'popup.nvim' }
     use { 'kyazdani42/nvim-web-devicons', module = 'nvim-web-devicons' }
 
-    -- Color scheme
-    use { 'sainnhe/gruvbox-material' }
-
-    -- Fuzzy finder
-    use {
-      'nvim-telescope/telescope.nvim',
-      requires = {'popup.nvim', 'plenary.nvim'}
-    }
-
-    -- GitHub Copilot
-    use { 'github/copilot.vim' }
-
-    -- using Treesitter
-    use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
-
+    ---
+    
+    use { 'sainnhe/gruvbox-material' } -- Color scheme
+    
+    use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- using Treesitter
     use { 'nvim-treesitter/playground' } -- See parsed tree
     use { 'nvim-treesitter/nvim-treesitter-textobjects' } -- More text motions
     use { 'nvim-treesitter/nvim-treesitter-refactor' } -- Highlight definitions, Rename
-    use { 'romgrk/nvim-treesitter-context' } -- Keep context in sight
+    -- use { 'RRethy/vim-illuminate' } -- Word highlighting
     use { 'RRethy/nvim-treesitter-endwise' } -- Add `end` statement when opening a context
     use { 'p00f/nvim-ts-rainbow' } -- "Enclosers" coloring
     use { 's1n7ax/nvim-comment-frame' } -- Comment frame
-    use { "SmiteshP/nvim-gps" }
-    use { 'ThePrimeagen/refactoring.nvim', requires = 'plenary.nvim' }
-    use { "danymat/neogen" }
+    use { "SmiteshP/nvim-gps" } -- Context in the status bar
+    use { 'ThePrimeagen/refactoring.nvim', requires = 'plenary.nvim' } --  Extract block in new function
+    use { "danymat/neogen" } -- Annotation generator
 
-
-    -- LSP and completion
-    use { 'neovim/nvim-lspconfig' }
-    use {'ray-x/lsp_signature.nvim'}
-
+    use { 'neovim/nvim-lspconfig' } -- LSP and completion
+    use {'ray-x/lsp_signature.nvim'} -- Signature help
+    use { 'onsails/lspkind-nvim' } -- LSP pictograms
+    use { 'github/copilot.vim' } -- AI completion
     use {
-      'Shougo/ddc.vim',
-      requires = {'vim-denops/denops.vim',
+      'Shougo/ddc.vim', requires = {'vim-denops/denops.vim',
         'matsui54/ddc-ultisnips', 'Shougo/ddc-omni', 'Shougo/ddc-nvim-lsp',
         'Shougo/ddc-converter_remove_overlap', 'LumaKernel/ddc-file', 'delphinus/ddc-treesitter',
         'Shougo/ddc-matcher_length', 'tani/ddc-fuzzy', 'matsui54/denops-popup-preview.vim'},
-    }
+    } -- Completion engine
+    use {
+      'folke/trouble.nvim',
+      requires = 'nvim-web-devicons',
+    } -- Diagnistic list
+
+    use {
+      'nvim-telescope/telescope.nvim',
+      requires = {'popup.nvim', 'plenary.nvim'}
+    } -- Fuzzy finder
 
     use { "beauwilliams/focus.nvim", 
       config = function()
         require("focus").setup({signcolumn = false, cursorline = false}) 
       end
-    }
+    } -- Split and resize window intelligently
 
-    -- Formatting
-    use { 'mhartington/formatter.nvim' }
+    use { 'mhartington/formatter.nvim' } -- Formatting
 
-    -- Vim dispatch
-    use { 'tpope/vim-dispatch' }
+    use { 'lewis6991/gitsigns.nvim' } -- Git integration
 
-    -- Git
-    -- use { 'tpope/vim-fugitive' }
-    -- use { 'philipgaudreau/vim-gitgutter', branch = 'feature/win-border-option' }
-    use { 'lewis6991/gitsigns.nvim' }
-    -- use { 'itchyny/vim-gitbranch' }
+    use { 'honza/vim-snippets' } -- Snippets
+    use { 'SirVer/ultisnips' } -- Snippets engine
 
-    -- Snippets
-    use { 'honza/vim-snippets' }
-    use { 'SirVer/ultisnips' }
-
-    -- TMUX
-    --use { 'roxma/vim-tmux-clipboard' }
-    use { 'ojroques/vim-oscyank' }
-
-    -- Comments
-    use { 'scrooloose/nerdcommenter' }
-    use { 'tpope/vim-commentary' }
-
-    -- Utils
-
-    -- use { 'dense-analysis/ale' } -- Lint
+    use { 'ojroques/vim-oscyank' } -- Global TMUX yank
+    
+    use {
+      'numToStr/Comment.nvim',
+      config = function()
+        require('Comment').setup()
+      end
+    } -- Comments
 
     use { 'tpope/vim-surround' } -- Surround
+
     use { 'windwp/nvim-autopairs' } -- Pairwise
+
     use { 'AndrewRadev/dsf.vim' } -- Delete function surround
 
-    -- use { 'Yggdroot/indentLine' } -- Indentation
-    use { 'lukas-reineke/indent-blankline.nvim' }
+    use { 'lukas-reineke/indent-blankline.nvim' } -- Indentation line
 
     use { 'tpope/vim-repeat' } -- Repeat plugins commands
 
     use { 'phaazon/hop.nvim' } -- Vim Motions
 
-    --use { 'unblevable/quick-scope' } -- f/F/t/T highlight helper
-
-    use { 'metakirby5/codi.vim' } -- Scratch pad
-
-
     use { "rcarriga/vim-ultest", 
       wants = {"vim-test"},
       cmd = { "UltestNearest" },
       run = ":UpdateRemotePlugins",
-    } -- tests
+    } -- Tests
 
     use {
       --"michaelb/sniprun",
@@ -162,7 +142,7 @@ function M.setup()
         require("config.sniprun").setup()
       end,
       ft = { "python" }
-    }
+    } -- Execute code snippets
 
     use { 'Houl/repmo-vim' } -- More motions with , and ;
 
@@ -170,13 +150,10 @@ function M.setup()
 
     use { 'junegunn/vim-easy-align' } -- Tabularize
 
-    use { 'airblade/vim-matchquote' } -- Add matching for ' " ` |
+    -- use { 'airblade/vim-matchquote' } -- Add matching for ' " ` |
+    use { 'andymass/vim-matchup' } -- Extend % matching to objects start/end
 
-    use { 'machakann/vim-swap' } -- Swap text
-
-    -- use { 'RRethy/vim-illuminate' } -- Word highlighting
-
-    use { 'onsails/lspkind-nvim' } -- LSP pictograms
+    use { 'machakann/vim-swap' } -- Swap delimited items, like function arguments
 
     use { 'rcarriga/nvim-notify' } --  Notifications
 
@@ -192,17 +169,12 @@ function M.setup()
     } -- Line preview
 
     use {
-      'folke/trouble.nvim',
-      requires = 'nvim-web-devicons',
-    } -- Diagnistic list
-
-
-    use {
       'philipGaudreau/nvim-cheat.sh',
       branch = 'feature/rounded-borders',
       requires = 'popfix'
     } -- cheat.sh
 
+    use { 'stevearc/dressing.nvim' } -- Use Telescope for input
 
     -- Bootstrap Neovim
     if packer_bootstrap then

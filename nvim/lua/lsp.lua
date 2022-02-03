@@ -16,8 +16,6 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', '<leader>j', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
     buf_set_keymap('n', 'h', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
     buf_set_keymap('n', 'l', '<cmd>lua vim.diagnostic.open_float({ border = "rounded" })<CR>', opts)
-    buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-    buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
 
     -- Set hightlights conditional on server_capabilities
     if client.resolved_capabilities.document_highlight then

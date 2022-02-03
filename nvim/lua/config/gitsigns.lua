@@ -1,3 +1,5 @@
+-- Add close_preview_on_escape
+
 local utils = require("utils")
 
 require('gitsigns').setup {
