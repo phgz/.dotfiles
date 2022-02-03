@@ -59,7 +59,6 @@ abbr -ag kbg kb grep
 abbr -ag kbt kb list --tags
 
 abbr -ag cat bat
-abbr -ag ssh kitty kitten ssh
 abbr -ag ls exa
 abbr -ag ll exal
 abbr -ag la exal -a
