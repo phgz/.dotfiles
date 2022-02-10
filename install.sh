@@ -47,10 +47,53 @@ elif [ "$platform" == "Linux" ]; then
     #sudo apt update
     #sudo apt install fish
 
-    #curl -fsSL https://deb.nodesource.com/setup_17.x | sudo -E bash -
-    #sudo apt-get install -y nodejs
+    nodeV=17.4.0
+    curl -LJO https://nodejs.org/dist/v$nodeV/node-$nodeV-linux-x64.tar.xz
+    tar -xf node-v$nodeV-linux-x64.tar.xz
+    rm node-v$nodeV-linux-x64.tar.xz
+    mv node-v$nodeV-linux-x64 $HOME/.local/
+
+    for exec in $(ls $HOME/.local/node-v$nodeV-linux-x64/bin); do
+        ln -fs $HOME/.local/node-v$nodeV-linux-x64/bin/$exec $HOME/.local/bin/
+    done
+
+    $HOME/.local/bin/corepack enable
+    $HOME/.local/bin/yarn global add yaml-language-server
+
+    $HOME/.local/bin/npm install -g dockerfile-language-server-nodejs
+    ln $HOME/.local/node-v$nodeV-linux-x64/bin/docker-langserver $HOME/.local/bin/
+
+    $HOME/.local/bin/npm install -g bash-language-server
+    ln $HOME/.local/node-v$nodeV-linux-x64/bin/bash-language-server $HOME/.local/bin/
+
+    curl -LJO https://github.com/sumneko/lua-language-server/releases/download/2.6.3/lua-language-server-2.6.3-linux-x64.tar.gz
+    mkdir -p $HOME/.local/lua-language-server
+    tar -xf lua-language-server-2.6.3-linux-x64.tar.gz -C $HOME/.local/lua-language-server
+    rm lua-language-server-2.6.3-linux-x64.tar.gz
 
     #sudo apt install tmux
+    curl -LJO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
+    tar -zxf libevent-*.tar.gz && rm libevent-2.1.12-stable.tar.gz
+    cd libevent-*/
+    ./configure --prefix=$HOME/.local --enable-shared
+    make && make install
+    cd ..
+
+    curl -LJO https://invisible-island.net/datafiles/release/ncurses.tar.gz
+    tar -zxf ncurses.tar.gz && rm ncurses.tar.gz
+    cd ncurses-*/
+    ./configure --prefix=$HOME/.local --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir=$HOME/.local/lib/pkgconfig
+    make && make install
+    cd ..
+
+    curl -LJO https://github.com/tmux/tmux/releases/download/3.1c/tmux-3.1c.tar.gz
+    tar -zxf tmux-*.tar.gz && rm tmux-3.1c.tar.gz
+    cd tmux-*/
+    PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix=$HOME/.local
+    make && make instal
+    cd ..
+
+    rm -rf ncurses-*/ tmux-*/ libevent-*/
 
     curl -LJO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
     chmod u+x nvim.appimage

@@ -4,7 +4,7 @@ function tmux_attach
 end
 
 function tmux_new_session
-    tmux -f $HOME/.config/tmux/tmux.conf new-session -s remote
+    tmux new-session -s remote
 end
 
 function initialize_tmux

@@ -1,8 +1,9 @@
-test -t 0 && initialize_tmux
-
 set -g fish_greeting
 string match -q (uname -ms) "Darwin arm64" && fish_add_path -g /opt/homebrew/bin
 fish_add_path -g $HOME/.local/bin $HOME/.cargo/bin 
+set -gx LD_LIBRARY_PATH $HOME/.local/lib $LD_LIBRARY_PATH
+set -gx MANPATH $HOME/.local/share/man $MANPATH
+
 set -gx STARSHIP_CONFIG ~/.config/starship/config.toml
 set -gx EDITOR nvim
 # set -gx TERM xterm-kitty
@@ -68,3 +69,5 @@ abbr -ag psh poetry shell
 # adding flags
 abbr -ag tma tmux -f ~/.config/tmux/tmux.conf attach-session -t 
 abbr -ag tmn tmux -f ~/.config/tmux/tmux.conf new -s 
+
+test -t 0 && initialize_tmux

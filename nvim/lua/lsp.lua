@@ -18,7 +18,7 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', 'l', '<cmd>lua vim.diagnostic.open_float({ border = "rounded" })<CR>', opts)
 
     -- Set hightlights conditional on server_capabilities
-    if client.resolved_capabilities.document_highlight then
+    -- if client.resolved_capabilities.document_highlight then
         vim.api.nvim_exec([[
         highlight link LspDiagnosticsLineNrError RedBold
         highlight link LspDiagnosticsLineNrWarning YellowBold
@@ -26,13 +26,14 @@ local on_attach = function(client, bufnr)
         highlight link LspDiagnosticsLineNrHint GreenBold
 
         highlight link LspSignatureActiveParameter GreenItalic
-
-        sign define DiagnosticSignError text= texthl=LspDiagnosticsSignError linehl= numhl=LspDiagnosticsLineNrError
-        sign define DiagnosticSignWarn text= texthl=LspDiagnosticsSignWarning linehl= numhl=LspDiagnosticsLineNrWarning
-        sign define DiagnosticSignInfo text= texthl=LspDiagnosticsSignInformation linehl= numhl=LspDiagnosticsLineNrInformation
-        sign define DiagnosticSignHint text= texthl=LspDiagnosticsSignHint linehl= numhl=LspDiagnosticsLineNrHint
             ]], false)
-    end
+
+        sign_define = vim.fn.sign_define
+        sign_define("DiagnosticSignError", {texthl="LspDiagnosticsSignError", numhl="LspDiagnosticsLineNrError"})
+        sign_define("DiagnosticSignWarn", {texthl="LspDiagnosticsSignWarning", numhl="LspDiagnosticsLineNrWarning"})
+        sign_define("DiagnosticSignInfo", {texthl="LspDiagnosticsSignInformation", numhl="LspDiagnosticsLineNrInformation"})
+        sign_define("DiagnosticSignHint", {texthl="LspDiagnosticsSignHint", numhl="LspDiagnosticsLineNrHint"})
+    -- end
 end
 
 local function goto_definition(split_cmd)
@@ -80,7 +81,24 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] =
 -- capabilities = vim.lsp.protocol.make_client_capabilities()
 
 local nvim_lsp = require('lspconfig')
+HOME = os.getenv("HOME")
 
 --python
-local bin_name = os.getenv( "HOME" ) .. '/.miniconda3/envs/neovim/bin/pyright-langserver'
-nvim_lsp["pyright"].setup{on_attach = on_attach, cmd = {bin_name, "--stdio"}}
+local pyright = HOME .. '/.miniconda3/envs/neovim/bin/pyright-langserver'
+nvim_lsp["pyright"].setup{on_attach = on_attach, cmd = {pyright, "--stdio"}}
+
+--yaml
+local yamlls = HOME .. '/.yarn/bin/yaml-language-server'
+nvim_lsp["yamlls"].setup{on_attach = on_attach, cmd = {yamlls, "--stdio"}}
+
+--bash
+local bashls = HOME .. '/.local/bin/bash-language-server'
+nvim_lsp["bashls"].setup{on_attach = on_attach, cmd = {bashls, "start"}}
+
+--docker
+local dockerls = HOME .. '/.local/bin/docker-langserver'
+nvim_lsp["dockerls"].setup{on_attach = on_attach, cmd = {dockerls, "--stdio"}}
+
+--lua
+local luals = HOME .. '/.local/lua-language-server/bin/lua-language-server'
+nvim_lsp["sumneko_lua"].setup{on_attach = on_attach, cmd = {luals}}

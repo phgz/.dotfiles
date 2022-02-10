@@ -1,7 +1,7 @@
 local utils = require('utils')
 
 require('nvim-treesitter.configs').setup {
-  ensure_installed = {"bash", "julia", "haskell", "rust", "python", "lua", "fish", "vim", "json", "toml", "yaml", "comment", "dockerfile", "html", "latex", "markdown", "regex"},
+  ensure_installed = 'maintained',
   highlight = {
     enable = true,
     disable = {"toml"},
