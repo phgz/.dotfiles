@@ -28,7 +28,7 @@ local on_attach = function(client, bufnr)
         highlight link LspSignatureActiveParameter GreenItalic
             ]], false)
 
-        sign_define = vim.fn.sign_define
+        local sign_define = vim.fn.sign_define
         sign_define("DiagnosticSignError", {texthl="LspDiagnosticsSignError", numhl="LspDiagnosticsLineNrError"})
         sign_define("DiagnosticSignWarn", {texthl="LspDiagnosticsSignWarning", numhl="LspDiagnosticsLineNrWarning"})
         sign_define("DiagnosticSignInfo", {texthl="LspDiagnosticsSignInformation", numhl="LspDiagnosticsLineNrInformation"})
@@ -79,26 +79,47 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] =
     })
 
 -- capabilities = vim.lsp.protocol.make_client_capabilities()
+local lsp_installer = require("nvim-lsp-installer")
 
-local nvim_lsp = require('lspconfig')
-HOME = os.getenv("HOME")
+local servers = {
+  "bashls",
+  "pyright",
+  "yamlls",
+  "sumneko_lua",
+  "dockerls",
+  "vimls"
+}
 
---python
-local pyright = HOME .. '/.miniconda3/envs/neovim/bin/pyright-langserver'
-nvim_lsp["pyright"].setup{on_attach = on_attach, cmd = {pyright, "--stdio"}}
+for _, name in pairs(servers) do
+  local server_is_found, server = lsp_installer.get_server(name)
+  if server_is_found and not server:is_installed() then
+    print("Installing " .. name)
+    server:install()
+  end
+end
 
---yaml
-local yamlls = HOME .. '/.yarn/bin/yaml-language-server'
-nvim_lsp["yamlls"].setup{on_attach = on_attach, cmd = {yamlls, "--stdio"}}
 
---bash
-local bashls = HOME .. '/.local/bin/bash-language-server'
-nvim_lsp["bashls"].setup{on_attach = on_attach, cmd = {bashls, "start"}}
+-- local enhance_server_opts = {
+  -- Provide settings that should only apply to the "pyright" server
+  -- ["pyright"] = function(opts)
+  --   opts.settings = {
+  --     format = {
+  --       enable = true,
+  --     },
+  --   }
+  -- end,
+-- }
 
---docker
-local dockerls = HOME .. '/.local/bin/docker-langserver'
-nvim_lsp["dockerls"].setup{on_attach = on_attach, cmd = {dockerls, "--stdio"}}
+lsp_installer.on_server_ready(function(server)
+  -- Specify the default options which we'll use to setup all servers
+  local opts = {
+    on_attach = on_attach,
+  }
 
---lua
-local luals = HOME .. '/.local/lua-language-server/bin/lua-language-server'
-nvim_lsp["sumneko_lua"].setup{on_attach = on_attach, cmd = {luals}}
+  -- if enhance_server_opts[server.name] then
+  --   -- Enhance the default opts with the server-specific ones
+  --   enhance_server_opts[server.name](opts)
+  -- end
+
+  server:setup(opts)
+end)

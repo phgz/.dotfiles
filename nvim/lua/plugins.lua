@@ -74,6 +74,7 @@ function M.setup()
     use { "danymat/neogen" } -- Annotation generator
 
     use { 'neovim/nvim-lspconfig' } -- LSP and completion
+    use {'williamboman/nvim-lsp-installer'} -- LSP installer
     use {'ray-x/lsp_signature.nvim'} -- Signature help
     use { 'onsails/lspkind-nvim' } -- LSP pictograms
     use { 'github/copilot.vim' } -- AI completion
