@@ -6,6 +6,24 @@ arch=$(uname -m)
 mkdir -p $HOME/.local/bin
 
 #------------------------------------------------------------------------------#
+#                                  Miniconda                                   #
+#------------------------------------------------------------------------------#
+if [ ! -d $HOME/.miniconda3 ]; then
+    if [ $platform == "Darwin" ]; then
+        platform_name=MacOSX
+    elif [ $platform == "Linux" ]; then
+        platform_name=Linux
+    fi
+
+    url_prefix=https://repo.anaconda.com/miniconda
+    curl -L $url_prefix/Miniconda3-latest-$platform_name-$arch.sh -o miniconda.sh
+    bash miniconda.sh -b -p $HOME/.miniconda3
+    rm miniconda.sh
+    $HOME/.miniconda3/bin/conda create --yes --name neovim python=3.9
+    $HOME/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
+fi
+
+#------------------------------------------------------------------------------#
 #                                    MacOSX                                    #
 #------------------------------------------------------------------------------#
 if [ "$platform" == "Darwin" ]; then
@@ -34,19 +52,40 @@ if [ "$platform" == "Darwin" ]; then
 
 
 #------------------------------------------------------------------------------#
-#                                    Linux                                     #
+#                               Linux (no root)                                #
 #------------------------------------------------------------------------------#
 elif [ "$platform" == "Linux" ]; then
+
     #------------------------------------------------------------------------------#
-    #                              kitty fish neovim                               #
+    #                                    Kitty                                     #
     #------------------------------------------------------------------------------#
     curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
     ln -fs $HOME/.local/kitty.app/bin/kitty $HOME/.local/bin/
 
-    #sudo apt-add-repository ppa:fish-shell/release-3
-    #sudo apt update
-    #sudo apt install fish
+    #------------------------------------------------------------------------------#
+    #                                     Fish                                     #
+    #------------------------------------------------------------------------------#
+    FISH_SHELL_VERSION=3.3.1
+    
+    curl -LJO http://fishshell.com/files/${FISH_SHELL_VERSION}/fish-${FISH_SHELL_VERSION}.tar.gz
+    tar xvzf fish-${FISH_SHELL_VERSION}.tar.gz && rm fish-${FISH_SHELL_VERSION}.tar.gz
+    pushd fish-${FISH_SHELL_VERSION}
+    ./configure --prefix=$HOME/local --disable-shared
+    make && make install
+    popd
+    mv fish $HOME/.local/fish
+    rm -rf fish-${FISH_SHELL_VERSION}
 
+    #------------------------------------------------------------------------------#
+    #                                    Neovim                                    #
+    #------------------------------------------------------------------------------#
+    curl -LJO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
+    chmod u+x nvim.appimage
+    mv nvim.appimage $HOME/.local/bin/nvim
+
+    #------------------------------------------------------------------------------#
+    #                                    Nodejs                                    #
+    #------------------------------------------------------------------------------#
     nodeV=17.4.0
     curl -LJO https://nodejs.org/dist/v$nodeV/node-v$nodeV-linux-x64.tar.xz
     tar -xf node-v$nodeV-linux-x64.tar.xz
@@ -59,10 +98,13 @@ elif [ "$platform" == "Linux" ]; then
 
     $HOME/.local/bin/corepack enable
 
+    #------------------------------------------------------------------------------#
+    #                                     TMUX                                     #
+    #------------------------------------------------------------------------------#
     curl -LJO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
     tar -zxf libevent-*.tar.gz && rm libevent-2.1.12-stable.tar.gz
     pushd libevent-*/
-    ./configure --prefix=$HOME/.local --enable-shared
+    PKG_CONFIG_PATH=$HOME/.miniconda3/lib/pkgconfig ./configure --prefix=$HOME/.local --enable-shared
     make && make install
     popd
 
@@ -71,20 +113,17 @@ elif [ "$platform" == "Linux" ]; then
     pushd ncurses-*/
     ./configure --prefix=$HOME/.local --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir=$HOME/.local/lib/pkgconfig
     make && make install
-    popd ..
+    popd
 
     curl -LJO https://github.com/tmux/tmux/releases/download/3.1c/tmux-3.1c.tar.gz
     tar -zxf tmux-*.tar.gz && rm tmux-3.1c.tar.gz
     pushd tmux-*/
     PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix=$HOME/.local
-    make && make instal
-    popd ..
+    make && make install
+    mv tmux $HOME/.local/bin/tmux
+    popd
 
     rm -rf ncurses-*/ tmux-*/ libevent-*/
-
-    curl -LJO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
-    chmod u+x nvim.appimage
-    mv nvim.appimage $HOME/.local/bin/nvim
 fi
 
 
@@ -121,24 +160,6 @@ if [ ! -d $HOME/.cargo ]; then
     cargo=$HOME/.cargo/bin/cargo
     $cargo install exa ripgrep bat fd-find du-dust
     $cargo install deno --locked
-fi
-
-#------------------------------------------------------------------------------#
-#                                  Miniconda                                   #
-#------------------------------------------------------------------------------#
-if [ ! -d $HOME/.miniconda3 ]; then
-    if [ $platform == "Darwin" ]; then
-        platform_name=MacOSX
-    elif [ $platform == "Linux" ]; then
-        platform_name=Linux
-    fi
-
-    url_prefix=https://repo.anaconda.com/miniconda
-    curl -L $url_prefix/Miniconda3-latest-$platform_name-$arch.sh -o miniconda.sh
-    bash miniconda.sh -b -p $HOME/.miniconda3
-    rm miniconda.sh
-    $HOME/.miniconda3/bin/conda create --yes --name neovim python=3.9
-    $HOME/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
 fi
 
 #------------------------------------------------------------------------------#
