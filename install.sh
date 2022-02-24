@@ -6,24 +6,6 @@ arch=$(uname -m)
 mkdir -p $HOME/.local/bin
 
 #------------------------------------------------------------------------------#
-#                                  Miniconda                                   #
-#------------------------------------------------------------------------------#
-if [ ! -d $HOME/.miniconda3 ]; then
-    if [ $platform == "Darwin" ]; then
-        platform_name=MacOSX
-    elif [ $platform == "Linux" ]; then
-        platform_name=Linux
-    fi
-
-    url_prefix=https://repo.anaconda.com/miniconda
-    curl -L $url_prefix/Miniconda3-latest-$platform_name-$arch.sh -o miniconda.sh
-    bash miniconda.sh -b -p $HOME/.miniconda3
-    rm miniconda.sh
-    $HOME/.miniconda3/bin/conda create --yes --name neovim python=3.9
-    $HOME/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
-fi
-
-#------------------------------------------------------------------------------#
 #                                    MacOSX                                    #
 #------------------------------------------------------------------------------#
 if [ "$platform" == "Darwin" ]; then
@@ -104,7 +86,7 @@ elif [ "$platform" == "Linux" ]; then
     curl -LJO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
     tar -zxf libevent-*.tar.gz && rm libevent-2.1.12-stable.tar.gz
     pushd libevent-*/
-    PKG_CONFIG_PATH=$HOME/.miniconda3/lib/pkgconfig ./configure --prefix=$HOME/.local --enable-shared
+    ./configure --prefix=$HOME/.local --enable-shared --disable-openssl
     make && make install
     popd
 
@@ -149,6 +131,24 @@ fi
 cp $HOME/.dotfiles/ssh/* $HOME/.ssh
 chmod 700 $HOME/.ssh
 chmod 600 $HOME/.ssh/*
+
+#------------------------------------------------------------------------------#
+#                                  Miniconda                                   #
+#------------------------------------------------------------------------------#
+if [ ! -d $HOME/.miniconda3 ]; then
+    if [ $platform == "Darwin" ]; then
+        platform_name=MacOSX
+    elif [ $platform == "Linux" ]; then
+        platform_name=Linux
+    fi
+
+    url_prefix=https://repo.anaconda.com/miniconda
+    curl -L $url_prefix/Miniconda3-latest-$platform_name-$arch.sh -o miniconda.sh
+    bash miniconda.sh -b -p $HOME/.miniconda3
+    rm miniconda.sh
+    $HOME/.miniconda3/bin/conda create --yes --name neovim python=3.9
+    $HOME/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
+fi
 
 #------------------------------------------------------------------------------#
 #                                  Cargo/Rust                                  #
