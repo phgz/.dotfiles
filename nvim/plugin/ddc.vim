@@ -13,7 +13,7 @@ function! s:wise_tab() abort
         return "\<TAB>"
     endif
 endfunction
-ca-1
+
 call ddc#custom#patch_global('sources', ['ultisnips', 'treesitter', 'file', 'nvim-lsp'])
 
 " 'matcher_length' <- only matches candidates > current word length.
