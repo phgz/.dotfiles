@@ -1,19 +1,19 @@
 function! s:wise_tab() abort
     if ddc#can_complete() 
-        if trim(g:ddc#_prev_input) ==# g:ddc#_candidates[0]['word']
+        if trim(g:ddc#_prev_input) ==# g:ddc#_items[0]['word']
             if UltiSnips#CanExpandSnippet()
                 return "\<cmd>call UltiSnips#ExpandSnippet()\<CR>"
             else
                 return "\<TAB>"
             endif
         else
-           return ddc#map#insert_candidate(0)
+           return ddc#map#insert_item(0)
        endif
     else
         return "\<TAB>"
     endif
 endfunction
-
+ca-1
 call ddc#custom#patch_global('sources', ['ultisnips', 'treesitter', 'file', 'nvim-lsp'])
 
 " 'matcher_length' <- only matches candidates > current word length.

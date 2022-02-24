@@ -152,7 +152,7 @@ function M.setup()
     use { 'junegunn/vim-easy-align' } -- Tabularize
 
     -- use { 'airblade/vim-matchquote' } -- Add matching for ' " ` |
-    use { 'andymass/vim-matchup' } -- Extend % matching to objects start/end
+    -- use { 'andymass/vim-matchup' } -- Extend % matching to objects start/end
 
     use { 'machakann/vim-swap' } -- Swap delimited items, like function arguments
 

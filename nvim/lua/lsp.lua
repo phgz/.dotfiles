@@ -1,84 +1,73 @@
+local function signature_help(client, bufnr)
+  local trigger_chars = client.resolved_capabilities.signature_help_trigger_characters
+  for _, char in ipairs(trigger_chars) do
+    vim.keymap.set("i", char, function()
+      vim.defer_fn(function()
+        pcall(vim.lsp.buf.signature_help)
+      end, 0)
+      return char
+    end, {
+        buffer = bufnr,
+        noremap = true,
+        silent = true,
+        expr = true,
+      })
+  end
+end
+
 local on_attach = function(client, bufnr)
 
-    local function buf_set_option(...)
-        vim.api.nvim_buf_set_option(bufnr, ...)
-    end
+  -- Enable completion triggered by <c-x><c-o>
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-    -- Enable completion triggered by <c-x><c-o>
-    buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+  -- Mappings.
+  local buf_keymap = vim.api.nvim_buf_set_keymap
+  local keymap = vim.api.nvim_set_keymap
+  local opts = {noremap = true, silent = true}
+  buf_keymap(bufnr, 'n', '<leader>j', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_keymap(bufnr, 'n', 'h', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  keymap('n', 'l', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
 
-    local function buf_set_keymap(...)
-        vim.api.nvim_buf_set_keymap(bufnr, ...)
-    end
-
-    -- Mappings.
-    local opts = {noremap = true, silent = true}
-    buf_set_keymap('n', '<leader>j', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    buf_set_keymap('n', 'h', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-    buf_set_keymap('n', 'l', '<cmd>lua vim.diagnostic.open_float({ border = "rounded" })<CR>', opts)
-
-    -- Set hightlights conditional on server_capabilities
-    -- if client.resolved_capabilities.document_highlight then
-        vim.api.nvim_exec([[
+  -- Set hightlights conditional on server_capabilities
+  -- if client.resolved_capabilities.document_highlight then
+  vim.api.nvim_exec([[
         highlight link LspDiagnosticsLineNrError RedBold
         highlight link LspDiagnosticsLineNrWarning YellowBold
         highlight link LspDiagnosticsLineNrInformation BlueBold
         highlight link LspDiagnosticsLineNrHint GreenBold
 
         highlight link LspSignatureActiveParameter GreenItalic
-            ]], false)
+        ]], false)
 
-        local sign_define = vim.fn.sign_define
-        sign_define("DiagnosticSignError", {texthl="LspDiagnosticsSignError", numhl="LspDiagnosticsLineNrError"})
-        sign_define("DiagnosticSignWarn", {texthl="LspDiagnosticsSignWarning", numhl="LspDiagnosticsLineNrWarning"})
-        sign_define("DiagnosticSignInfo", {texthl="LspDiagnosticsSignInformation", numhl="LspDiagnosticsLineNrInformation"})
-        sign_define("DiagnosticSignHint", {texthl="LspDiagnosticsSignHint", numhl="LspDiagnosticsLineNrHint"})
-    -- end
+  local sign_define = vim.fn.sign_define
+  sign_define("DiagnosticSignError", {texthl="LspDiagnosticsSignError", numhl="LspDiagnosticsLineNrError"})
+  sign_define("DiagnosticSignWarn", {texthl="LspDiagnosticsSignWarning", numhl="LspDiagnosticsLineNrWarning"})
+  sign_define("DiagnosticSignInfo", {texthl="LspDiagnosticsSignInformation", numhl="LspDiagnosticsLineNrInformation"})
+  sign_define("DiagnosticSignHint", {texthl="LspDiagnosticsSignHint", numhl="LspDiagnosticsLineNrHint"})
+  -- end
+
+  signature_help(client, bufnr)
 end
 
-local function goto_definition(split_cmd)
-    local util = vim.lsp.util
-    local log = require("vim.lsp.log")
-    local api = vim.api
+local lsp_config = {
+  diagnostic = {
+    virtual_text = false,
+    underline = true,
+    update_in_insert = true,
+    severity_sort = false,
+    signs = true,
+    float = {
+      focusable = true,
+      style = "minimal",
+      border = "rounded",
+    },
+  },
+}
 
-    -- note, this handler style is for neovim 0.5.1/0.6
-    local handler = function(_, result, ctx)
-        if result == nil or vim.tbl_isempty(result) then
-            local _ = log.info() and log.info(ctx.method, "No location found")
-            return nil
-        end
+vim.diagnostic.config(lsp_config.diagnostic)
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, lsp_config.diagnostic.float)
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, lsp_config.diagnostic.float)
 
-        if split_cmd then
-            vim.cmd(split_cmd)
-        end
-
-        if vim.tbl_islist(result) then
-            util.jump_to_location(result[1])
-
-            if #result > 1 then
-                util.set_qflist(util.locations_to_items(result))
-                api.nvim_command("copen")
-                api.nvim_command("wincmd p")
-            end
-        else
-            util.jump_to_location(result)
-        end
-    end
-
-    return handler
-end
-
-vim.lsp.handlers["textDocument/definition"] = goto_definition('vsplit')
-
-vim.lsp.handlers["textDocument/publishDiagnostics"] =
-    vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-        virtual_text = false,
-        underline = true,
-        signs = true,
-        update_in_insert = true
-    })
-
--- capabilities = vim.lsp.protocol.make_client_capabilities()
 local lsp_installer = require("nvim-lsp-installer")
 
 local servers = {
@@ -98,28 +87,49 @@ for _, name in pairs(servers) do
   end
 end
 
-
--- local enhance_server_opts = {
+local enhance_server_opts = {
   -- Provide settings that should only apply to the "pyright" server
-  -- ["pyright"] = function(opts)
-  --   opts.settings = {
-  --     format = {
-  --       enable = true,
-  --     },
-  --   }
-  -- end,
--- }
+  ["sumneko_lua"] = function(opts)
+    opts.settings = {
+      Lua = {
+        runtime = {
+          -- Tell the language server which version of Lua we're using (most likely LuaJIT in the case of Neovim)
+          version = "LuaJIT",
+          -- Setup your lua path
+          path = vim.split(package.path, ";"),
+        },
+        diagnostics = {
+          -- Get the language server to recognize the `vim` global
+          globals = { "vim" },
+        },
+        workspace = {
+          -- Make the server aware of Neovim runtime files
+          library = {
+            [vim.fn.expand "$VIMRUNTIME/lua"] = true,
+            [vim.fn.expand "$VIMRUNTIME/lua/vim/lsp"] = true,
+          },
+        },
+      },
+    }
+  end,
+}
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
 
 lsp_installer.on_server_ready(function(server)
   -- Specify the default options which we'll use to setup all servers
   local opts = {
     on_attach = on_attach,
+    capabilities = capabilities,
+    flags = {
+      debounce_text_changes = 150,
+    },
   }
 
-  -- if enhance_server_opts[server.name] then
-  --   -- Enhance the default opts with the server-specific ones
-  --   enhance_server_opts[server.name](opts)
-  -- end
+  if enhance_server_opts[server.name] then
+    -- Enhance the default opts with the server-specific ones
+    enhance_server_opts[server.name](opts)
+  end
 
   server:setup(opts)
 end)
