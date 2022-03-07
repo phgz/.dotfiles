@@ -58,9 +58,9 @@ function M.setup()
     use { 'kyazdani42/nvim-web-devicons', module = 'nvim-web-devicons' }
 
     ---
-    
+
     use { 'sainnhe/gruvbox-material' } -- Color scheme
-    
+
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- using Treesitter
     use { 'nvim-treesitter/playground' } -- See parsed tree
     use { 'nvim-treesitter/nvim-treesitter-textobjects' } -- More text motions
@@ -94,9 +94,9 @@ function M.setup()
       requires = {'popup.nvim', 'plenary.nvim'}
     } -- Fuzzy finder
 
-    use { "beauwilliams/focus.nvim", 
+    use { "beauwilliams/focus.nvim",
       config = function()
-        require("focus").setup({signcolumn = false, cursorline = false}) 
+        require("focus").setup({signcolumn = false, cursorline = false})
       end
     } -- Split and resize window intelligently
 
@@ -108,7 +108,7 @@ function M.setup()
     use { 'SirVer/ultisnips' } -- Snippets engine
 
     use { 'ojroques/vim-oscyank' } -- Global TMUX yank
-    
+
     use {
       'numToStr/Comment.nvim',
       config = function()
@@ -128,7 +128,7 @@ function M.setup()
 
     use { 'phaazon/hop.nvim' } -- Vim Motions
 
-    use { "rcarriga/vim-ultest", 
+    use { "rcarriga/vim-ultest",
       wants = {"vim-test"},
       cmd = { "UltestNearest" },
       run = ":UpdateRemotePlugins",

@@ -47,16 +47,47 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                     Fish                                     #
     #------------------------------------------------------------------------------#
-    FISH_SHELL_VERSION=3.3.1
-    
-    curl -LJO http://fishshell.com/files/${FISH_SHELL_VERSION}/fish-${FISH_SHELL_VERSION}.tar.gz
-    tar xvzf fish-${FISH_SHELL_VERSION}.tar.gz && rm fish-${FISH_SHELL_VERSION}.tar.gz
-    pushd fish-${FISH_SHELL_VERSION}
-    ./configure --prefix=$HOME/local --disable-shared
+    curl -LJO https://invisible-island.net/datafiles/release/ncurses.tar.gz
+    tar -zxf ncurses.tar.gz && rm ncurses.tar.gz
+    pushd ncurses-*/
+    ./configure --prefix=$HOME/.local --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir=$HOME/.local/lib/pkgconfig
     make && make install
     popd
-    mv fish $HOME/.local/fish
+
+    curl -LJO https://github.com/Kitware/CMake/releases/download/v3.22.3/cmake-3.22.3-linux-x86_64.tar.gz
+    tar xvzf cmake-3.22.3-linux-x86_64.tar.gz && rm cmake-3.22.3-linux-x86_64.tar.gz
+
+    curl -LJO https://github.com/fish-shell/fish-shell/releases/download/${FISH_SHELL_VERSION}/fish-${FISH_SHELL_VERSION}.tar.xz
+    tar xvf fish-${FISH_SHELL_VERSION}.tar.xz && rm fish-${FISH_SHELL_VERSION}.tar.xz
+    pushd fish-${FISH_SHELL_VERSION}
+    mkdir build
+    pushd build
+    ../../cmake-3.22.3-linux-x86_64/bin/cmake -DCMAKE_INSTALL_PREFIX=$HOME/.local ..
+    make && make install
+    popd
+    popd
     rm -rf fish-${FISH_SHELL_VERSION}
+    rm -rf cmake-3.22.3-linux-x86_64
+
+    #------------------------------------------------------------------------------#
+    #                                     TMUX                                     #
+    #------------------------------------------------------------------------------#
+    curl -LJO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
+    tar -zxf libevent-*.tar.gz && rm libevent-2.1.12-stable.tar.gz
+    pushd libevent-*/
+    ./configure --prefix=$HOME/.local --enable-shared --disable-openssl
+    make && make install
+    popd
+
+    curl -LJO https://github.com/tmux/tmux/releases/download/3.1c/tmux-3.1c.tar.gz
+    tar -zxf tmux-*.tar.gz && rm tmux-3.1c.tar.gz
+    pushd tmux-*/
+    PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix=$HOME/.local
+    make && make install
+    mv tmux $HOME/.local/bin/tmux
+    popd
+
+    rm -rf ncurses-*/ tmux-*/ libevent-*/
 
     #------------------------------------------------------------------------------#
     #                                    Neovim                                    #
@@ -79,35 +110,7 @@ elif [ "$platform" == "Linux" ]; then
     done
 
     $HOME/.local/bin/corepack enable
-
-    #------------------------------------------------------------------------------#
-    #                                     TMUX                                     #
-    #------------------------------------------------------------------------------#
-    curl -LJO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
-    tar -zxf libevent-*.tar.gz && rm libevent-2.1.12-stable.tar.gz
-    pushd libevent-*/
-    ./configure --prefix=$HOME/.local --enable-shared --disable-openssl
-    make && make install
-    popd
-
-    curl -LJO https://invisible-island.net/datafiles/release/ncurses.tar.gz
-    tar -zxf ncurses.tar.gz && rm ncurses.tar.gz
-    pushd ncurses-*/
-    ./configure --prefix=$HOME/.local --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir=$HOME/.local/lib/pkgconfig
-    make && make install
-    popd
-
-    curl -LJO https://github.com/tmux/tmux/releases/download/3.1c/tmux-3.1c.tar.gz
-    tar -zxf tmux-*.tar.gz && rm tmux-3.1c.tar.gz
-    pushd tmux-*/
-    PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix=$HOME/.local
-    make && make install
-    mv tmux $HOME/.local/bin/tmux
-    popd
-
-    rm -rf ncurses-*/ tmux-*/ libevent-*/
 fi
-
 
 #------------------------------------------------------------------------------#
 #                                .config files                                 #
