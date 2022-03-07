@@ -39,14 +39,22 @@ if [ "$platform" == "Darwin" ]; then
 elif [ "$platform" == "Linux" ]; then
 
     #------------------------------------------------------------------------------#
-    #                                    Kitty                                     #
+    #                                 Dependencies                                 #
     #------------------------------------------------------------------------------#
-    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-    ln -fs $HOME/.local/kitty.app/bin/kitty $HOME/.local/bin/
+    curl -JLO https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
+    tar xvfz pkg-config-0.29.2.tar.gz && rm -rf pkg-config-0.29.2.tar.gz
+    pushd pkg-config-0.29.2/
+    ./configure --prefix=$HOME/.local --with-internal-glib
+    make && make install
+    popd
 
-    #------------------------------------------------------------------------------#
-    #                                     Fish                                     #
-    #------------------------------------------------------------------------------#
+    curl -LJO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
+    tar -zxf libevent-*.tar.gz && rm libevent-2.1.12-stable.tar.gz
+    pushd libevent-*/
+    ./configure --prefix=$HOME/.local --enable-shared --disable-openssl
+    make && make install
+    popd
+
     curl -LJO https://invisible-island.net/datafiles/release/ncurses.tar.gz
     tar -zxf ncurses.tar.gz && rm ncurses.tar.gz
     pushd ncurses-*/
@@ -57,6 +65,15 @@ elif [ "$platform" == "Linux" ]; then
     curl -LJO https://github.com/Kitware/CMake/releases/download/v3.22.3/cmake-3.22.3-linux-x86_64.tar.gz
     tar xvzf cmake-3.22.3-linux-x86_64.tar.gz && rm cmake-3.22.3-linux-x86_64.tar.gz
 
+    #------------------------------------------------------------------------------#
+    #                                    Kitty                                     #
+    #------------------------------------------------------------------------------#
+    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+    ln -fs $HOME/.local/kitty.app/bin/kitty $HOME/.local/bin/
+
+    #------------------------------------------------------------------------------#
+    #                                     Fish                                     #
+    #------------------------------------------------------------------------------#
     curl -LJO https://github.com/fish-shell/fish-shell/releases/download/${FISH_SHELL_VERSION}/fish-${FISH_SHELL_VERSION}.tar.xz
     tar xvf fish-${FISH_SHELL_VERSION}.tar.xz && rm fish-${FISH_SHELL_VERSION}.tar.xz
     pushd fish-${FISH_SHELL_VERSION}
@@ -66,28 +83,20 @@ elif [ "$platform" == "Linux" ]; then
     make && make install
     popd
     popd
+
     rm -rf fish-${FISH_SHELL_VERSION}
-    rm -rf cmake-3.22.3-linux-x86_64
 
     #------------------------------------------------------------------------------#
     #                                     TMUX                                     #
     #------------------------------------------------------------------------------#
-    curl -LJO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
-    tar -zxf libevent-*.tar.gz && rm libevent-2.1.12-stable.tar.gz
-    pushd libevent-*/
-    ./configure --prefix=$HOME/.local --enable-shared --disable-openssl
-    make && make install
-    popd
-
     curl -LJO https://github.com/tmux/tmux/releases/download/3.1c/tmux-3.1c.tar.gz
     tar -zxf tmux-*.tar.gz && rm tmux-3.1c.tar.gz
     pushd tmux-*/
     PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix=$HOME/.local
     make && make install
-    mv tmux $HOME/.local/bin/tmux
     popd
 
-    rm -rf ncurses-*/ tmux-*/ libevent-*/
+    rm -rf tmux-*/
 
     #------------------------------------------------------------------------------#
     #                                    Neovim                                    #
@@ -110,6 +119,11 @@ elif [ "$platform" == "Linux" ]; then
     done
 
     $HOME/.local/bin/corepack enable
+
+    #------------------------------------------------------------------------------#
+    #                       Remove dependencies src folders                        #
+    #------------------------------------------------------------------------------#
+    rm -rf ncurses-*/ libevent-*/ cmake-*/ pkg-config-*/
 fi
 
 #------------------------------------------------------------------------------#
