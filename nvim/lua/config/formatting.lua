@@ -13,16 +13,16 @@ require('formatter').setup{
             -- black
             function()
                 return {
-                    exe = "~/.miniconda3/envs/neovim/bin/black",
-                    args = {"--quiet", "--line-length", "88", '-'},
+                    exe = "~/.miniconda3/envs/neovim/bin/isort",
+                    args = {"-", "--quiet", "--multi-line", "VERTICAL_HANGING_INDENT"},
                     stdin = true
                 }
             end,
             -- isort
             function()
                 return {
-                    exe = "~/.miniconda3/envs/neovim/bin/isort",
-                    args = {"-", "--quiet", "--multi-line", "VERTICAL_HANGING_INDENT"},
+                    exe = "~/.miniconda3/envs/neovim/bin/black",
+                    args = {"--quiet", "--line-length", "88", '-'},
                     stdin = true
                 }
             end
