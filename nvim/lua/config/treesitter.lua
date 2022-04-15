@@ -1,14 +1,15 @@
 local utils = require('utils')
 
 require('nvim-treesitter.configs').setup {
-  ensure_installed = 'maintained',
+  ensure_installed = 'all',
   highlight = {
     enable = true,
     disable = {"toml"},
     additional_vim_regex_highlighting = {'python'},
   },
   indent = {
-    enable = true
+    enable = false,
+    disable = { "python" }
   },
   rainbow = {
     enable = true,
@@ -148,22 +149,22 @@ require('nvim-treesitter.configs').setup {
   },
 }
 
-vim.api.nvim_exec([[
-highlight! TSDefinition gui=underline
-highlight! TSDefinitionUsage gui=bold
-
-highlight! link TreesitterContext CursorLine
-
-highlight! link TSKeywordFunction RedItalic
-highlight! link TSKeyword RedItalic
-highlight! link TSConditional RedItalic
-highlight! link TSRepeat RedItalic
-highlight! link TSString Green
-highlight! link TSInclude PreProc
-highlight! link TSField Blue
-highlight! link TSFuncBuiltin Yellow
-highlight! link TSFunction AquaBold
-highlight! link TSMethod Aqua
-]], false)
+-- vim.api.nvim_exec([[
+-- highlight! TSDefinition gui=underline
+-- highlight! TSDefinitionUsage gui=bold
+--
+-- highlight! link TreesitterContext CursorLine
+--
+-- highlight! link TSKeywordFunction RedItalic
+-- highlight! link TSKeyword RedItalic
+-- highlight! link TSConditional RedItalic
+-- highlight! link TSRepeat RedItalic
+-- highlight! link TSString Green
+-- highlight! link TSInclude PreProc
+-- highlight! link TSField Blue
+-- highlight! link TSFuncBuiltin Yellow
+-- highlight! link TSFunction AquaBold
+-- highlight! link TSMethod Aqua
+-- ]], false)
 
 utils.map('n', '<localleader>t', '<cmd>TSHighlightCapturesUnderCursor<cr>')
