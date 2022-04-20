@@ -1,6 +1,6 @@
 set -g fish_greeting
 string match -q (uname -ms) "Darwin arm64" && fish_add_path -g /opt/homebrew/bin
-fish_add_path -g $HOME/.local/bin $HOME/.cargo/bin 
+fish_add_path -g $HOME/.local/bin $HOME/.cargo/bin
 set -gx LD_LIBRARY_PATH $HOME/.local/lib $LD_LIBRARY_PATH
 set -gx MANPATH $HOME/.local/share/man $MANPATH
 
@@ -65,10 +65,6 @@ abbr -ag ll exal
 abbr -ag la exal -a
 abbr -ag grep rg
 abbr -ag psh poetry shell
-
-# adding flags
-abbr -ag tma tmux -f ~/.config/tmux/tmux.conf attach-session -t 
-abbr -ag tmn tmux -f ~/.config/tmux/tmux.conf new -s 
 
 if set -q KITTY_INSTALLATION_DIR
     set --global KITTY_SHELL_INTEGRATION enabled
