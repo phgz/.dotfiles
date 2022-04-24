@@ -216,3 +216,5 @@ rm FantasqueSansMono.zip && rm -rf FantasqueSansMono
 #do
 #    ln -sf $HOME/.dotfiles/pre-commit $folder/.git/hooks/
 #done
+
+crontab -l | cat - $HOME/.dotfiles/cronjobs.txt | crontab -

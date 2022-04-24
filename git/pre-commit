@@ -84,6 +84,8 @@ with open(current_setup_file, "r") as f:
 
 remote_master_content = repo.git.show(remote_master_setup_file)
 
+not_staged = [item.a_path for item in repo.index.diff(None)]
+
 find_version = dict(
     zip(
         setup_files,
@@ -99,7 +101,6 @@ versions = [
 ]
 
 parsed_current, parsed_remote_master = [list(map(int, v.split("."))) for v in versions]
-not_staged = [item.a_path for item in repo.index.diff(None)]
 
 if parsed_current <= parsed_remote_master or setup_name in not_staged:
     print(repo.active_branch.name + "'s version is not greater than remote master's.")

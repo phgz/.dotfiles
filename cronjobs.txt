@@ -1,0 +1,4 @@
+PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH
+
+0 8 * * * fish -c light
+0 16 * * * fish -c dark

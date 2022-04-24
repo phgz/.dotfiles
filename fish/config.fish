@@ -66,9 +66,11 @@ abbr -ag la exal -a
 abbr -ag grep rg
 abbr -ag psh poetry shell
 
-# adding flags
-abbr -ag tma tmux -f ~/.config/tmux/tmux.conf attach-session -t 
-abbr -ag tmn tmux -f ~/.config/tmux/tmux.conf new -s 
+if set -q KITTY_INSTALLATION_DIR
+    set --global KITTY_SHELL_INTEGRATION enabled
+    source "$KITTY_INSTALLATION_DIR/shell-integration/fish/vendor_conf.d/kitty-shell-integration.fish"
+    set --prepend fish_complete_path "$KITTY_INSTALLATION_DIR/shell-integration/fish/vendor_completions.d"
+end
 
 if set -q KITTY_INSTALLATION_DIR
     set --global KITTY_SHELL_INTEGRATION enabled

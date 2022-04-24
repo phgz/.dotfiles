@@ -1,13 +1,12 @@
 local utils = require('utils')
 local gps = require("nvim-gps")
-local cmd = vim.cmd
 local indent = 4
 
 function NvimGPS()
   return  gps.is_available() and ('  ' .. gps.get_location()) or ''
 end
 
-function status_line()
+local function status_line()
   local status = " %{%get(b:,'gitsigns_status','')%}"
   status = status .. '%=%#GreyStatusLine#%{luaeval("NvimGPS()")}'
   status = status .. '%=%h%#RedStatusLine#%m%#BlueStatusLine#%r%#StatusLine# %F ▏%2c'
@@ -39,7 +38,7 @@ utils.opt('o', 'icm', 'nosplit')
 utils.opt('o', 'mouse', 'nicr')
 utils.opt('o', 'hidden', true)
 utils.opt('o', 'lazyredraw', true) -- Don’t update screen during macro and script execution
-utils.opt('o', 'autochdir', true) 
+utils.opt('o', 'autochdir', true)
 utils.opt('o', 'ignorecase', true)
 utils.opt('o', 'shiftround', true)
 utils.opt('o', 'smartcase', true)

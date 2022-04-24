@@ -60,6 +60,7 @@ function M.setup()
     ---
 
     use { 'sainnhe/gruvbox-material' } -- Color scheme
+    use { 'projekt0n/github-nvim-theme' } -- Color scheme
 
     use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' } -- using Treesitter
     use { 'nvim-treesitter/playground' } -- See parsed tree
