@@ -108,17 +108,14 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                    Nodejs                                    #
     #------------------------------------------------------------------------------#
-    nodeV=17.4.0
+    nodeV=18.0.0
     curl -LJO https://nodejs.org/dist/v$nodeV/node-v$nodeV-linux-x64.tar.xz
     tar -xf node-v$nodeV-linux-x64.tar.xz
     rm node-v$nodeV-linux-x64.tar.xz
-    mv node-v$nodeV-linux-x64 $HOME/.local/
+    mv node-v$nodeV-linux-x64 $HOME/.local/node
 
-    for exec in $(ls $HOME/.local/node-v$nodeV-linux-x64/bin); do
-        ln -fs $HOME/.local/node-v$nodeV-linux-x64/bin/$exec $HOME/.local/bin/
-    done
-
-    $HOME/.local/bin/corepack enable
+    $HOME/.local/node-v$nodeV-linux-x64/bin/corepack enable
+    $HOME/.local/node-v$nodeV-linux-x64/bin/npm install -g neovim
 
     #------------------------------------------------------------------------------#
     #                       Remove dependencies src folders                        #

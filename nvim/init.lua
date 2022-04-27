@@ -1,5 +1,6 @@
 -- python provider
 vim.g.python3_host_prog = "~/.miniconda3/envs/neovim/bin/python"
+vim.g.loaded_perl_provider = 0
 
 require("plugins").setup()
 -- Perform load optimizations
