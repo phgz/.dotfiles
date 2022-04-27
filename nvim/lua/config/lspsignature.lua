@@ -3,7 +3,6 @@ require "lsp_signature".setup({
     handler_opts = {
         border = "rounded",
     },
-    hi_parameter = "GreenItalic",
     hint_enable = false,
     max_height = 6,
     extra_trigger_chars = {"(", ","},

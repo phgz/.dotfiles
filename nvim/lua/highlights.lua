@@ -5,12 +5,12 @@ hi WarningFloat guibg=None
 hi InfoFloat guibg=None
 hi HintFloat guibg=None
 
-hi def RedStatusLine guifg=#fb4934 guibg=#32302f
-hi def GreenStatusLine guifg=#afaf00 guibg=#32302f
-hi def BlueStatusLine guifg=#87afaf guibg=#32302f
-hi def TurquoiseStatusLine guifg=turquoise guibg=#32302f
-hi def MagentaStatusLine guifg=magenta guibg=#32302f
-hi def GreyStatusLine guifg=grey guibg=#32302f
+hi def RedStatusLine none
+hi def GreenStatusLine none
+hi def BlueStatusLine none
+hi def TurquoiseStatusLine none
+hi def MagentaStatusLine none
+hi def GreyStatusLine none
 ]], false)
 
 --hi! link Pmenu NormalFloat

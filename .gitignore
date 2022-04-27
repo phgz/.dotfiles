@@ -1,4 +1,2 @@
 packer_compiled.lua
 *.bak
-nvim/lua/config/current-theme.lua
-kitty/current-theme.conf

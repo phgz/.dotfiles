@@ -1,6 +1,7 @@
 function theme
     if test -n "$TMUX"
-        tmux source-file $HOME/.dotfiles/tmux/$argv-theme.conf
+        cat $HOME/.dotfiles/tmux/$argv-theme.conf > $HOME/.dotfiles/tmux/current-theme.conf \
+        && tmux source-file $HOME/.dotfiles/tmux/current-theme.conf
     else
         kitty +kitten themes --reload-in=all Theme-$argv
     end

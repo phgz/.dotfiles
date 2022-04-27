@@ -1,5 +1,3 @@
-local execute = vim.api.nvim_command
-
 -- python provider
 vim.g.python3_host_prog = "~/.miniconda3/envs/neovim/bin/python"
 

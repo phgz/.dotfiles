@@ -30,14 +30,6 @@ local on_attach = function(client, bufnr)
 
   -- Set hightlights conditional on server_capabilities
   -- if client.resolved_capabilities.document_highlight then
-  vim.api.nvim_exec([[
-        highlight link LspDiagnosticsLineNrError RedBold
-        highlight link LspDiagnosticsLineNrWarning YellowBold
-        highlight link LspDiagnosticsLineNrInformation BlueBold
-        highlight link LspDiagnosticsLineNrHint GreenBold
-
-        highlight link LspSignatureActiveParameter GreenItalic
-        ]], false)
 
   local sign_define = vim.fn.sign_define
   sign_define("DiagnosticSignError", {texthl="LspDiagnosticsSignError", numhl="LspDiagnosticsLineNrError"})
