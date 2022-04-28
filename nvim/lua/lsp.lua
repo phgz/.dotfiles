@@ -25,6 +25,7 @@ local on_attach = function(client, bufnr)
   local keymap = vim.api.nvim_set_keymap
   local opts = {noremap = true, silent = true}
   buf_keymap(bufnr, 'n', '<leader>j', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_keymap(bufnr, 'n', '<localleader>m', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_keymap(bufnr, 'n', 'h', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   keymap('n', 'l', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
 
@@ -63,7 +64,6 @@ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.s
 local lsp_installer = require("nvim-lsp-installer")
 
 local servers = {
-  "bashls",
   "pyright",
   "yamlls",
   "sumneko_lua",
@@ -113,9 +113,6 @@ lsp_installer.on_server_ready(function(server)
   local opts = {
     on_attach = on_attach,
     capabilities = capabilities,
-    flags = {
-      debounce_text_changes = 150,
-    },
   }
 
   if enhance_server_opts[server.name] then
@@ -125,3 +122,5 @@ lsp_installer.on_server_ready(function(server)
 
   server:setup(opts)
 end)
+
+require'lspconfig'.bashls.setup{on_attach=on_attach, capabilities=capabilities}

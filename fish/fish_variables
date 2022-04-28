@@ -33,5 +33,5 @@ SETUVAR fish_pager_color_completion:\x1d
 SETUVAR fish_pager_color_description:B3A06D\x1eyellow
 SETUVAR fish_pager_color_prefix:normal\x1e\x2d\x2dbold\x1e\x2d\x2dunderline
 SETUVAR fish_pager_color_progress:brwhite\x1e\x2d\x2dbackground\x3dcyan
-SETUVAR fish_user_paths:/home/philip/\x2elocal/bin\x1e/home/philip/\x2ecargo/bin\x1e/usr/local/cuda/bin\x1e/home/philip/\x2eyarn/bin
+SETUVAR fish_user_paths:/home/philip/\x2elocal/share/nvim/lsp_servers/bash/node_modules/bash\x2dlanguage\x2dserver/bin\x1e/home/philip/\x2elocal/node/bin\x1e/home/philip/\x2elocal/bin\x1e/home/philip/\x2ecargo/bin\x1e/usr/local/cuda/bin\x1e/home/philip/\x2eyarn/bin
 SETUVAR fish_vi_force_cursor:\x1d
