@@ -30,7 +30,7 @@ if [ "$platform" == "Darwin" ]; then
     #------------------------------------------------------------------------------#
     #                              kitty fish neovim                               #
     #------------------------------------------------------------------------------#
-    $brew install kitty fish node neovim tmux fontconfig
+    $brew install kitty fish node yarn shellcheck neovim tmux fontconfig
 
 
 #------------------------------------------------------------------------------#

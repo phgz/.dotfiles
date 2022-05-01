@@ -4,9 +4,9 @@ vim.g.loaded_perl_provider = 0
 
 require("plugins").setup()
 -- Perform load optimizations
-require('impatient')
+-- require('impatient')
 -- Install plugins
-require('plugins')
+-- require('plugins')
 
 -- Custom plugins
 require('custom_plugins')
