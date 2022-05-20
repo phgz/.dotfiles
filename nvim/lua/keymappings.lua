@@ -10,7 +10,7 @@ utils.map('n', '<leader>r', 'mb<cmd>g/breakpoint()/d<cr>`b')--< Remove Breakpoin
 utils.map('n', '<leader>b', 'obreakpoint()<Esc>')--< set Breakpoint
 utils.map('n', '<localleader>n', '<cmd>bnext<cr>')--< goto next buffer
 utils.map('n', '<localleader>p', '<cmd>bprevious<cr>')--< goto prev buffer
-utils.map('n', '<leader>d', '<cmd>bdelete<cr>')--< delete buffer
+utils.map('n', '<localleader>d', '<cmd>bdelete<cr>')--< delete buffer
 utils.map('n', '<localleader>=', 'mbgg=G=G`b')--< Autoindent document
 utils.map('v', '<leader>s', ':sort<cr>')--< Sort selection
 
@@ -29,7 +29,7 @@ utils.map('', 'l', 'zl')  --< Move screen to the right
 utils.map('', '0', 'gg<cmd>goto 1<CR>')--<
 utils.map('', '-', 'G')  --<
 utils.map('n', 'Y', 'y$')--< Yank till end
-utils.map('n', '<localLeader>d', '<cmd>:windo :diffthis<cr>') --< Diff
+utils.map('n', '<leader>d', '<cmd>:windo :diffthis<cr>') --< Diff
 utils.map('n', 'sN', '<cmd>move .+1<cr>')--< Swap with next line
 utils.map('n', 'sP', '<cmd>move .-2<cr>')--< Swap with prev line
 utils.map('v', 'y', 'ygv<Esc>')--< Do not move cursor on yank
