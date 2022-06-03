@@ -192,7 +192,7 @@ fi
 #                                    Poetry                                    #
 #------------------------------------------------------------------------------#
 if [ ! -f "$HOME"/.local/bin/poetry ]; then
-    curl -sSL https://install.python-poetry.org | "$HOME"/.miniconda3/bin/python3 - --yes
+    curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.2.0b1 "$HOME"/.miniconda3/bin/python3 - --yes
 fi
 
 #------------------------------------------------------------------------------#
@@ -205,6 +205,8 @@ fi
 #------------------------------------------------------------------------------#
 #                         FantasqueSansMono Nerd Font                          #
 #------------------------------------------------------------------------------#
+
+# https://github.com/be5invis/Iosevka # To try
 curl -JLO https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FantasqueSansMono.zip
 unzip FantasqueSansMono.zip -d FantasqueSansMono
 

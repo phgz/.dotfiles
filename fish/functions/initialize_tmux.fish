@@ -13,7 +13,7 @@ function initialize_tmux
     if ps -p $PPID | grep -q ssh
         tmux_attach
         or tmux_new_session
-        and kill %self
+        and kill -15 %self
         or echo "tmux failed to start; using plain fish shell"
     end
 end
