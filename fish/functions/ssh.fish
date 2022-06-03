@@ -1,3 +1,3 @@
 function ssh
-    command kitty +kitten ssh $argv
+    command kitty +kitten ssh $argv || true
 end
