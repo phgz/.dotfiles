@@ -6,11 +6,12 @@ arch=$(uname -m)
 BISON_VERSION=3.8.2
 PKG_CONFIG_VERSION=0.29.2
 LIBEVENT_VERSION=2.1.12
-CMAKE_VERSION=3.22.3
+CMAKE_VERSION=3.22.5
 FISH_SHELL_VERSION=3.5.0
 TMUX_VERSION=3.3a
-NODE_VERSION=18.0.0
+NODE_VERSION=18.4.0
 POETRY_VERSION=1.2.0b1
+PYTHON_VERSION=3.10
 
 mkdir -p "$HOME"/.local/bin
 
@@ -168,7 +169,7 @@ if [ ! -d "$HOME"/.miniconda3 ]; then
     curl -L $url_prefix/Miniconda3-latest-$platform_name-"$arch".sh -o miniconda.sh
     bash miniconda.sh -b -p "$HOME"/.miniconda3
     rm miniconda.sh
-    "$HOME"/.miniconda3/bin/conda create --yes --name neovim python=3.10
+    "$HOME"/.miniconda3/bin/conda create --yes --name neovim python="$PYTHON_VERSION"
     "$HOME"/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
     "$HOME"/.miniconda3/bin/conda install --yes -c conda-forge shellcheck
 fi
@@ -183,6 +184,7 @@ git fetch upstream
 git merge upstream/master --no-edit
 yarn install && yarn run compile && yarn run reinstall-server
 popd || exit
+rm -rf bash-language-server/
 
 #------------------------------------------------------------------------------#
 #                                  Cargo/Rust                                  #
@@ -200,7 +202,7 @@ fi
 #                                    Poetry                                    #
 #------------------------------------------------------------------------------#
 if [ ! -f "$HOME"/.local/bin/poetry ]; then
-    curl -sSL https://install.python-poetry.org | "$HOME"/.miniconda3/bin/python3 - --yes
+    curl -sSL https://install.python-poetry.org | POETRY_VERSION="$POETRY_VERSION" "$HOME"/.miniconda3/bin/python3 - --yes
 fi
 
 #------------------------------------------------------------------------------#
