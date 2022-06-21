@@ -41,36 +41,40 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                 Dependencies                                 #
     #------------------------------------------------------------------------------#
-    curl -JLO http://ftp.gnu.org/gnu/bison/bison-3.8.2.tar.gz
-    tar xfz bison-3.8.2.tar.gz && rm -rf bison-3.8.2.tar.gz
-    pushd bison-3.8.2/ || exit
+    BISON_VERSION=3.8.2
+    curl -JLO http://ftp.gnu.org/gnu/bison/bison-"$BISON_VERSION".tar.gz
+    tar xfz bison-"$BISON_VERSION".tar.gz && rm -rf bison-"$BISON_VERSION".tar.gz
+    pushd bison-"$BISON_VERSION"/ || exit
     ./configure --prefix="$HOME"/.local
     make && make install
-    popd
+    popd || exit
 
-    curl -JLO https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
-    tar xfz pkg-config-0.29.2.tar.gz && rm -rf pkg-config-0.29.2.tar.gz
-    pushd pkg-config-0.29.2/ || exit
+    PKG_CONFIG_VERSION=0.29.2
+    curl -JLO https://pkg-config.freedesktop.org/releases/pkg-config-"$PKG_CONFIG_VERSION".tar.gz
+    tar xfz pkg-config-"$PKG_CONFIG_VERSION".tar.gz && rm -rf pkg-config-"$PKG_CONFIG_VERSION".tar.gz
+    pushd pkg-config-"$PKG_CONFIG_VERSION"/ || exit
     ./configure --prefix="$HOME"/.local --with-internal-glib
     make && make install
-    popd
+    popd || exit
 
-    curl -LJO https://github.com/libevent/libevent/releases/download/release-2.1.12-stable/libevent-2.1.12-stable.tar.gz
-    tar -zxf libevent-*.tar.gz && rm libevent-2.1.12-stable.tar.gz
+    LIBEVENT_VERSION=2.1.12
+    curl -LJO https://github.com/libevent/libevent/releases/download/release-"$LIBEVENT_VERSION"-stable/libevent-"$LIBEVENT_VERSION"-stable.tar.gz
+    tar -zxf libevent-*.tar.gz && rm libevent-"$LIBEVENT_VERSION"-stable.tar.gz
     pushd libevent-*/ || exit
     ./configure --prefix="$HOME"/.local --enable-shared --disable-openssl
     make && make install
-    popd
+    popd || exit
 
     curl -LJO https://invisible-island.net/datafiles/release/ncurses.tar.gz
     tar -zxf ncurses.tar.gz && rm ncurses.tar.gz
     pushd ncurses-*/ || exit
     ./configure --prefix="$HOME"/.local --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir="$HOME"/.local/lib/pkgconfig
     make && make install
-    popd
+    popd || exit
 
-    curl -LJO https://github.com/Kitware/CMake/releases/download/v3.22.3/cmake-3.22.3-linux-x86_64.tar.gz
-    tar xvzf cmake-3.22.3-linux-x86_64.tar.gz && rm cmake-3.22.3-linux-x86_64.tar.gz
+    CMAKE_VERSION=3.22.3
+    curl -LJO https://github.com/Kitware/CMake/releases/download/v"$CMAKE_VERSION"/cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz
+    tar xvzf cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz && rm cmake-"$CMAKE_VERSION"-linux-x86_64.tar.gz
 
     #------------------------------------------------------------------------------#
     #                                    Kitty                                     #
@@ -81,27 +85,29 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                     Fish                                     #
     #------------------------------------------------------------------------------#
+    FISH_SHELL_VERSION=3.5.0
     curl -LJO https://github.com/fish-shell/fish-shell/releases/download/"$FISH_SHELL_VERSION"/fish-"$FISH_SHELL_VERSION".tar.xz
     tar xf fish-"$FISH_SHELL_VERSION".tar.xz && rm fish-"$FISH_SHELL_VERSION".tar.xz
     pushd fish-"$FISH_SHELL_VERSION" || exit
     mkdir build
     pushd build || exit
-    ../../cmake-3.22.3-linux-x86_64/bin/cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local ..
+    ../../cmake-"$CMAKE_VERSION"-linux-"$arch"/bin/cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local ..
     make && make install
-    popd
-    popd
+    popd || exit
+    popd || exit
 
     rm -rf fish-"$FISH_SHELL_VERSION"
 
     #------------------------------------------------------------------------------#
     #                                     TMUX                                     #
     #------------------------------------------------------------------------------#
-    curl -LJO https://github.com/tmux/tmux/releases/download/3.3a/tmux-3.3a.tar.gz
-    tar -zxf tmux-*.tar.gz && rm tmux-3.3a.tar.gz
+    TMUX_VERSION=3.3a
+    curl -LJO https://github.com/tmux/tmux/releases/download/"$TMUX_VERSION"/tmux-"$TMUX_VERSION".tar.gz
+    tar -zxf tmux-*.tar.gz && rm tmux-"$TMUX_VERSION".tar.gz
     pushd tmux-*/ || exit
     PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix="$HOME"/.local
     make && make install
-    popd
+    popd || exit
 
     rm -rf tmux-*/
 
@@ -115,11 +121,11 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                    Nodejs                                    #
     #------------------------------------------------------------------------------#
-    nodeV=18.0.0
-    curl -LJO https://nodejs.org/dist/v$nodeV/node-v$nodeV-linux-x64.tar.xz
-    tar -xf node-v$nodeV-linux-x64.tar.xz
-    rm node-v$nodeV-linux-x64.tar.xz
-    mv node-v$nodeV-linux-x64 "$HOME"/.local/node
+    NODE_VERSION=18.0.0
+    curl -LJO https://nodejs.org/dist/v"$NODE_VERSION"/node-v"$NODE_VERSION"-linux-x64.tar.xz
+    tar -xf node-v"$NODE_VERSION"-linux-x64.tar.xz
+    rm node-v"$NODE_VERSION"-linux-x64.tar.xz
+    mv node-v"$NODE_VERSION"-linux-x64 "$HOME"/.local/node
 
     "$HOME"/.local/node/bin/corepack enable
     "$HOME"/.local/node/bin/npm install -g neovim
@@ -167,7 +173,7 @@ if [ ! -d "$HOME"/.miniconda3 ]; then
     curl -L $url_prefix/Miniconda3-latest-$platform_name-"$arch".sh -o miniconda.sh
     bash miniconda.sh -b -p "$HOME"/.miniconda3
     rm miniconda.sh
-    "$HOME"/.miniconda3/bin/conda create --yes --name neovim python=3.9
+    "$HOME"/.miniconda3/bin/conda create --yes --name neovim python=3.10
     "$HOME"/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
     "$HOME"/.miniconda3/bin/conda install -c conda-forge shellcheck
 fi
@@ -181,7 +187,7 @@ git remote add upstream https://github.com/bash-lsp/bash-language-server
 git fetch upstream
 git merge upstream/master --no-edit
 yarn install && yarn run compile && yarn run reinstall-server
-popd
+popd || exit
 
 #------------------------------------------------------------------------------#
 #                                  Cargo/Rust                                  #
@@ -233,9 +239,9 @@ rm FantasqueSansMono.zip && rm -rf FantasqueSansMono
 #------------------------------------------------------------------------------#
 #                                   Git hooks                                  #
 #------------------------------------------------------------------------------#
-for folder in $HOME/*/
+for folder in "$HOME"/*/
 do
-   ln -sf $HOME/.dotfiles/pre-commit $folder/.git/hooks/
+   ln -sf "$HOME"/.dotfiles/pre-commit "$folder"/.git/hooks/
 done
 
 #------------------------------------------------------------------------------#
