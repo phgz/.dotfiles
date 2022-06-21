@@ -136,16 +136,16 @@ function M.setup()
       run = ":UpdateRemotePlugins",
     } -- Tests
 
-    use {
-      --"michaelb/sniprun",
-      "philipgaudreau/sniprun",
-      branch = "feature/hide-kernel-launched",
-      run = "bash ./install.sh",
-      config = function()
-        require("config.sniprun").setup()
-      end,
-      ft = { "python" }
-    } -- Execute code snippets
+    -- use {
+    --   --"michaelb/sniprun",
+    --   "philipgaudreau/sniprun",
+    --   branch = "feature/hide-kernel-launched",
+    --   run = "bash ./install.sh",
+    --   config = function()
+    --     require("config.sniprun").setup()
+    --   end,
+    --   ft = { "python" }
+    -- } -- Execute code snippets
 
     use { 'Houl/repmo-vim' } -- More motions with , and ;
 
@@ -153,7 +153,7 @@ function M.setup()
 
     use { 'junegunn/vim-easy-align' } -- Tabularize
 
-    -- use { 'airblade/vim-matchquote' } -- Add matching for ' " ` |
+    use { 'airblade/vim-matchquote' } -- Add matching for ' " ` |
     -- use { 'andymass/vim-matchup' } -- Extend % matching to objects start/end
 
     use { 'machakann/vim-swap' } -- Swap delimited items, like function arguments

@@ -6,7 +6,7 @@ require("Comment").setup{
         ---Line-comment toggle keymap
         line = 'KK',
         ---Block-comment toggle keymap
-        block = 'gcb',
+        block = 'gkb',
     },
 
     ---LHS of operator-pending mappings in NORMAL + VISUAL mode
@@ -15,7 +15,7 @@ require("Comment").setup{
         -- -Line-comment keymap
         line = 'K',
         ---Block-comment keymap
-        block = 'gc',
+        block = 'gk',
     },
       extra = {
         ---Add comment on the line above
@@ -28,7 +28,7 @@ require("Comment").setup{
 }
 
 vim.api.nvim_set_keymap('n', 'KD', '<ESC><CMD>lua require("custom_plugins.lines").yank_comment_paste()<CR>', opt)
-vim.api.nvim_set_keymap('x', 'gcd', '<ESC><CMD>lua require("custom_plugins.lines").yank_comment_paste(vim.fn.visualmode())<CR>', opt)
+vim.api.nvim_set_keymap('x', 'gkd', '<ESC><CMD>lua require("custom_plugins.lines").yank_comment_paste(vim.fn.visualmode())<CR>', opt)
 
 -- function _G.___gcd(vmode)
 --   lua require("custom_plugins.lines").yank_comment_paste()

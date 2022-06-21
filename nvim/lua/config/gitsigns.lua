@@ -37,9 +37,12 @@ require('gitsigns').setup {
 
     -- Actions
     map({'n', 'v'}, 'gr', gs.reset_hunk)
+    map({'n', 'v'}, 'ga', gs.stage_hunk)
+    map('n', 'gA', gs.undo_stage_hunk)
     map('n', 'gR', gs.reset_buffer)
     map('n', 'gd', gs.preview_hunk)
     map('n', 'gb', function() gs.blame_line{full=true} end)
+    map('n', 'gc', function() gs.diffthis(vim.fn.input("Compare to: ")) end)
 
     -- Text objects
      map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')

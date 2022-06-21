@@ -1,3 +1,3 @@
 local utils = require('utils')
 
-utils.map('x', 'ga', ':EasyAlign<cr>')
+utils.map('x', '<localleader>a', ':EasyAlign<cr>')

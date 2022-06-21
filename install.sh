@@ -41,8 +41,15 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                 Dependencies                                 #
     #------------------------------------------------------------------------------#
+    curl -JLO http://ftp.gnu.org/gnu/bison/bison-3.8.2.tar.gz
+    tar xfz bison-3.8.2.tar.gz && rm -rf bison-3.8.2.tar.gz
+    pushd bison-3.8.2/ || exit
+    ./configure --prefix="$HOME"/.local
+    make && make install
+    popd
+
     curl -JLO https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
-    tar xvfz pkg-config-0.29.2.tar.gz && rm -rf pkg-config-0.29.2.tar.gz
+    tar xfz pkg-config-0.29.2.tar.gz && rm -rf pkg-config-0.29.2.tar.gz
     pushd pkg-config-0.29.2/ || exit
     ./configure --prefix="$HOME"/.local --with-internal-glib
     make && make install
@@ -75,7 +82,7 @@ elif [ "$platform" == "Linux" ]; then
     #                                     Fish                                     #
     #------------------------------------------------------------------------------#
     curl -LJO https://github.com/fish-shell/fish-shell/releases/download/"$FISH_SHELL_VERSION"/fish-"$FISH_SHELL_VERSION".tar.xz
-    tar xvf fish-"$FISH_SHELL_VERSION".tar.xz && rm fish-"$FISH_SHELL_VERSION".tar.xz
+    tar xf fish-"$FISH_SHELL_VERSION".tar.xz && rm fish-"$FISH_SHELL_VERSION".tar.xz
     pushd fish-"$FISH_SHELL_VERSION" || exit
     mkdir build
     pushd build || exit
@@ -89,8 +96,8 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                     TMUX                                     #
     #------------------------------------------------------------------------------#
-    curl -LJO https://github.com/tmux/tmux/releases/download/3.1c/tmux-3.1c.tar.gz
-    tar -zxf tmux-*.tar.gz && rm tmux-3.1c.tar.gz
+    curl -LJO https://github.com/tmux/tmux/releases/download/3.3a/tmux-3.3a.tar.gz
+    tar -zxf tmux-*.tar.gz && rm tmux-3.3a.tar.gz
     pushd tmux-*/ || exit
     PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix="$HOME"/.local
     make && make install
@@ -120,7 +127,7 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                       Remove dependencies src folders                        #
     #------------------------------------------------------------------------------#
-    rm -rf ncurses-*/ libevent-*/ cmake-*/ pkg-config-*/
+    rm -rf ncurses-*/ libevent-*/ cmake-*/ pkg-config-*/ bison-*/
 fi
 
 #------------------------------------------------------------------------------#
