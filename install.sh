@@ -3,6 +3,15 @@
 platform=$(uname -s)
 arch=$(uname -m)
 
+BISON_VERSION=3.8.2
+PKG_CONFIG_VERSION=0.29.2
+LIBEVENT_VERSION=2.1.12
+CMAKE_VERSION=3.22.3
+FISH_SHELL_VERSION=3.5.0
+TMUX_VERSION=3.3a
+NODE_VERSION=18.0.0
+POETRY_VERSION=1.2.0b1
+
 mkdir -p "$HOME"/.local/bin
 
 #------------------------------------------------------------------------------#
@@ -41,40 +50,32 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                 Dependencies                                 #
     #------------------------------------------------------------------------------#
-    BISON_VERSION=3.8.2
     curl -JLO http://ftp.gnu.org/gnu/bison/bison-"$BISON_VERSION".tar.gz
     tar xfz bison-"$BISON_VERSION".tar.gz && rm -rf bison-"$BISON_VERSION".tar.gz
     pushd bison-"$BISON_VERSION"/ || exit
     ./configure --prefix="$HOME"/.local
-    make && make install
-    popd || exit
+    make && make install && popd || exit
 
-    PKG_CONFIG_VERSION=0.29.2
     curl -JLO https://pkg-config.freedesktop.org/releases/pkg-config-"$PKG_CONFIG_VERSION".tar.gz
     tar xfz pkg-config-"$PKG_CONFIG_VERSION".tar.gz && rm -rf pkg-config-"$PKG_CONFIG_VERSION".tar.gz
     pushd pkg-config-"$PKG_CONFIG_VERSION"/ || exit
     ./configure --prefix="$HOME"/.local --with-internal-glib
-    make && make install
-    popd || exit
+    make && make install && popd || exit
 
-    LIBEVENT_VERSION=2.1.12
     curl -LJO https://github.com/libevent/libevent/releases/download/release-"$LIBEVENT_VERSION"-stable/libevent-"$LIBEVENT_VERSION"-stable.tar.gz
     tar -zxf libevent-*.tar.gz && rm libevent-"$LIBEVENT_VERSION"-stable.tar.gz
     pushd libevent-*/ || exit
     ./configure --prefix="$HOME"/.local --enable-shared --disable-openssl
-    make && make install
-    popd || exit
+    make && make install && popd || exit
 
     curl -LJO https://invisible-island.net/datafiles/release/ncurses.tar.gz
     tar -zxf ncurses.tar.gz && rm ncurses.tar.gz
     pushd ncurses-*/ || exit
     ./configure --prefix="$HOME"/.local --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir="$HOME"/.local/lib/pkgconfig
-    make && make install
-    popd || exit
+    make && make install && popd || exit
 
-    CMAKE_VERSION=3.22.3
     curl -LJO https://github.com/Kitware/CMake/releases/download/v"$CMAKE_VERSION"/cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz
-    tar xvzf cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz && rm cmake-"$CMAKE_VERSION"-linux-x86_64.tar.gz
+    tar xvzf cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz && rm cmake-"$CMAKE_VERSION"-linux-x86_64.tar.gz || exit
 
     #------------------------------------------------------------------------------#
     #                                    Kitty                                     #
@@ -85,15 +86,13 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                     Fish                                     #
     #------------------------------------------------------------------------------#
-    FISH_SHELL_VERSION=3.5.0
     curl -LJO https://github.com/fish-shell/fish-shell/releases/download/"$FISH_SHELL_VERSION"/fish-"$FISH_SHELL_VERSION".tar.xz
     tar xf fish-"$FISH_SHELL_VERSION".tar.xz && rm fish-"$FISH_SHELL_VERSION".tar.xz
     pushd fish-"$FISH_SHELL_VERSION" || exit
     mkdir build
     pushd build || exit
     ../../cmake-"$CMAKE_VERSION"-linux-"$arch"/bin/cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local ..
-    make && make install
-    popd || exit
+    make && make install && popd || exit
     popd || exit
 
     rm -rf fish-"$FISH_SHELL_VERSION"
@@ -101,13 +100,11 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                     TMUX                                     #
     #------------------------------------------------------------------------------#
-    TMUX_VERSION=3.3a
     curl -LJO https://github.com/tmux/tmux/releases/download/"$TMUX_VERSION"/tmux-"$TMUX_VERSION".tar.gz
     tar -zxf tmux-*.tar.gz && rm tmux-"$TMUX_VERSION".tar.gz
     pushd tmux-*/ || exit
     PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix="$HOME"/.local
-    make && make install
-    popd || exit
+    make && make install && popd || exit
 
     rm -rf tmux-*/
 
@@ -121,10 +118,8 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                    Nodejs                                    #
     #------------------------------------------------------------------------------#
-    NODE_VERSION=18.0.0
     curl -LJO https://nodejs.org/dist/v"$NODE_VERSION"/node-v"$NODE_VERSION"-linux-x64.tar.xz
-    tar -xf node-v"$NODE_VERSION"-linux-x64.tar.xz
-    rm node-v"$NODE_VERSION"-linux-x64.tar.xz
+    tar -xf node-v"$NODE_VERSION"-linux-x64.tar.xz && rm node-v"$NODE_VERSION"-linux-x64.tar.xz
     mv node-v"$NODE_VERSION"-linux-x64 "$HOME"/.local/node
 
     "$HOME"/.local/node/bin/corepack enable
@@ -175,7 +170,7 @@ if [ ! -d "$HOME"/.miniconda3 ]; then
     rm miniconda.sh
     "$HOME"/.miniconda3/bin/conda create --yes --name neovim python=3.10
     "$HOME"/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
-    "$HOME"/.miniconda3/bin/conda install -c conda-forge shellcheck
+    "$HOME"/.miniconda3/bin/conda install --yes -c conda-forge shellcheck
 fi
 
 #------------------------------------------------------------------------------#
@@ -197,15 +192,15 @@ if [ ! -d "$HOME"/.cargo ]; then
 
     curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
     cargo=$HOME/.cargo/bin/cargo
-    $cargo install exa ripgrep bat fd-find du-dust
-    $cargo install deno --locked
+    $cargo install exa ripgrep bat fd-find du-dust || exit
+    $cargo install deno --locked || exit
 fi
 
 #------------------------------------------------------------------------------#
 #                                    Poetry                                    #
 #------------------------------------------------------------------------------#
 if [ ! -f "$HOME"/.local/bin/poetry ]; then
-    curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.2.0b1 "$HOME"/.miniconda3/bin/python3 - --yes
+    curl -sSL https://install.python-poetry.org | "$HOME"/.miniconda3/bin/python3 - --yes
 fi
 
 #------------------------------------------------------------------------------#
