@@ -4,6 +4,7 @@ hi ErrorFloat guibg=None
 hi WarningFloat guibg=None
 hi InfoFloat guibg=None
 hi HintFloat guibg=None
+hi FloatBorder guibg=None
 
 hi def RedStatusLine none
 hi def GreenStatusLine none

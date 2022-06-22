@@ -1,7 +1,5 @@
 -- Add close_preview_on_escape
-
-local utils = require("utils")
-
+require('gitsigns.nvim').highlight('GitSignsDeleteLn', { default = true, link = 'DiffDelete' })
 require('gitsigns').setup {
   signs = {
     add = {hl = 'GitSignsAdd', text = '│', numhl='GitSignsAddNr', linehl='GitSignsAddLn'},

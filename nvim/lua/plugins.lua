@@ -48,6 +48,7 @@ function M.setup()
     -- Load time optimization
     use { 'nathom/filetype.nvim' }
     use { 'lewis6991/impatient.nvim' }
+    use { 'antoinemadec/FixCursorHold.nvim' }
 
     use { 'nvim-lua/plenary.nvim' } -- Lua functions
 
@@ -77,9 +78,9 @@ function M.setup()
 
     use { 'neovim/nvim-lspconfig' } -- LSP and completion
     use {'williamboman/nvim-lsp-installer'} -- LSP installer
-    use {'ray-x/lsp_signature.nvim'} -- Signature help
+    -- use {'ray-x/lsp_signature.nvim'} -- Signature help
     use { 'onsails/lspkind-nvim' } -- LSP pictograms
-    use { 'github/copilot.vim' } -- AI completion
+    -- use { 'github/copilot.vim' } -- AI completion
     use {
       'Shougo/ddc.vim', requires = {'vim-denops/denops.vim',
         'matsui54/ddc-ultisnips', 'Shougo/ddc-omni', 'Shougo/ddc-nvim-lsp',

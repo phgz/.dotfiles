@@ -1,5 +1,5 @@
 local function signature_help(client, bufnr)
-  local trigger_chars = client.resolved_capabilities.signature_help_trigger_characters
+  local trigger_chars = client.server_capabilities.signatureHelpProvider.triggerCharacters
   for _, char in ipairs(trigger_chars) do
     vim.keymap.set("i", char, function()
       vim.defer_fn(function()
@@ -33,10 +33,10 @@ local on_attach = function(client, bufnr)
   -- if client.resolved_capabilities.document_highlight then
 
   local sign_define = vim.fn.sign_define
-  sign_define("DiagnosticSignError", {texthl="LspDiagnosticsSignError", numhl="LspDiagnosticsLineNrError"})
-  sign_define("DiagnosticSignWarn", {texthl="LspDiagnosticsSignWarning", numhl="LspDiagnosticsLineNrWarning"})
-  sign_define("DiagnosticSignInfo", {texthl="LspDiagnosticsSignInformation", numhl="LspDiagnosticsLineNrInformation"})
-  sign_define("DiagnosticSignHint", {texthl="LspDiagnosticsSignHint", numhl="LspDiagnosticsLineNrHint"})
+  sign_define("DiagnosticSignError", {texthl="DiagnosticSignError", numhl="DiagnosticLineNrError"})
+  sign_define("DiagnosticSignWarn", {texthl="DiagnosticSignWarn", numhl="DiagnosticLineNrWarn"})
+  sign_define("DiagnosticSignInfo", {texthl="DiagnosticSignInfo", numhl="DiagnosticLineNrInfo"})
+  sign_define("DiagnosticSignHint", {texthl="DiagnosticSignHint", numhl="DiagnosticLineNrHint"})
   -- end
 
   signature_help(client, bufnr)

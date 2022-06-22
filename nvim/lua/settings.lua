@@ -22,6 +22,9 @@ set shell=fish
 set foldtext=getline(v:foldstart+1)
 ]], false)
 
+-- CursorHold and CursorHoldI
+-- vim.g.cursorhold_updatetime = 4000
+
 -- vim.g.mapleader = "<Space>"
 vim.g.maplocalleader = "!"
 
@@ -29,7 +32,7 @@ utils.opt('b', 'expandtab', true)
 utils.opt('b', 'shiftwidth', indent)
 utils.opt('b', 'smartindent', true)
 utils.opt('b', 'tabstop', indent)
-utils.opt('o', 'updatetime', 100)
+-- utils.opt('o', 'updatetime', 4000) -- default to 4000, used by signatureHelp
 utils.opt('o', 'timeoutlen', 4000) -- Keymap timer
 utils.opt('o', 'laststatus', 2)
 utils.opt('o', 'pumblend', 30)
