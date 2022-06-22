@@ -1,5 +1,5 @@
 function tmux_attach
-    tmux has-session -t remote
+    tmux has-session -t remote 2> /dev/null
     and tmux attach-session -t remote
 end
 
