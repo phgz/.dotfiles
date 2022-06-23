@@ -106,7 +106,7 @@ elif [ "$platform" == "Linux" ]; then
     curl -LJO https://github.com/tmux/tmux/releases/download/"$TMUX_VERSION"/tmux-"$TMUX_VERSION".tar.gz
     tar -zxf tmux-*.tar.gz && rm tmux-"$TMUX_VERSION".tar.gz
     pushd tmux-*/ || exit
-    PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix="$HOME"/.local
+    PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix="$HOME"/.local --enable-static
     make && make install && popd || exit
 
     rm -rf tmux-*/
