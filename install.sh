@@ -72,7 +72,7 @@ elif [ "$platform" == "Linux" ]; then
     make && make install && popd || exit
 
     curl -LJO https://invisible-mirror.net/archives/ncurses/ncurses-"$NCURSES_VERSION".tar.gz
-    tar -zxf ncurses-"$NCURSES_VERSION".tar.gz && rm ncurse-"$NCURSES_VERSION".tar.gz
+    tar -zxf ncurses-"$NCURSES_VERSION".tar.gz && rm ncurses-"$NCURSES_VERSION".tar.gz
     pushd ncurses-*/ || exit
     ./configure --prefix="$HOME"/.local --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir="$HOME"/.local/lib/pkgconfig
     make && make install && popd || exit
@@ -125,9 +125,9 @@ elif [ "$platform" == "Linux" ]; then
     tar -xf node-v"$NODE_VERSION"-linux-x64.tar.xz && rm node-v"$NODE_VERSION"-linux-x64.tar.xz
     mv node-v"$NODE_VERSION"-linux-x64 "$HOME"/.local/node
 
-    "$HOME"/.local/node/bin/corepack enable
-    "$HOME"/.local/node/bin/npm install -g neovim
-    "$HOME"/.local/node/bin/npm install -g bash-language-server
+    PATH=$HOME/.local/node/bin:$PATH "$HOME"/.local/node/bin/corepack enable
+    PATH=$HOME/.local/node/bin:$PATH "$HOME"/.local/node/bin/npm install -g neovim
+    PATH=$HOME/.local/node/bin:$PATH "$HOME"/.local/node/bin/npm install -g bash-language-server
 
     #------------------------------------------------------------------------------#
     #                       Remove dependencies src folders                        #
@@ -144,7 +144,7 @@ fi
 
 for folder in "$HOME"/.dotfiles/*/
 do
-    ln -fs "$folder" "$HOME"/.config/
+    ln -fs "$folder" "$HOME"/.config/ || (rm -rf "$HOME"/.config/"$(basename $folder)" && ln -fs "$folder" "$HOME"/.config/)
 done
 
 #------------------------------------------------------------------------------#
