@@ -69,7 +69,8 @@ local servers = {
   "yamlls",
   "sumneko_lua",
   "dockerls",
-  "vimls"
+  "vimls",
+  "bashls"
 }
 
 for _, name in pairs(servers) do
@@ -123,5 +124,3 @@ lsp_installer.on_server_ready(function(server)
 
   server:setup(opts)
 end)
-
-require'lspconfig'.bashls.setup{on_attach=on_attach, capabilities=capabilities}
