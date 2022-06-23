@@ -6,7 +6,8 @@ arch=$(uname -m)
 BISON_VERSION=3.8.2
 PKG_CONFIG_VERSION=0.29.2
 LIBEVENT_VERSION=2.1.12
-CMAKE_VERSION=3.22.5
+NCURSES_VERSION=6.3
+CMAKE_VERSION=3.23.2
 FISH_SHELL_VERSION=3.5.0
 TMUX_VERSION=3.3a
 NODE_VERSION=18.4.0
@@ -70,8 +71,8 @@ elif [ "$platform" == "Linux" ]; then
     ./configure --prefix="$HOME"/.local --enable-shared --disable-openssl
     make && make install && popd || exit
 
-    curl -LJO https://invisible-island.net/datafiles/release/ncurses.tar.gz
-    tar -zxf ncurses.tar.gz && rm ncurses.tar.gz
+    curl -LJO https://invisible-mirror.net/archives/ncurses/ncurses-"$NCURSES_VERSION".tar.gz
+    tar -zxf ncurses-"$NCURSES_VERSION".tar.gz && rm ncurse-"$NCURSES_VERSION".tar.gz
     pushd ncurses-*/ || exit
     ./configure --prefix="$HOME"/.local --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir="$HOME"/.local/lib/pkgconfig
     make && make install && popd || exit
