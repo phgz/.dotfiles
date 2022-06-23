@@ -38,8 +38,9 @@ local on_attach = function(client, bufnr)
   sign_define("DiagnosticSignInfo", {texthl="DiagnosticSignInfo", numhl="DiagnosticLineNrInfo"})
   sign_define("DiagnosticSignHint", {texthl="DiagnosticSignHint", numhl="DiagnosticLineNrHint"})
   -- end
-
-  signature_help(client, bufnr)
+  if client.server_capabilities.signatureHelpProvider then
+    signature_help(client, bufnr)
+  end
 end
 
 local lsp_config = {
