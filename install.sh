@@ -127,6 +127,7 @@ elif [ "$platform" == "Linux" ]; then
 
     "$HOME"/.local/node/bin/corepack enable
     "$HOME"/.local/node/bin/npm install -g neovim
+    "$HOME"/.local/node/bin/npm install -g bash-language-server
 
     #------------------------------------------------------------------------------#
     #                       Remove dependencies src folders                        #
@@ -175,18 +176,6 @@ if [ ! -d "$HOME"/.miniconda3 ]; then
     "$HOME"/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
     "$HOME"/.miniconda3/bin/conda install --yes -c conda-forge shellcheck
 fi
-
-#------------------------------------------------------------------------------#
-#                             bash-language-server                             #
-#------------------------------------------------------------------------------#
-git clone https://github.com/shabbyrobe/bash-language-server
-pushd bash-language-server || exit
-git remote add upstream https://github.com/bash-lsp/bash-language-server
-git fetch upstream
-git merge upstream/master --no-edit
-yarn install && yarn run compile && yarn run reinstall-server
-popd || exit
-rm -rf bash-language-server/
 
 #------------------------------------------------------------------------------#
 #                                  Cargo/Rust                                  #
