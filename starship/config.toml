@@ -8,6 +8,7 @@ format = """
 $shlvl\
 $singularity\
 $kubernetes\
+$sudo\
 $directory\
 $vcsh\
 $git_branch\
@@ -65,6 +66,10 @@ $jobs\
 $battery\
 $status\
 $character"""
+
+[sudo]
+format = "[$symbol]($style)"
+disabled = false
 
 [aws]
 symbol = "  "
