@@ -235,3 +235,5 @@ done
 #                                   Cronjobs                                   #
 #------------------------------------------------------------------------------#
 crontab -l | cat - "$HOME"/.dotfiles/cronjobs.txt | crontab -
+
+touch "$HOME"/.hushlogin
