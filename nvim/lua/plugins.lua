@@ -54,7 +54,6 @@ function M.setup()
 
     -- Modules
     use { 'philipGaudreau/popfix', module = 'popfix' }
-    use { 'vim-test/vim-test', module = 'vim-test' }
     use { 'nvim-lua/popup.nvim', module = 'popup.nvim' }
     use { 'kyazdani42/nvim-web-devicons', module = 'nvim-web-devicons' }
 
@@ -110,7 +109,7 @@ function M.setup()
     use { 'honza/vim-snippets' } -- Snippets
     use { 'SirVer/ultisnips' } -- Snippets engine
 
-    use { 'ojroques/vim-oscyank' } -- Global TMUX yank
+    use { 'ojroques/nvim-osc52' } -- Global TMUX yank
 
     use {
       'numToStr/Comment.nvim',
@@ -130,12 +129,6 @@ function M.setup()
     use { 'tpope/vim-repeat' } -- Repeat plugins commands
 
     use { 'phaazon/hop.nvim' } -- Vim Motions
-
-    use { "rcarriga/vim-ultest",
-      wants = {"vim-test"},
-      cmd = { "UltestNearest" },
-      run = ":UpdateRemotePlugins",
-    } -- Tests
 
     -- use {
     --   --"michaelb/sniprun",
