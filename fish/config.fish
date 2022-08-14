@@ -48,6 +48,7 @@ abbr -ag gstp git stash pop
 abbr -ag gr git restore
 abbr -ag gm git merge
 abbr -ag gcln git clean -df
+abbr -ag gcane git commit --amend --no-edit
 
 # kb
 abbr -ag kbl kb list
