@@ -1,1 +1,0 @@
-/home/philip/.dotfiles/nvim/lua/config/dark-theme.lua
