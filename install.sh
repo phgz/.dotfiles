@@ -228,7 +228,7 @@ rm FantasqueSansMono.zip && rm -rf FantasqueSansMono
 #------------------------------------------------------------------------------#
 for folder in "$HOME"/*/
 do
-   ln -sf "$HOME"/.dotfiles/pre-commit "$folder"/.git/hooks/
+   ln -sf "$HOME"/.dotfiles/pre-commit "${folder%/*}"/.git/hooks/
 done
 
 #------------------------------------------------------------------------------#
