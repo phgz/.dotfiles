@@ -10,6 +10,12 @@ set -gx PYTHONBREAKPOINT pdbr.set_trace
 ### "bat" as manpager
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 
+fish_vi_key_bindings
+
+set fish_cursor_default block
+set fish_cursor_insert line
+set fish_cursor_replace_one underscore
+
 bind -M insert \ca beginning-of-line
 bind -M insert \ce end-of-line
 bind -M insert \ck kill-line
@@ -65,12 +71,5 @@ abbr -ag ll exal
 abbr -ag la exal -a
 abbr -ag grep rg
 abbr -ag psh poetry shell
-
-if set -q KITTY_INSTALLATION_DIR
-    set --global KITTY_SHELL_INTEGRATION enabled
-    echo $KITTY_INSTALLATION_DIR > $HOME/kitty.log
-    source "$KITTY_INSTALLATION_DIR/shell-integration/fish/vendor_conf.d/kitty-shell-integration.fish"
-    set --prepend fish_complete_path "$KITTY_INSTALLATION_DIR/shell-integration/fish/vendor_completions.d"
-end
 
 test -t 0 && initialize_tmux
