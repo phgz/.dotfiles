@@ -93,7 +93,9 @@ elif [ "$platform" == "Linux" ]; then
     pushd fish-"$FISH_SHELL_VERSION" || exit
     mkdir build
     pushd build || exit
-    ../../cmake-"$CMAKE_VERSION"-linux-"$arch"/bin/cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local -DCMAKE_CXX_FLAGS=-I\ "$HOME"/.local/include/ncurses ..
+    ../../cmake-"$CMAKE_VERSION"-linux-"$arch"/bin/cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local ..
+    # Try this instead if previous line fails:
+    # ../../cmake-"$CMAKE_VERSION"-linux-"$arch"/bin/cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local -DCMAKE_CXX_FLAGS=-I\ "$HOME"/.local/include/ncurses ..
     make && make install && popd || exit
     popd || exit
 
