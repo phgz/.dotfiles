@@ -4,5 +4,5 @@ function theme
 
     kitty +kitten themes --reload-in=all Theme-$argv 2> /dev/null
 
-    ln -fs $HOME/.dotfiles/nvim/lua/config/$argv-theme.lua $HOME/.dotfiles/nvim/lua/config/current-theme.lua
+    cp $HOME/.dotfiles/nvim/lua/config/$argv-theme.lua $HOME/.dotfiles/nvim/lua/config/current-theme.lua
 end
