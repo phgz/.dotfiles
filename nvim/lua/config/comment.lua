@@ -1,4 +1,3 @@
-local utils = require('utils')
 local opt = { silent = true, noremap = true }
 
 require("Comment").setup{

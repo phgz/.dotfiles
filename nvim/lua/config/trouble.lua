@@ -1,5 +1,3 @@
-local utils = require('utils')
-
 require("trouble").setup{
     auto_preview = false,
     action_keys = { -- key mappings for actions in the trouble list
@@ -12,4 +10,4 @@ require("trouble").setup{
     }
 }
 
-utils.map('n', '<leader>l', '<cmd>Trouble document_diagnostics<cr>')
+vim.keymap.set('n', '<leader>l', '<cmd>Trouble document_diagnostics<cr>')

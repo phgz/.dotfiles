@@ -1,3 +1,1 @@
-local utils = require('utils')
-
-utils.map('n', '<localleader>c', ':Cheat<cr>')
+vim.keymap.set('n', '<localleader>c', ':Cheat<cr>')

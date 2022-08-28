@@ -67,7 +67,7 @@ function M.setup()
     use { 'nvim-treesitter/playground' } -- See parsed tree
     use { 'nvim-treesitter/nvim-treesitter-textobjects' } -- More text motions
     use { 'nvim-treesitter/nvim-treesitter-refactor' } -- Highlight definitions, Rename
-    -- use { 'RRethy/vim-illuminate' } -- Word highlighting
+    use { 'RRethy/vim-illuminate' } -- Word highlighting
     use { 'RRethy/nvim-treesitter-endwise' } -- Add `end` statement when opening a context
     use { 'p00f/nvim-ts-rainbow' } -- "Enclosers" coloring
     use { 's1n7ax/nvim-comment-frame' } -- Comment frame
@@ -157,6 +157,8 @@ function M.setup()
     use { 'nixon/vim-vmath' } -- Visual block math mode
 
     use { 'dahu/vim-fanfingtastic' } -- Use f/F/t/T multiline
+
+    use { 'chentoast/marks.nvim' }
 
     use {
       "nacro90/numb.nvim",

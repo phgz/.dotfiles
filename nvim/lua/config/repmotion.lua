@@ -1,4 +1,4 @@
-local utils = require("utils")
+local map = vim.api.nvim_set_keymap
 
 local register_comamnd = function(kind, with_end)
   local common_part = '\'<cmd>lua require"nvim-treesitter.textobjects.move"'
@@ -45,12 +45,12 @@ local opts_noremap = {expr = true, noremap = true, silent = true}
 local opts = {expr = true, noremap = false, silent = true}
 
 local map_cmd = function(c, direction)
-  utils.map('', ']' .. c, string.format('repmo#Key(%s,%s) <bar> sunmap ]%s)', direction.ns, direction.ps, c), opts)
-  utils.map('', '[' .. c, string.format('repmo#Key(%s,%s) <bar> sunmap [%s)', direction.ps, direction.ns, c), opts)
+  map('', ']' .. c, string.format('repmo#Key(%s,%s) <bar> sunmap ]%s)', direction.ns, direction.ps, c), opts)
+  map('', '[' .. c, string.format('repmo#Key(%s,%s) <bar> sunmap [%s)', direction.ps, direction.ns, c), opts)
 
   if direction.ne then
-    utils.map('', ']' .. c:upper(), string.format('repmo#Key(%s,%s) <bar> sunmap ]%s)', direction.ne, direction.pe, c:upper()), opts)
-    utils.map('', '[' .. c:upper(), string.format('repmo#Key(%s,%s) <bar> sunmap [%s)', direction.pe, direction.ne, c:upper()), opts)
+    map('', ']' .. c:upper(), string.format('repmo#Key(%s,%s) <bar> sunmap ]%s)', direction.ne, direction.pe, c:upper()), opts)
+    map('', '[' .. c:upper(), string.format('repmo#Key(%s,%s) <bar> sunmap [%s)', direction.pe, direction.ne, c:upper()), opts)
   end
 end
 
@@ -58,18 +58,18 @@ for k, v in pairs(mapping) do
   map_cmd(k:sub(1,1), v)
 end
 
-utils.map('', ']m', 'repmo#SelfKey("]m", "[m") <bar> sunmap ]m', opts_noremap)
-utils.map('', '[m', 'repmo#SelfKey("[m", "]m") <bar> sunmap [m', opts_noremap)
+map('', ']m', 'repmo#SelfKey("]m", "[m") <bar> sunmap ]m', opts_noremap)
+map('', '[m', 'repmo#SelfKey("[m", "]m") <bar> sunmap [m', opts_noremap)
 
-utils.map('n', ';', 'repmo#LastKey(";") <bar> sunmap ;', opts)
-utils.map('n', ',', 'repmo#LastRevKey(",") <bar> sunmap ,', opts)
+map('n', ';', 'repmo#LastKey(";") <bar> sunmap ;', opts)
+map('n', ',', 'repmo#LastRevKey(",") <bar> sunmap ,', opts)
 
 -- vim.g.fing_enabled = 0
 
-utils.map('n', ';', 'repmo#LastKey("<Plug>fanfingtastic_;") <bar> sunmap ;', opts)
-utils.map('n', ',', 'repmo#LastRevKey("<Plug>fanfingtastic_,") <bar> sunmap ,', opts)
+map('n', ';', 'repmo#LastKey("<Plug>fanfingtastic_;") <bar> sunmap ;', opts)
+map('n', ',', 'repmo#LastRevKey("<Plug>fanfingtastic_,") <bar> sunmap ,', opts)
 
-utils.map('n', 'f', 'repmo#ZapKey("<Plug>fanfingtastic_f") <bar> sunmap f', opts)
-utils.map('n', 'F', 'repmo#ZapKey("<Plug>fanfingtastic_F") <bar> sunmap F', opts)
-utils.map('n', 't', 'repmo#ZapKey("<Plug>fanfingtastic_t") <bar> sunmap t', opts)
-utils.map('n', 'T', 'repmo#ZapKey("<Plug>fanfingtastic_T") <bar> sunmap T', opts)
+map('n', 'f', 'repmo#ZapKey("<Plug>fanfingtastic_f") <bar> sunmap f', opts)
+map('n', 'F', 'repmo#ZapKey("<Plug>fanfingtastic_F") <bar> sunmap F', opts)
+map('n', 't', 'repmo#ZapKey("<Plug>fanfingtastic_t") <bar> sunmap t', opts)
+map('n', 'T', 'repmo#ZapKey("<Plug>fanfingtastic_T") <bar> sunmap T', opts)

@@ -1,5 +1,3 @@
-local utils = require("utils")
-
 require("neogen").setup {
     enabled = true,
     input_after_comment = true,
@@ -13,4 +11,4 @@ require("neogen").setup {
 }
 
 local opts = { noremap = true, silent = true }
-utils.map("n", "<leader>a", "<CMD>lua require('neogen').generate()<CR>", opts)
+vim.keymap.set("n", "<leader>a", "<CMD>lua require('neogen').generate()<CR>", opts)
