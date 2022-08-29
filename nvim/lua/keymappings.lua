@@ -19,7 +19,6 @@ set('v', '<leader>s', ':sort<cr>')--< Sort selection
 
 -- Normal key
 set('n', '<LeftDrag>', '<LeftMouse>')--< No drag
-set('n', 'dm<space>', '<cmd>delm!<cr>')--< remove marks
 set('n', 'Z', '<cmd>w<CR>')--< Write buffer
 set('n', 'Q', '<cmd>q!<CR>')--< Quit no wirte buffer
 set('n', 'U', '<C-R>')--< Redo

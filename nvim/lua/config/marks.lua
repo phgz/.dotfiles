@@ -32,3 +32,5 @@ require'marks'.setup {
   },
   mappings = {}
 }
+
+vim.keymap.set('n', 'dm<space>', '<cmd>delm!<cr>')--< remove marks
