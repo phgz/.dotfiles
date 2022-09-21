@@ -234,8 +234,16 @@ do
 done
 
 #------------------------------------------------------------------------------#
-#                                   Cronjobs                                   #
+#                                    Theme                                     #
 #------------------------------------------------------------------------------#
-crontab -l | cat - "$HOME"/.dotfiles/cronjobs.txt | crontab -
+if [ "$platform" == "Darwin" ]; then
+    echo "Run the following command to enable theme daemons"
+    echo "sudo mv $HOME/.dotfiles/theme/dotfiles.theme.{light,dark}.plist /Library/LaunchDaemons/"
+    echo "sudo launchctl load /Library/LaunchDaemons/dotfiles.theme.{light,dark}.plist"
 
-touch "$HOME"/.hushlogin
+elif [ "$platform" == "Linux" ]; then
+    crontab -l | cat - "$HOME"/.dotfiles/theme/linux.txt | crontab -
+
+    # Do not display login message
+    touch "$HOME"/.hushlogin
+fi
