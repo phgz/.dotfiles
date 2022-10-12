@@ -33,6 +33,7 @@ utils.opt('b', 'shiftwidth', indent)
 utils.opt('b', 'smartindent', true)
 utils.opt('b', 'tabstop', indent)
 -- utils.opt('o', 'updatetime', 4000) -- default to 4000, used by signatureHelp
+utils.opt('o', 'cmdheight', 0)
 utils.opt('o', 'timeoutlen', 4000) -- Keymap timer
 utils.opt('o', 'laststatus', 2)
 utils.opt('o', 'pumblend', 30)
