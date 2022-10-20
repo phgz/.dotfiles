@@ -2,6 +2,7 @@ set -g fish_greeting
 string match -q (uname -ms) "Darwin arm64" && fish_add_path /opt/homebrew/bin
 fish_add_path $HOME/.local/bin $HOME/.cargo/bin $HOME/.local/node/bin $HOME/.miniconda/bin
 set -gx MANPATH $HOME/.local/share/man /usr/share/man $MANPATH
+set -gx DIRENV_LOG_FORMAT ""
 
 set -gx STARSHIP_CONFIG ~/.config/starship/config.toml
 set -gx EDITOR nvim
@@ -28,6 +29,7 @@ eval $HOME/.miniconda3/bin/conda "shell.fish" "hook" $argv | source
 # <<< conda initialize <<<
 
 ~/.local/bin/starship init fish | source
+direnv hook fish | source
 
 abbr -ag :q exit
 

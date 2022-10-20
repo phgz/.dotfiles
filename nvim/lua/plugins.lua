@@ -48,7 +48,6 @@ function M.setup()
     -- Load time optimization
     use { 'nathom/filetype.nvim' }
     use { 'lewis6991/impatient.nvim' }
-    use { 'antoinemadec/FixCursorHold.nvim' }
 
     use { 'nvim-lua/plenary.nvim' } -- Lua functions
 
@@ -157,8 +156,6 @@ function M.setup()
     use { 'nixon/vim-vmath' } -- Visual block math mode
 
     use { 'dahu/vim-fanfingtastic' } -- Use f/F/t/T multiline
-
-    use { 'chentoast/marks.nvim' }
 
     use {
       "nacro90/numb.nvim",

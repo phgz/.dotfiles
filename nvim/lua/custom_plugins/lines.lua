@@ -108,6 +108,12 @@ M.swap = function()
   swap_aux(input, current)
 end
 
+M.after = function()
+  local input = vim.fn.getchar()
+  local seq = vim.api.nvim_replace_termcodes("f" .. string.char(input) .. "<Right>", true, true, true)
+  vim.api.nvim_feedkeys(seq, 'm', false)
+end
+
 M.duplicate = function()
   local input = get_input("Duplicate line ")
   if input == nil then

@@ -1,3 +1,5 @@
+vim.keymap.set('n', 'q', '<cmd>lua require("custom_plugins.lines").after()<cr>', {silent = true})
+
 vim.keymap.set('n', '<leader>s', '<cmd>lua require("custom_plugins.lines").swap()<cr>', {silent = true})
 
 vim.keymap.set('n', '<leader>y', '<cmd>lua require("custom_plugins.lines").duplicate()<cr>', {silent = true})
