@@ -21,10 +21,10 @@ highlight TurquoiseStatusLine guifg=turquoise guibg=#32302f
 highlight MagentaStatusLine guifg=magenta guibg=#32302f
 highlight GreyStatusLine guifg=grey guibg=#32302f
 
-highlight link DiagnosticLineNrError DiagnosticError
-highlight link DiagnosticLineNrWarn DiagnosticWarn
-highlight link DiagnosticLineNrInfo DiagnosticInfo
-highlight link DiagnosticLineNrHint DiagnosticHint
+highlight link DiagnosticLineNrError RedBold
+highlight link DiagnosticLineNrWarn YellowBold
+highlight link DiagnosticLineNrInfo BlueBold
+highlight link DiagnosticLineNrHint GreenBold
 
 highlight link LspSignatureActiveParameter GreenItalic
 

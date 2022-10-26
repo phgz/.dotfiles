@@ -83,7 +83,7 @@ function M.setup()
       'Shougo/ddc.vim', requires = {'vim-denops/denops.vim',
         'matsui54/ddc-ultisnips', 'Shougo/ddc-omni', 'Shougo/ddc-nvim-lsp',
         'Shougo/ddc-converter_remove_overlap', 'LumaKernel/ddc-file', 'delphinus/ddc-treesitter',
-        'Shougo/ddc-matcher_length', 'tani/ddc-fuzzy', 'matsui54/denops-popup-preview.vim'},
+        'Shougo/ddc-matcher_length', 'tani/ddc-fuzzy', 'matsui54/denops-popup-preview.vim'}, commit='042e3b1d4df310d5bbaba7a6c2e7f36a94e27977'
     } -- Completion engine
     use {
       'folke/trouble.nvim',
