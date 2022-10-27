@@ -54,7 +54,6 @@ function M.setup()
     -- Modules
     use { 'philipGaudreau/popfix', module = 'popfix' }
     use { 'nvim-lua/popup.nvim', module = 'popup.nvim' }
-    use { 'kyazdani42/nvim-web-devicons', module = 'nvim-web-devicons' }
 
     ---
 
@@ -85,10 +84,6 @@ function M.setup()
         'Shougo/ddc-converter_remove_overlap', 'LumaKernel/ddc-file', 'delphinus/ddc-treesitter',
         'Shougo/ddc-matcher_length', 'tani/ddc-fuzzy', 'matsui54/denops-popup-preview.vim'}, commit='042e3b1d4df310d5bbaba7a6c2e7f36a94e27977'
     } -- Completion engine
-    use {
-      'folke/trouble.nvim',
-      requires = 'nvim-web-devicons',
-    } -- Diagnistic list
 
     use {
       'nvim-telescope/telescope.nvim',
