@@ -33,15 +33,14 @@ utils.opt('b', 'shiftwidth', indent)
 utils.opt('b', 'smartindent', true)
 utils.opt('b', 'tabstop', indent)
 -- utils.opt('o', 'updatetime', 4000) -- default to 4000, used by signatureHelp
--- utils.opt('o', 'cmdheight', 0)
+utils.opt('o', 'cmdheight', 0)
 utils.opt('o', 'timeoutlen', 4000) -- Keymap timer
-utils.opt('o', 'laststatus', 2)
+utils.opt('o', 'laststatus', 3)
 utils.opt('o', 'pumblend', 30)
 utils.opt('o', 'pumheight', 9)
 utils.opt('o', 'icm', 'nosplit')
 utils.opt('o', 'mouse', 'nicr')
 utils.opt('o', 'hidden', true)
-utils.opt('o', 'lazyredraw', true) -- Don’t update screen during macro and script execution
 utils.opt('o', 'autochdir', true)
 utils.opt('o', 'ignorecase', true)
 utils.opt('o', 'shiftround', true)
@@ -54,6 +53,7 @@ utils.opt('o', 'completeopt', 'menu,menuone,noinsert,noselect')
 --utils.opt('o', 'backspace', 'indent,start')
 utils.opt('w', 'number', true)
 utils.opt('w', 'signcolumn', "yes")
+-- utils.opt('w', 'winbar', "...") -- Use winbar feature
 utils.opt('w', 'cursorline', true)
 utils.opt('w', 'linebreak', true) -- Avoid wrapping a line in the middle of a word
 -- utils.opt('w', 'foldmethod', 'expr')

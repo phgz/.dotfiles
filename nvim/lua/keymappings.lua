@@ -9,7 +9,7 @@ set('n', '<leader>v', '<C-w>v')--< Split vertical
 set('n', '<leader>h', '<C-w>s')--< Split horizontal
 set('n', '<leader>q', '<C-w>c')--< Close window
 set('n', '<leader>g', '<Nop>')
-set('n', '<leader>r', 'mb<cmd>g/breakpoint()/d<cr>`b')--< Remove Breakpoint
+set('n', '<localleader>q', 'mb<cmd>g/breakpoint()/d<cr>`b')--< Remove Breakpoint
 set('n', '<leader>b', 'obreakpoint()<Esc>')--< set Breakpoint
 set('n', '<localleader>n', '<cmd>bnext<cr>')--< goto next buffer
 set('n', '<localleader>p', '<cmd>bprevious<cr>')--< goto prev buffer
@@ -23,6 +23,9 @@ set('n', 'Z', '<cmd>w<CR>')--< Write buffer
 set('n', 'Q', '<cmd>q!<CR>')--< Quit no wirte buffer
 set('n', 'U', '<C-R>')--< Redo
 set('n', '<M-s>', 'r<CR>')--< Split below
+set('n', 'cq', 'ct_')  --< Change until _
+set('n', 'yq', 'yt_')  --< Yank until _
+set('n', 'dq', 'df_')  --< Delete find _
 set('', 'j', '^') --< Swap document bengin/end with line
 set('', 'k', '$')  --<
 set('', 'h', 'zh')  --< Move screen to the left

@@ -11,7 +11,7 @@ vim.g.gruvbox_material_palette = 'original'
 
 -- Change search hl to orange instead of red
 vim.api.nvim_exec([[
-set background=dark
+colorscheme default
 colorscheme gruvbox-material
 call gruvbox_material#highlight('IncSearch', ['#282828',   '235'], ['#fe8019',   '208'])
 highlight RedStatusLine guifg=#fb4934 guibg=#32302f
@@ -38,4 +38,5 @@ highlight! link TSField Blue
 highlight! link TSFuncBuiltin Yellow
 highlight! link TSFunction AquaBold
 highlight! link TSMethod Aqua
+luafile /home/philip/.dotfiles/nvim/lua/highlights.lua
 ]], false)

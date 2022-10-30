@@ -145,7 +145,7 @@ fi
 
 for folder in "$HOME"/.dotfiles/*/
 do
-    ln -fs "$folder" "$HOME"/.config/ || (rm -rf "$HOME"/.config/"$(basename $folder)" && ln -fs "$folder" "$HOME"/.config/)
+    ln -fs "$folder" "$HOME"/.config/ || (rm -rf "$HOME"/.config/"$(basename "$folder")" && ln -fs "$folder" "$HOME"/.config/)
 done
 
 #------------------------------------------------------------------------------#

@@ -46,7 +46,10 @@ function M.setup()
     use {'wbthomason/packer.nvim'}
 
     -- Load time optimization
-    use { 'nathom/filetype.nvim' }
+    use {
+        'nathom/filetype.nvim',
+        setup = [[vim.cmd('runtime! autoload/dist/ft.vim')]],
+    }
     use { 'lewis6991/impatient.nvim' }
 
     use { 'nvim-lua/plenary.nvim' } -- Lua functions
@@ -74,7 +77,8 @@ function M.setup()
     use { "danymat/neogen" } -- Annotation generator
 
     use { 'neovim/nvim-lspconfig' } -- LSP and completion
-    use {'williamboman/nvim-lsp-installer'} -- LSP installer
+    use {'williamboman/mason.nvim'} -- LSP installer
+    use {'williamboman/mason-lspconfig.nvim'}
     -- use {'ray-x/lsp_signature.nvim'} -- Signature help
     use { 'onsails/lspkind-nvim' } -- LSP pictograms
     -- use { 'github/copilot.vim' } -- AI completion
@@ -90,6 +94,8 @@ function M.setup()
       requires = {'popup.nvim', 'plenary.nvim'}
     } -- Fuzzy finder
 
+    use { 'cljoly/telescope-repo.nvim' } --Jump around the repositories in the filesystem
+
     use { "beauwilliams/focus.nvim",
       config = function()
         require("focus").setup({signcolumn = false, cursorline = false})
@@ -103,7 +109,8 @@ function M.setup()
     use { 'honza/vim-snippets' } -- Snippets
     use { 'SirVer/ultisnips' } -- Snippets engine
 
-    use { 'ojroques/nvim-osc52' } -- Global TMUX yank
+    -- use { 'ojroques/nvim-osc52' } -- Global TMUX yank
+    use { 'ibhagwan/smartyank.nvim' }
 
     use {
       'numToStr/Comment.nvim',
@@ -124,6 +131,9 @@ function M.setup()
 
     use { 'phaazon/hop.nvim' } -- Vim Motions
 
+    use { 'vimpostor/vim-tpipeline' }
+    use { '/dstein64/vim-startuptime' }
+    use { 'jose-elias-alvarez/null-ls.nvim' }
     -- use {
     --   --"michaelb/sniprun",
     --   "philipgaudreau/sniprun",
@@ -146,7 +156,18 @@ function M.setup()
 
     use { 'machakann/vim-swap' } -- Swap delimited items, like function arguments
 
-    use { 'rcarriga/nvim-notify' } --  Notifications
+    -- use { 'rcarriga/nvim-notify' } --  Notifications
+    -- use({
+    --   "folke/noice.nvim",
+    --   requires = {
+    --     -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+    --     "MunifTanjim/nui.nvim",
+    --     -- OPTIONAL:
+    --     --   `nvim-notify` is only needed, if you want to use the notification view.
+    --     --   If not available, we use `mini` as the fallback
+    --     "rcarriga/nvim-notify",
+    --   }
+    -- })
 
     use { 'nixon/vim-vmath' } -- Visual block math mode
 

@@ -1,4 +1,4 @@
-vim.cmd("set background=light")    -- Setting dark mode
+vim.cmd("colorscheme default")    -- Restore default values first
 require("github-theme").setup({
   theme_style = "light",
   transparent = true,
@@ -34,3 +34,4 @@ require("github-theme").setup({
   end
 })
 
+vim.cmd('luafile /home/philip/.dotfiles/nvim/lua/highlights.lua')

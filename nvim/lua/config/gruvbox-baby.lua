@@ -20,10 +20,12 @@ vim.g.gruvbox_baby_highlights = {
   DiagnosticError = {bg = "None", fg = colors.red},
 
   GitSignsDelete = {bg = "None", fg = colors.red},
+
   EndOfBuffer = { fg = colors.medium_gray },
+
+  MatchParen = { bg = colors.medium_gray},
 }
 vim.api.nvim_exec([[
-set background=dark
 colorscheme gruvbox-baby
 
 highlight RedStatusLine guifg=#fb4934 guibg=#504945

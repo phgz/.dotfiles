@@ -62,8 +62,6 @@ vim.diagnostic.config(lsp_config.diagnostic)
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, lsp_config.diagnostic.float)
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, lsp_config.diagnostic.float)
 
-local lsp_installer = require("nvim-lsp-installer")
-
 local servers = {
   "pyright",
   "yamlls",
@@ -73,19 +71,23 @@ local servers = {
   "bashls"
 }
 
-for _, name in pairs(servers) do
-  local server_is_found, server = lsp_installer.get_server(name)
-  if server_is_found and not server:is_installed() then
-    print("Installing " .. name)
-    server:install()
-  end
-end
+require("mason").setup()
+require("mason-lspconfig").setup({
+    ensure_installed = servers
+})
 
-local enhance_server_opts = {
-  -- Provide settings that should only apply to the "pyright" server
-  ["sumneko_lua"] = function(opts)
-    opts.settings = {
-      Lua = {
+local capabilities = vim.lsp.protocol.make_client_capabilities
+
+require("mason-lspconfig").setup_handlers{
+  function (server_name) -- default handler
+    require("lspconfig")[server_name].setup {on_attach = on_attach, capabilities = capabilities()}
+  end,
+
+  ["sumneko_lua"] = function ()
+    require("lspconfig").sumneko_lua.setup {
+      on_attach = on_attach,
+      capabilities = capabilities(),
+      settings = {   Lua = {
         runtime = {
           -- Tell the language server which version of Lua we're using (most likely LuaJIT in the case of Neovim)
           version = "LuaJIT",
@@ -105,22 +107,6 @@ local enhance_server_opts = {
         },
       },
     }
-  end,
-}
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-
-lsp_installer.on_server_ready(function(server)
-  -- Specify the default options which we'll use to setup all servers
-  local opts = {
-    on_attach = on_attach,
-    capabilities = capabilities,
   }
-
-  if enhance_server_opts[server.name] then
-    -- Enhance the default opts with the server-specific ones
-    enhance_server_opts[server.name](opts)
-  end
-
-  server:setup(opts)
-end)
+end,
+}

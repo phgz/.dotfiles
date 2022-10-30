@@ -1,5 +1,7 @@
 local map = vim.api.nvim_set_keymap
 
+vim.g.fing_enabled = 0
+
 local register_comamnd = function(kind, with_end)
   local common_part = '\'<cmd>lua require"nvim-treesitter.textobjects.move"'
   local ns = string.format('%s.goto_next_start("@%s.outer")<cr>\'', common_part, kind)
@@ -61,10 +63,8 @@ end
 map('', ']m', 'repmo#SelfKey("]m", "[m") <bar> sunmap ]m', opts_noremap)
 map('', '[m', 'repmo#SelfKey("[m", "]m") <bar> sunmap [m', opts_noremap)
 
-map('n', ';', 'repmo#LastKey(";") <bar> sunmap ;', opts)
-map('n', ',', 'repmo#LastRevKey(",") <bar> sunmap ,', opts)
-
--- vim.g.fing_enabled = 0
+-- map('n', ';', 'repmo#LastKey(";") <bar> sunmap ;', opts)
+-- map('n', ',', 'repmo#LastRevKey(",") <bar> sunmap ,', opts)
 
 map('n', ';', 'repmo#LastKey("<Plug>fanfingtastic_;") <bar> sunmap ;', opts)
 map('n', ',', 'repmo#LastRevKey("<Plug>fanfingtastic_,") <bar> sunmap ,', opts)

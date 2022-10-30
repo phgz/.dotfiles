@@ -39,6 +39,7 @@ require('gitsigns').setup {
     map('n', 'gA', gs.undo_stage_hunk)
     map('n', 'gR', gs.reset_buffer)
     map('n', 'gd', gs.preview_hunk)
+    map('n', 'gi', gs.preview_hunk_inline)
     map('n', 'gb', function() gs.blame_line{full=true} end)
     map('n', 'gc', function() gs.diffthis(vim.fn.input("Compare to: ")) end)
 
