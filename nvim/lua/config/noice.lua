@@ -1,4 +1,7 @@
 require("noice").setup({
+  popupmenu = {
+    enabled = false, -- enables the Noice popupmenu UI
+  },
   notify = {
     enabled = false,
   },

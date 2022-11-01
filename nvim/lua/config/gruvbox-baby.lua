@@ -18,7 +18,7 @@ vim.g.gruvbox_baby_highlights = {
   DiagnosticInfo  = {bg = "None", fg = colors.light_blue},
   DiagnosticError = {bg = "None", fg = colors.red},
 
-  LspSignatureActiveParameter = {style = "italic", fg = colors.forest_green},
+  LspSignatureActiveParameter = {style = "italic", fg = colors.soft_green},
 
   GitSignsDelete = {bg = "None", fg = colors.red},
 
