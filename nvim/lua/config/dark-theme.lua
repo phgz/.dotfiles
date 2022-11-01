@@ -18,7 +18,7 @@ vim.g.gruvbox_baby_highlights = {
   DiagnosticInfo  = {bg = "None", fg = colors.light_blue},
   DiagnosticError = {bg = "None", fg = colors.red},
 
-  LspSignatureActiveParameter = {style = "italic", fg = colors.forest_green},
+  LspSignatureActiveParameter = {style = "italic", fg = colors.soft_green},
 
   GitSignsDelete = {bg = "None", fg = colors.red},
 
@@ -29,6 +29,7 @@ vim.g.gruvbox_baby_highlights = {
   StatusLine = { fg = colors.foreground, bg = "#413c37" },
 }
 vim.api.nvim_exec([[
+colorscheme default
 colorscheme gruvbox-baby
 
 highlight RedStatusLine guifg=#fb4934 guibg=#413c37
@@ -37,4 +38,5 @@ highlight BlueStatusLine guifg=#eebd35 guibg=#413c37
 highlight TurquoiseStatusLine guifg=turquoise guibg=#413c37
 highlight MagentaStatusLine guifg=magenta guibg=#413c37
 highlight GreyStatusLine guifg=grey guibg=#413c37
+luafile $HOME/.dotfiles/nvim/lua/highlights.lua
 ]], false)

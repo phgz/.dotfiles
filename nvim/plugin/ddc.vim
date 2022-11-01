@@ -68,8 +68,5 @@ let g:popup_preview_config = {
         \   'maxHeight': 20,
         \ }
 
-hi! link PopupPreviewDocument Pmenu
-hi! link PopupPreviewBorder Pmenu
-
 call popup_preview#enable()
 call ddc#enable()
