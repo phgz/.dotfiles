@@ -22,6 +22,7 @@ require('telescope').setup{
 }
 
 require("telescope").load_extension "repo"
+require("telescope").load_extension "noice"
 
 local dropdown_theme = require('telescope.themes').get_dropdown({
   layout_config = {

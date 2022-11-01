@@ -14,12 +14,13 @@ vim.api.nvim_exec([[
 colorscheme default
 colorscheme gruvbox-material
 call gruvbox_material#highlight('IncSearch', ['#282828',   '235'], ['#fe8019',   '208'])
-highlight RedStatusLine guifg=#fb4934 guibg=#32302f
-highlight GreenStatusLine guifg=#afaf00 guibg=#32302f
-highlight BlueStatusLine guifg=#87afaf guibg=#32302f
-highlight TurquoiseStatusLine guifg=turquoise guibg=#32302f
-highlight MagentaStatusLine guifg=magenta guibg=#32302f
-highlight GreyStatusLine guifg=grey guibg=#32302f
+highlight StatusLine guibg=#413c37
+highlight RedStatusLine guifg=#fb4934 guibg=#413c37
+highlight GreenStatusLine guifg=#afaf00 guibg=#413c37
+highlight BlueStatusLine guifg=#87afaf guibg=#413c37
+highlight TurquoiseStatusLine guifg=turquoise guibg=#413c37
+highlight MagentaStatusLine guifg=magenta guibg=#413c37
+highlight GreyStatusLine guifg=grey guibg=#413c37
 
 highlight link DiagnosticLineNrError RedBold
 highlight link DiagnosticLineNrWarn YellowBold
@@ -38,5 +39,5 @@ highlight! link TSField Blue
 highlight! link TSFuncBuiltin Yellow
 highlight! link TSFunction AquaBold
 highlight! link TSMethod Aqua
-luafile /home/philip/.dotfiles/nvim/lua/highlights.lua
+luafile $HOME/.dotfiles/nvim/lua/highlights.lua
 ]], false)

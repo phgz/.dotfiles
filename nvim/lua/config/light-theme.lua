@@ -34,4 +34,4 @@ require("github-theme").setup({
   end
 })
 
-vim.cmd('luafile /home/philip/.dotfiles/nvim/lua/highlights.lua')
+vim.cmd('luafile ' .. os.getenv( "HOME" ) .. '/.dotfiles/nvim/lua/highlights.lua')

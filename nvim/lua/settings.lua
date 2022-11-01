@@ -1,14 +1,14 @@
 local utils = require('utils')
-local gps = require("nvim-gps")
+local noice = require("noice")
 local indent = 4
 
-function NvimGPS()
-  return  gps.is_available() and ('  ' .. gps.get_location()) or ''
+function Noice()
+  return noice.api.status.message.has() and noice.api.status.message.get() or ''
 end
 
 local function status_line()
   local status = " %{%get(b:,'gitsigns_status','')%}"
-  status = status .. '%=%#GreyStatusLine#%{luaeval("NvimGPS()")}'
+  status = status .. "%=%#GreyStatusLine#%{%luaeval('Noice()')%}"
   status = status .. '%=%h%#RedStatusLine#%m%#BlueStatusLine#%r%#StatusLine# %F ▏%2c'
   return status
 end
@@ -58,6 +58,7 @@ utils.opt('w', 'cursorline', true)
 utils.opt('w', 'linebreak', true) -- Avoid wrapping a line in the middle of a word
 -- utils.opt('w', 'foldmethod', 'expr')
 -- utils.opt('w', 'foldexpr', 'nvim_treesitter#foldexpr()')
+vim.opt.shell = "/bin/sh"
 vim.opt.formatoptions = vim.opt.formatoptions - { "ro" }
 vim.opt.iskeyword = vim.opt.iskeyword + { "-" }
 vim.opt.shortmess = vim.opt.shortmess + { c = true }

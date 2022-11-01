@@ -131,8 +131,7 @@ function M.setup()
 
     use { 'phaazon/hop.nvim' } -- Vim Motions
 
-    use { 'vimpostor/vim-tpipeline' }
-    use { '/dstein64/vim-startuptime' }
+    -- use { 'vimpostor/vim-tpipeline' }
     use { 'jose-elias-alvarez/null-ls.nvim' }
     -- use {
     --   --"michaelb/sniprun",
@@ -156,18 +155,17 @@ function M.setup()
 
     use { 'machakann/vim-swap' } -- Swap delimited items, like function arguments
 
-    -- use { 'rcarriga/nvim-notify' } --  Notifications
-    -- use({
-    --   "folke/noice.nvim",
-    --   requires = {
-    --     -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
-    --     "MunifTanjim/nui.nvim",
-    --     -- OPTIONAL:
-    --     --   `nvim-notify` is only needed, if you want to use the notification view.
-    --     --   If not available, we use `mini` as the fallback
-    --     "rcarriga/nvim-notify",
-    --   }
-    -- })
+    use({
+      "folke/noice.nvim",
+      requires = {
+        -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+        "MunifTanjim/nui.nvim",
+        -- OPTIONAL:
+        --   `nvim-notify` is only needed, if you want to use the notification view.
+        --   If not available, we use `mini` as the fallback
+        -- "rcarriga/nvim-notify",
+      }
+    })
 
     use { 'nixon/vim-vmath' } -- Visual block math mode
 
@@ -186,7 +184,7 @@ function M.setup()
       requires = 'popfix'
     } -- cheat.sh
 
-    use { 'stevearc/dressing.nvim' } -- Use Telescope for input
+    -- use { 'stevearc/dressing.nvim' } -- Use Telescope for input
 
     -- Bootstrap Neovim
     if packer_bootstrap then
