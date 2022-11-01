@@ -112,7 +112,6 @@ M.after_sep = function(fwd)
   local direction = fwd and "f" or "F"
   local col = vim.fn.col(".")
   local prev_char = vim.api.nvim_get_current_line():sub(col-1,col-1)
-  print(prev_char)
   if direction == "F" and prev_char == "_" then
     direction = "2F"
   end
