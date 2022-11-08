@@ -176,6 +176,7 @@ if [ ! -d "$HOME"/.miniconda3 ]; then
     curl -L $url_prefix/Miniconda3-latest-$platform_name-"$arch".sh -o miniconda.sh
     bash miniconda.sh -b -p "$HOME"/.miniconda3
     rm miniconda.sh
+    "$HOME"/.miniconda3/bin/conda install --yes python="$PYTHON_VERSION"
     "$HOME"/.miniconda3/bin/conda create --yes --name neovim python="$PYTHON_VERSION"
     "$HOME"/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
     "$HOME"/.miniconda3/bin/conda install --yes -c conda-forge shellcheck
