@@ -1,7 +1,7 @@
 local colors = require("gruvbox-baby.colors").config()
 
-vim.g.gruvbox_baby_transparent_mode = 1
 -- func local asadfad avc = @424r
+vim.g.gruvbox_baby_transparent_mode = 1
 vim.g.gruvbox_baby_highlights = {
   DiagnosticUnderlineHint = {style = "undercurl", bg = "None",  sp = colors.forest_green},
   DiagnosticUnderlineWarn = {style = "undercurl", bg = "None",  sp = colors.soft_yellow},
@@ -29,16 +29,35 @@ vim.g.gruvbox_baby_highlights = {
   MatchParen = { bg = colors.medium_gray},
 
   StatusLine = { fg = colors.foreground, bg = "#413c37" },
-}
-vim.api.nvim_exec([[
-colorscheme default
-colorscheme gruvbox-baby
 
-highlight RedStatusLine guifg=#fb4934 guibg=#413c37
-highlight GreenStatusLine guifg=#689d6a guibg=#413c37
-highlight BlueStatusLine guifg=#eebd35 guibg=#413c37
-highlight TurquoiseStatusLine guifg=turquoise guibg=#413c37
-highlight MagentaStatusLine guifg=magenta guibg=#413c37
-highlight GreyStatusLine guifg=grey guibg=#413c37
-luafile $HOME/.dotfiles/nvim/lua/highlights.lua
-]], false)
+  NormalFloat  = {bg = "None"},
+  ErrorFloat   = {bg = "None"},
+  WarningFloat = {bg = "None"},
+  InfoFloat    = {bg = "None"},
+  HintFloat    = {bg = "None"},
+  FloatBorder = {bg = "None"},
+
+  PopupPreviewDocument = { fg = colors.foreground, bg = colors.background_light },
+  PopupPreviewBorder = { fg = colors.foreground, bg = colors.background_light },
+
+  RedStatusLine       = {fg = colors.red, bg = "#413c37"  },
+  GreenStatusLine     = {fg = colors.forest_green, bg = "#413c37"  },
+  BlueStatusLine      = {fg = colors.soft_yellow, bg = "#413c37"  },
+  GreyStatusLine      = {fg = "grey", bg = "#413c37"     },
+
+  TelescopeBorder = { fg = colors.background_dark, bg = colors.background_dark },
+  TelescopePromptCounter = { fg = colors.milk, bg = colors.medium_gray },
+  TelescopePromptBorder = { fg = colors.medium_gray, bg = colors.medium_gray },
+  TelescopePromptNormal = { fg = colors.milk, bg = colors.medium_gray },
+  TelescopePromptPrefix = { fg = colors.soft_yellow, bg = colors.medium_gray },
+
+  TelescopeNormal = { bg = colors.background_dark },
+
+  TelescopePreviewTitle = { fg = colors.background, bg = colors.forest_green },
+  TelescopePreviewMatch = { fg = colors.background_dark, bg = colors.milk },
+  TelescopePromptTitle = { fg = colors.background, bg = colors.soft_yellow },
+  TelescopeResultsTitle = { fg = colors.background_dark, bg = colors.milk },
+
+  TelescopeSelection = { bg = colors.diff.change },
+  TelescopeMultiSelection = { fg = colors.soft_yellow },
+}

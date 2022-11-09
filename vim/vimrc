@@ -55,6 +55,7 @@ set backspace=indent,eol,start
 " settings
 set splitright
 set splitbelow
+set mouse=nicr
 set encoding=utf8
 scriptencoding utf-8
 set nu

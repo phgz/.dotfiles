@@ -1,4 +1,6 @@
 -- TODO: sort
+require('config.github-light')
+require('config.gruvbox-baby')
 require('config.colorscheme')
 require('config.ultisnips')
 -- require('config.osc52')
