@@ -79,9 +79,8 @@ function M.setup()
     use { 'neovim/nvim-lspconfig' } -- LSP and completion
     use {'williamboman/mason.nvim'} -- LSP installer
     use {'williamboman/mason-lspconfig.nvim'}
-    -- use {'ray-x/lsp_signature.nvim'} -- Signature help
+    -- use { 'WhoIsSethDaniel/mason-tool-installer.nvim' } -- Auto install tools like shellcheck
     use { 'onsails/lspkind-nvim' } -- LSP pictograms
-    -- use { 'github/copilot.vim' } -- AI completion
     use {
       'Shougo/ddc.vim', requires = {'vim-denops/denops.vim',
         'matsui54/ddc-ultisnips', 'Shougo/ddc-omni', 'Shougo/ddc-nvim-lsp',
@@ -109,7 +108,6 @@ function M.setup()
     use { 'honza/vim-snippets' } -- Snippets
     use { 'SirVer/ultisnips' } -- Snippets engine
 
-    -- use { 'ojroques/nvim-osc52' } -- Global TMUX yank
     use { 'ibhagwan/smartyank.nvim' }
 
     use {
@@ -131,18 +129,19 @@ function M.setup()
 
     use { 'phaazon/hop.nvim' } -- Vim Motions
 
-    -- use { 'vimpostor/vim-tpipeline' }
+    use {
+      'Weissle/easy-action',
+      requires = {
+        {
+          "kevinhwang91/promise-async",
+          module = { "async" },
+        }
+      }
+    }
+
+    use { 'diegoulloao/nvim-file-location' }
+
     use { 'jose-elias-alvarez/null-ls.nvim' }
-    -- use {
-    --   --"michaelb/sniprun",
-    --   "philipgaudreau/sniprun",
-    --   branch = "feature/hide-kernel-launched",
-    --   run = "bash ./install.sh",
-    --   config = function()
-    --     require("config.sniprun").setup()
-    --   end,
-    --   ft = { "python" }
-    -- } -- Execute code snippets
 
     use { 'Houl/repmo-vim' } -- More motions with , and ;
 
@@ -151,20 +150,15 @@ function M.setup()
     use { 'junegunn/vim-easy-align' } -- Tabularize
 
     use { 'airblade/vim-matchquote' } -- Add matching for ' " ` |
-    -- use { 'andymass/vim-matchup' } -- Extend % matching to objects start/end
 
     use { 'machakann/vim-swap' } -- Swap delimited items, like function arguments
 
     use({
       "folke/noice.nvim",
       requires = {
-        -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
         "MunifTanjim/nui.nvim",
-        -- OPTIONAL:
-        --   `nvim-notify` is only needed, if you want to use the notification view.
-        --   If not available, we use `mini` as the fallback
-        -- "rcarriga/nvim-notify",
-      }
+      },
+      commit = "7b62ccfc236e51e78e5b2fc7d3068eacd65e4590"
     })
 
     use { 'nixon/vim-vmath' } -- Visual block math mode
@@ -184,7 +178,8 @@ function M.setup()
       requires = 'popfix'
     } -- cheat.sh
 
-    -- use { 'stevearc/dressing.nvim' } -- Use Telescope for input
+    -- use { 'vimpostor/vim-tpipeline' } -- Status line in TMUX bar
+    -- use { 'andymass/vim-matchup' } -- Extend % matching to objects start/end
 
     -- Bootstrap Neovim
     if packer_bootstrap then

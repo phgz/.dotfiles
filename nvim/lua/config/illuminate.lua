@@ -34,9 +34,3 @@ require('illuminate').configure({
     -- under_cursor: whether or not to illuminate under the cursor
     under_cursor = false,
 })
-
-vim.api.nvim_exec([[
-hi def IlluminatedWordText gui=bold
-hi def IlluminatedWordRead gui=bold
-hi def IlluminatedWordWrite gui=bold
-]], false)

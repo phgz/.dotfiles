@@ -178,7 +178,7 @@ if [ ! -d "$HOME"/.miniconda3 ]; then
     rm miniconda.sh
     "$HOME"/.miniconda3/bin/conda install --yes python="$PYTHON_VERSION"
     "$HOME"/.miniconda3/bin/conda create --yes --name neovim python="$PYTHON_VERSION"
-    "$HOME"/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake black isort pyright
+    "$HOME"/.miniconda3/envs/neovim/bin/pip install toml gitpython pynvim autoflake
     "$HOME"/.miniconda3/bin/conda install --yes -c conda-forge shellcheck
 fi
 

@@ -36,6 +36,10 @@ local next_diagnostic = '\'<cmd>lua vim.diagnostic.goto_next({ float = { border 
 local prev_diagnostic = '\'<cmd>lua vim.diagnostic.goto_prev({ float = { border = "rounded" } })<CR>\''
 mapping.diagnostic = {ns = next_diagnostic, ps = prev_diagnostic}
 
+local next_fold = '\'<cmd>norm! zj<CR>\''
+local prev_fold = '\'<cmd>norm! zk<CR>\''
+mapping.zfold = {ns = next_fold, ps = prev_fold}
+
 mapping.parameter.ns = mapping.parameter.ns:gsub('outer', 'inner')
 mapping.parameter.ps = mapping.parameter.ps:gsub('outer', 'inner')
 mapping.kall = mapping.call
@@ -62,9 +66,6 @@ end
 
 map('', ']m', 'repmo#SelfKey("]m", "[m") <bar> sunmap ]m', opts_noremap)
 map('', '[m', 'repmo#SelfKey("[m", "]m") <bar> sunmap [m', opts_noremap)
-
--- map('n', ';', 'repmo#LastKey(";") <bar> sunmap ;', opts)
--- map('n', ',', 'repmo#LastRevKey(",") <bar> sunmap ,', opts)
 
 map('n', ';', 'repmo#LastKey("<Plug>fanfingtastic_;") <bar> sunmap ;', opts)
 map('n', ',', 'repmo#LastRevKey("<Plug>fanfingtastic_,") <bar> sunmap ,', opts)

@@ -1,76 +1,73 @@
-local utils = require('utils')
-local noice = require("noice")
-local indent = 4
+--Global (g:) editor variables.
+local g = vim.g
 
-function Noice()
-  return noice.api.status.message.has() and noice.api.status.message.get() or ''
-end
+-- A special interface |vim.opt| exists for conveniently interacting with list-
+-- and map-style option from Lua: It allows accessing them as Lua tables and
+-- offers object-oriented method for adding and removing entries.
+local opt = vim.opt
+
+-- Get or set global |options|. Like `:setglobal`.
+-- Note: this is different from |vim.o| because this accesses the global
+-- option value and thus is mostly useful for use with |global-local|
+-- options.
+local go = vim.go
+
+-- Get or set buffer-scoped |options| for the buffer with number {bufnr}. Like `:set` and `:setlocal`.
+-- Note: this is equivalent to both `:set` and `:setlocal`.
+local bo = vim.bo
+
+-- Get or set window-scoped |options| for the window with handle {winid}. Like `:set`.
+-- Note: this does not access |local-options| (`:setlocal`).
+local wo = vim.wo
 
 local function status_line()
   local status = " %{%get(b:,'gitsigns_status','')%}"
-  status = status .. "%=%#GreyStatusLine#%{%luaeval('Noice()')%}"
+  status = status .. [[%=%#GreyStatusLine#%{%luaeval('require("noice.api.status").message.get() or ""')%}]]
   status = status .. '%=%h%#RedStatusLine#%m%#BlueStatusLine#%r%#StatusLine# %F ▏%2c'
   return status
 end
 
-vim.api.nvim_exec([[
-syntax enable
-filetype plugin indent on
-set nohlsearch
-set history=100
-set shell=fish
-set foldtext=getline(v:foldstart+1)
-]], false)
+g.loaded_perl_provider = 0
+g.maplocalleader = "!"
+g.python3_host_prog = "~/.miniconda3/envs/neovim/bin/python"
 
--- CursorHold and CursorHoldI
--- vim.g.cursorhold_updatetime = 4000
+bo.expandtab = true
+bo.shiftwidth = 4
+bo.smartindent = true
+bo.softtabstop = 4
+bo.tabstop = 4
 
--- vim.g.mapleader = "<Space>"
-vim.g.maplocalleader = "!"
+go.autochdir = true
+-- go.clipboard = 'unnamed,unnamedplus'
+go.cmdheight = 0
+go.completeopt = 'menu,menuone,noinsert,noselect'
+go.gdefault = true
+go.hlsearch = false
+go.ignorecase = true
+go.laststatus = 3
+go.mouse = 'nicr'
+go.pumblend = 30
+go.pumheight = 9
+go.shell = "/bin/sh"
+go.shiftround = true
+go.smartcase = true
+go.splitbelow = true
+go.splitright = true
+go.statusline = status_line()
+go.termguicolors = true
+go.timeoutlen = 4000
+go.wildmode = 'list:longest'
 
-utils.opt('b', 'expandtab', true)
-utils.opt('b', 'shiftwidth', indent)
-utils.opt('b', 'smartindent', true)
-utils.opt('b', 'tabstop', indent)
--- utils.opt('o', 'updatetime', 4000) -- default to 4000, used by signatureHelp
-utils.opt('o', 'cmdheight', 0)
-utils.opt('o', 'timeoutlen', 4000) -- Keymap timer
-utils.opt('o', 'laststatus', 3)
-utils.opt('o', 'pumblend', 30)
-utils.opt('o', 'pumheight', 9)
-utils.opt('o', 'icm', 'nosplit')
-utils.opt('o', 'mouse', 'nicr')
-utils.opt('o', 'hidden', true)
-utils.opt('o', 'autochdir', true)
-utils.opt('o', 'ignorecase', true)
-utils.opt('o', 'shiftround', true)
-utils.opt('o', 'smartcase', true)
-utils.opt('o', 'splitbelow', true)
-utils.opt('o', 'splitright', true)
-utils.opt('o', 'showmode', false)
-utils.opt('o', 'wildmode', 'list:longest')
-utils.opt('o', 'completeopt', 'menu,menuone,noinsert,noselect')
---utils.opt('o', 'backspace', 'indent,start')
-utils.opt('w', 'number', true)
-utils.opt('w', 'signcolumn', "yes")
--- utils.opt('w', 'winbar', "...") -- Use winbar feature
-utils.opt('w', 'cursorline', true)
-utils.opt('w', 'linebreak', true) -- Avoid wrapping a line in the middle of a word
--- utils.opt('w', 'foldmethod', 'expr')
--- utils.opt('w', 'foldexpr', 'nvim_treesitter#foldexpr()')
-vim.opt.shell = "/bin/sh"
-vim.opt.formatoptions = vim.opt.formatoptions - { "ro" }
-vim.opt.iskeyword = vim.opt.iskeyword + { "-" }
-vim.opt.shortmess = vim.opt.shortmess + { c = true }
-vim.o.statusline = status_line()
---utils.opt('o', 'clipboard','unnamed,unnamedplus')
+wo.cursorline = true
+wo.foldtext = 'getline(v:foldstart+1)'
+wo.linebreak = true
+wo.number = true
+wo.signcolumn = "yes"
+-- wo.winbar = "..." -- Use winbar feature
 
--- Highlight on yank
--- Highlight when more than 80 cols
--- Fold docstring
---call matchadd('DiffText', '\%81v\|\%89v\|\%97v')
-vim.api.nvim_exec([[
-autocmd TextYankPost * silent! lua vim.highlight.on_yank {timeout=140}
-call matchadd('DiffText', '\%97v')
-autocmd FileType python setlocal foldenable foldmethod=syntax
-]], false)
+opt.formatoptions:remove { "ro" }
+opt.iskeyword:append { "-" }
+opt.matchpairs:append { ">:<" }
+opt.shortmess:append { c = true, I = true --[[A = true]]}
+
+vim.fn.matchadd('DiffText', '\\%97v')

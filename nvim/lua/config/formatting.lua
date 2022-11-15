@@ -1,5 +1,5 @@
 require('formatter').setup{
-  logging = false,
+  logging = true,
   filetype = {
     python = {
       -- black
@@ -15,15 +15,15 @@ require('formatter').setup{
         --
         -- config_opt = vim.fn.filereadable(pyproject) and "--config " .. pyproject or ""
         return {
-          exe = "~/.miniconda3/envs/neovim/bin/isort",
-          args = {"-", "--quiet", "--multi-line", 3, "--resolve-all-configs"},
+          exe = "isort",
+          args = {"--quiet", "--profile", "black", "--resolve-all-configs", "-"},
           stdin = true
         }
       end,
       -- isort
       function()
         return {
-          exe = "~/.miniconda3/envs/neovim/bin/black",
+          exe = "black",
           args = {"--quiet", '-'},
           stdin = true
         }
@@ -32,12 +32,12 @@ require('formatter').setup{
   }
 }
 
-vim.api.nvim_exec([[
-augroup FormatAutogroup
-autocmd!
-autocmd BufWritePost *.py FormatWrite
-augroup END
-]], false)
+local formatGrp = vim.api.nvim_create_augroup("FormatAutogroup", { clear = true })
+vim.api.nvim_create_autocmd("BufWritePost", {
+	pattern = "*.py",
+  command = "FormatWrite",
+  group = formatGrp,
+})
 
 local function file_exists(name)
   local f = io.open(name, "r")

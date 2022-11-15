@@ -60,4 +60,8 @@ vim.g.gruvbox_baby_highlights = {
 
   TelescopeSelection = { bg = colors.diff.change },
   TelescopeMultiSelection = { fg = colors.soft_yellow },
+
+  IlluminatedWordText = { style = 'bold' },
+  IlluminatedWordRead = { style = 'bold' },
+  IlluminatedWordWrite= { style = 'bold' },
 }

@@ -26,8 +26,8 @@ require("Comment").setup{
     },
 }
 
-vim.api.nvim_set_keymap('n', 'KD', '<ESC><CMD>lua require("custom_plugins.lines").yank_comment_paste()<CR>', opt)
-vim.api.nvim_set_keymap('x', 'gkd', '<ESC><CMD>lua require("custom_plugins.lines").yank_comment_paste(vim.fn.visualmode())<CR>', opt)
+vim.keymap.set('n', 'KD', require("custom_plugins.lines").yank_comment_paste, opt)
+vim.keymap.set('x', 'gkd', function() require("custom_plugins.lines").yank_comment_paste(vim.fn.visualmode()) end, opt)
 
 -- function _G.___gcd(vmode)
 --   lua require("custom_plugins.lines").yank_comment_paste()

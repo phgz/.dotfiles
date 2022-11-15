@@ -11,4 +11,4 @@ require("neogen").setup {
 }
 
 local opts = { noremap = true, silent = true }
-vim.keymap.set("n", "<leader>a", "<CMD>lua require('neogen').generate()<CR>", opts)
+vim.keymap.set("n", "<leader>a", require('neogen').generate, opts)

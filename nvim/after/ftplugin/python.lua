@@ -1,7 +1,10 @@
-vim.bo.shiftwidth = 4
-vim.bo.tabstop = 4
-vim.bo.softtabstop = 4
-vim.bo.expandtab = true
-vim.bo.textwidth = 0
-vim.bo.autoindent = true
-vim.bo.smartindent = true
+vim.wo.foldmethod="syntax"
+
+for _, match in ipairs(vim.fn.getmatches()) do
+  if match['group'] == 'DiffText' then
+    vim.fn.matchdelete(match['id'])
+    break
+  end
+end
+
+vim.fn.matchadd('DiffText', '\\%89v')

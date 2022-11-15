@@ -1,5 +1,5 @@
-vim.keymap.set('n', 'q', '<cmd>lua require("custom_plugins.lines").after_sep(true)<cr>', {silent = true})
-vim.keymap.set('n', 'gq', '<cmd>lua require("custom_plugins.lines").after_sep(false)<cr>', {silent = true})
+vim.keymap.set('n', 'q', function() require("custom_plugins.lines").after_sep(true) end, {silent = true})
+vim.keymap.set('n', 'gq', function() require("custom_plugins.lines").after_sep(false) end, {silent = true})
 
 vim.keymap.set('n', '<leader>s', '<cmd>lua require("custom_plugins.lines").swap()<cr>', {silent = true})
 

@@ -36,6 +36,9 @@ require('github-theme').setup({
       InfoFloat    = {bg = "None"},
       HintFloat    = {bg = "None"},
       FloatBorder = {bg = "None"},
+      IlluminatedWordText = { style = 'bold' },
+      IlluminatedWordRead = { style = 'bold' },
+      IlluminatedWordWrite= { style = 'bold' },
       --     -- this will remove the highlight groups
       --     TSField = {},
     }

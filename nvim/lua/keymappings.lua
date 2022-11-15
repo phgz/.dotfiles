@@ -1,13 +1,15 @@
 --to input a function as insert mode: <C-R>=UltiSnips#ExpandSnippet()<CR>
 local set = vim.keymap.set
+local api = vim.api
+local fn = vim.fn
 
-vim.api.nvim_set_keymap('', ' ', '<Bslash>' , {noremap=false})--< Leader
-vim.api.nvim_set_keymap('', '<BS>', '!' , {noremap=false})--< Local Leader
+api.nvim_set_keymap('', ' ', '<Bslash>' , {noremap=false})--< Leader
+api.nvim_set_keymap('', '<BS>', '!' , {noremap=false})--< Local Leader
 
 -- leader key
-set('n', '<leader>v', '<C-w>v')--< Split vertical
-set('n', '<leader>h', '<C-w>s')--< Split horizontal
-set('n', '<leader>q', '<C-w>c')--< Close window
+set('n', '<localleader>v', '<cmd>vsplit<cr>')--< Split vertical
+set('n', '<localleader>h', '<cmd>split<cr>')--< Split horizontal
+set('n', '<leader>q', 'close')--< Close window
 set('n', '<leader>g', '<Nop>')
 set('n', '<localleader>q', 'mb<cmd>g/breakpoint()/d<cr>`b')--< Remove Breakpoint
 set('n', '<leader>b', 'obreakpoint()<Esc>')--< set Breakpoint
@@ -38,6 +40,23 @@ set('n', 'sN', '<cmd>move .+1<cr>')--< Swap with next line
 set('n', 'sP', '<cmd>move .-2<cr>')--< Swap with prev line
 set('v', 'y', 'ygv<Esc>')--< Do not move cursor on yank
 
+set('', '(', function()
+  local line = fn.line("'{")
+  if line == fn.line('.') - 1 then
+    fn.cursor(line-1,0)
+    line = fn.line("'{")
+  end
+  fn.cursor(line + fn.empty(fn.getline(line)), 0)
+end)
+set('', ')', function()
+  local line = fn.line("'}")
+  if line == fn.line('.') + 1 then
+    fn.cursor(line+1,0)
+    line = fn.line("'}")
+  end
+  fn.cursor(line - fn.empty(fn.getline(line)), 0)
+end)
+
 --Meta key
 set('n', '<M-S-s>', 'r<CR>ddkP')--< Split up
 set('n', '<M-j>', 'd$jA <Esc>p')--< Join at end of below
@@ -51,7 +70,7 @@ set('n', '<M-o>', 'mbo<Esc>`b')  --< New line down
 set('n', '<M-S-o>', 'mbO<Esc>`b')--< New line up
 set('n', '<M-h>', 'i<space><esc><right>')--< Add space left
 set('n', '<M-l>', 'a<space><esc><left>')--< Add space right
-set('i', '<C-l>', '<C-o>:norm! "byl<cr><right>,<space><C-r>=@b[0].@b[0]<cr><left>')--< Add new string parameter
+set('i', '<C-l>', '<C-o>norm! "byl<cr><right>,<space><C-r>=@b[0].@b[0]<cr><left>')--< Add new string parameter
 set('i', '<C-s>', '<space><space><left>')--< Add space after and before
-set('', '<M-x>', 'm":norm kx<CR>`"')   --< Delete lastchar multiline
-set('', '<M-S-x>', 'm":norm x<CR>`"')--< Delete firstchar multiline
+set('', '<M-x>', 'mb:norm! $x<CR>`b')   --< Delete lastchar multiline
+set('', '<M-S-x>', 'mb:norm! 0x<CR>`b')--< Delete firstchar multiline

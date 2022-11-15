@@ -1,6 +1,3 @@
-local utils = require('utils')
-utils.opt('o', 'termguicolors', true)
-
 local colorFile = os.getenv( "HOME" ) .. '/.dotfiles/nvim/lua/config/current-theme.lua'
 
 local function reload()
@@ -22,4 +19,3 @@ end
 -- reload vim config when background changes
 watch_file(colorFile)
 reload()
-

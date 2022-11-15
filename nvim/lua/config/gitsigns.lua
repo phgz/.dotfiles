@@ -44,8 +44,8 @@ require('gitsigns').setup {
     map('n', 'gc', function() gs.diffthis(vim.fn.input("Compare to: ")) end)
 
     -- Text objects
-     map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
-     map({'o', 'x'}, 'ah', ':<C-U>Gitsigns select_hunk<CR>')
+    map({'o', 'x'}, 'ih', gs.select_hunk)
+    map({'o', 'x'}, 'ah', gs.select_hunk)
   end,
   status_formatter =function(status)
     local head = status.head

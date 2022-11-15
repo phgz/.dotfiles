@@ -1,3 +1,5 @@
+local get_range_motion = require"custom_plugins.utils".get_range_motion
+
 local M = {}
 
 local feed = function(motion)
@@ -25,24 +27,6 @@ local get_range_params = function(tbl, to)
   local range = tbl.end_ - tbl.start
   local new_start, new_end = forward and to-range or to, forward and to or to + range
   return {forward = forward, new_start = new_start, new_end = new_end, range = range}
-end
-
-local get_range_motion = function(mode)
-  local range_start
-  local range_end
-
-  if mode == 'v' then
-    range_start = vim.fn.line('v')
-    range_end = vim.api.nvim_win_get_cursor(0)[1]
-    if range_start > range_end then
-      range_start, range_end = range_end, range_start
-    end
-  else
-    range_start = vim.fn.line('.')
-    range_end = range_start
-  end
-
-  return {start = range_start, end_ = range_end}
 end
 
 local swap_aux = function(other, current)
@@ -76,7 +60,7 @@ end
 local move_aux = function(tbl, to)
   local params = get_range_params(tbl, to)
   vim.cmd(tbl.start .. "," .. tbl.end_ .. "m " .. to)
-  offset = params.forward and 0 or 1
+  local offset = params.forward and 0 or 1
   actualize_visual_selection(params.new_start+offset, params.new_end+offset)
   feed("gv=")
 end
