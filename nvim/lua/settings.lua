@@ -22,13 +22,14 @@ local wo = vim.wo
 
 local function status_line()
   local status = " %{%get(b:,'gitsigns_status','')%}"
-  status = status .. [[%=%#GreyStatusLine#%{%luaeval('require("noice.api.status").message.get() or ""')%}]]
+  status = status .. [[%=%#GreyStatusLine#%{%luaeval('require("noice.api.status").search.get() or require("noice.api.status").message.get() or ""')%}]]
   status = status .. '%=%h%#RedStatusLine#%m%#BlueStatusLine#%r%#StatusLine# %F ▏%2c'
   return status
 end
 
 g.loaded_perl_provider = 0
-g.maplocalleader = "!"
+g.mapleader = " "
+vim.cmd([[let maplocalleader="\<BS>"]])
 g.python3_host_prog = "~/.miniconda3/envs/neovim/bin/python"
 
 bo.expandtab = true
@@ -57,6 +58,7 @@ go.statusline = status_line()
 go.termguicolors = true
 go.timeoutlen = 4000
 go.wildmode = 'list:longest'
+go.incsearch = true
 
 wo.cursorline = true
 wo.foldtext = 'getline(v:foldstart+1)'

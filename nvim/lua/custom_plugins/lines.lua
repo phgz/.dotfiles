@@ -93,15 +93,27 @@ M.swap = function()
 end
 
 M.after_sep = function(fwd)
-  local direction = fwd and "f" or "F"
-  local col = vim.fn.col(".")
-  local prev_char = vim.api.nvim_get_current_line():sub(col-1,col-1)
-  if direction == "F" and prev_char == "_" then
-    direction = "2F"
-  end
-  local seq = vim.api.nvim_replace_termcodes(direction .. "_", true, true, true)
-  vim.api.nvim_feedkeys(seq, 'm', false)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<right>", true, false, true), 'n', false)
+	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	local prev_char = vim.api.nvim_get_current_line():sub(col,col)
+	local back_on_edge = not fwd and prev_char == "_"
+	local opts = 'Wn'
+	opts = fwd and opts or opts .. 'b'
+
+	if back_on_edge then
+		vim.api.nvim_win_set_cursor(0, {row, col-1})
+	end
+
+	local new_row, new_col = unpack(vim.fn.searchpos('_', opts))
+
+	if new_row == 0 then
+		if back_on_edge then
+			vim.api.nvim_win_set_cursor(0, {row, col})
+		else
+			return
+		end
+	else
+		vim.api.nvim_win_set_cursor(0, {new_row, new_col})
+	end
 end
 
 M.duplicate = function()
@@ -118,27 +130,6 @@ M.kill = function()
     return
   end
   kill_aux(input)
-end
-
-M.yank_comment_paste = function(vmode)
-  local U = require("Comment.utils")
-  local A = require("Comment.api")
-
-  local range = U.get_region(vmode)
-  local lines = U.get_lines(range)
-
-  -- Copying the block
-  local srow = range.erow
-  vim.api.nvim_buf_set_lines(0, srow, srow, false, lines)
-
-  -- Doing the comment
-  A.comment_linewise_op(vmode)
-
-  -- Move the cursor
-  local erow = srow + 1
-  local line = U.get_lines({ srow = srow, erow = erow })
-  local _, col = U.grab_indent(line[1])
-  vim.api.nvim_win_set_cursor(0, { erow, col })
 end
 
 return M

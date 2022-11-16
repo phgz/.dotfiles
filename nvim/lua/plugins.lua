@@ -158,7 +158,7 @@ function M.setup()
       requires = {
         "MunifTanjim/nui.nvim",
       },
-      commit = "7b62ccfc236e51e78e5b2fc7d3068eacd65e4590"
+      -- commit = "7b62ccfc236e51e78e5b2fc7d3068eacd65e4590"
     })
 
     use { 'nixon/vim-vmath' } -- Visual block math mode

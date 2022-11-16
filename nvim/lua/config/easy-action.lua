@@ -19,7 +19,7 @@ require("easy-action").setup({
         char1 = {
           -- action ends with any char of options will use HopChar1MW command.
           options = "(){}[]<>`'\"",
-          cmd = "HopChar1MW",
+          cmd = "HopChar1",
           feed = function(action)
             return string.sub(action, #action)
           end,
@@ -27,10 +27,10 @@ require("easy-action").setup({
         line = {
           -- action ends with any char of options will use HopLineMW command.
           options = "yd",
-          cmd = "HopLineMW",
+          cmd = "HopLine",
         },
         -- Default command.
-        default = "HopChar1",
+        default = "HopWord",
       },
     },
   },
@@ -41,4 +41,9 @@ require("easy-action").setup({
 
 local opts = { silent=true, remap=false }
 -- trigger easy-action.
-vim.keymap.set("n","<leader>e", "<cmd>BasicEasyAction<cr>", opts)
+vim.keymap.set("n","\\", "<cmd>BasicEasyAction<cr>", opts)
+
+-- To insert something and jump back after you leave the insert mode
+vim.keymap.set("n","<leader>g", function()
+  require("easy-action").base_easy_action("i", nil, "InsertLeave")
+end, opts)

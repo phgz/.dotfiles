@@ -15,16 +15,6 @@ require("noice").setup({
       -- override the lsp markdown formatter with Noice
       ["vim.lsp.util.stylize_markdown"] = true,
     },
-    documentation = {
-      view = "hover",
-      opts = {
-        lang = "markdown",
-        replace = true,
-        render = "plain",
-        format = { "{message}" },
-        win_options = { concealcursor = "n", conceallevel = 3 },
-      },
-    },
   },
   presets = {
     lsp_doc_border = true

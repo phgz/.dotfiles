@@ -1,5 +1,3 @@
-local opt = { silent = true, noremap = true }
-
 require("Comment").setup{
       toggler = {
         ---Line-comment toggle keymap
@@ -26,11 +24,22 @@ require("Comment").setup{
     },
 }
 
-vim.keymap.set('n', 'KD', require("custom_plugins.lines").yank_comment_paste, opt)
-vim.keymap.set('x', 'gkd', function() require("custom_plugins.lines").yank_comment_paste(vim.fn.visualmode()) end, opt)
+vim.keymap.set('n', 'KD',
+function()
+	local U = require("Comment.utils")
 
--- function _G.___gcd(vmode)
---   lua require("custom_plugins.lines").yank_comment_paste()
--- end
--- A.nvim_set_keymap('n', 'gy', '<CMD>set operatorfunc=v:lua.___gdc<CR>g@', opt)
+	local col = vim.fn.col('.')
+	local range = U.get_region()
+	local lines = U.get_lines(range)
 
+	-- Copying the block
+	local srow = range.erow
+	vim.api.nvim_buf_set_lines(0, srow, srow, false, lines)
+
+	-- Doing the comment
+	require("Comment.api").comment.linewise()
+
+	-- Move the cursor
+	vim.api.nvim_win_set_cursor(0, { srow+1, col-1 })
+end
+, { silent = true, noremap = true })

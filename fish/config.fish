@@ -37,6 +37,7 @@ abbr -ag nv nvim
 
 abbr -ag ga git add
 abbr -ag gb git branch
+abbr -ag gco git checkout
 abbr -ag gcl git clone
 abbr -ag gc git commit -m
 abbr -ag gd git diff
