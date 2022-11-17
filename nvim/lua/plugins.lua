@@ -95,6 +95,8 @@ function M.setup()
 
     use { 'cljoly/telescope-repo.nvim' } --Jump around the repositories in the filesystem
 
+    use { 'kylechui/nvim-surround' }
+
     use { "beauwilliams/focus.nvim",
       config = function()
         require("focus").setup({signcolumn = false, cursorline = false})
@@ -117,11 +119,7 @@ function M.setup()
       end
     } -- Comments
 
-    use { 'tpope/vim-surround' } -- Surround
-
     use { 'windwp/nvim-autopairs' } -- Pairwise
-
-    use { 'AndrewRadev/dsf.vim' } -- Delete function surround
 
     use { 'lukas-reineke/indent-blankline.nvim' } -- Indentation line
 

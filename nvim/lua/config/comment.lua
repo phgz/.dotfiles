@@ -2,8 +2,6 @@ require("Comment").setup{
       toggler = {
         ---Line-comment toggle keymap
         line = 'KK',
-        ---Block-comment toggle keymap
-        block = 'gkb',
     },
 
     ---LHS of operator-pending mappings in NORMAL + VISUAL mode
@@ -11,8 +9,6 @@ require("Comment").setup{
     opleader = {
         -- -Line-comment keymap
         line = 'K',
-        ---Block-comment keymap
-        block = 'gk',
     },
       extra = {
         ---Add comment on the line above
