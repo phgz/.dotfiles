@@ -1,9 +1,6 @@
-require('config.github-light')
-require('config.gruvbox-baby')
-require('config.colorscheme')
-
 require('config.autopairs')
 require('config.cheat')
+require('config.colorscheme')
 require('config.comment')
 require('config.commentframe')
 require('config.easy-action')

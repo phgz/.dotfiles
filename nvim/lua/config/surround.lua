@@ -1,5 +1,3 @@
-local config = require("nvim-surround.config")
-
 require("nvim-surround").setup({
   keymaps = {
     insert = "<C-g>s",
@@ -22,6 +20,6 @@ local opts = {
 }
 vim.keymap.set('n', 'S',
 function()
-  return config.get_opts().keymaps.normal .. "g_"
+  return "<Plug>(nvim-surround-normal)g_"
 end
 , opts)
