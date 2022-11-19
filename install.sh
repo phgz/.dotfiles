@@ -237,12 +237,14 @@ fc-cache -f -v
 rm FantasqueSansMono.zip && rm -rf FantasqueSansMono
 
 #------------------------------------------------------------------------------#
-#                                   Git hooks                                  #
+#                                   Git stuff                                  #
 #------------------------------------------------------------------------------#
 for folder in "$HOME"/*/
 do
    ln -sf "$HOME"/.dotfiles/git/pre-commit "${folder%/*}"/.git/hooks/
 done
+
+sed "s/<<EMAIL>>/$(git log | head -2 | rg Author | sed -r 's/.*<(.*)>.*/\1/')/" "$HOME"/.dotfiles/git/gitconfig > "$HOME"/.gitconfig
 
 #------------------------------------------------------------------------------#
 #                                    Theme                                     #

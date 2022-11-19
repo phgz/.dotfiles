@@ -1,6 +1,9 @@
 [user]
-	email = <<EMAIL>>
-	name = Philip Gaudreau
+    email = <<EMAIL>>
+    name = Philip Gaudreau
 
 [credential]
-	helper = store
+    helper = store
+
+[filter "currentThemeFilter"]
+    clean = sed "s/^#\\ Theme-dark$/#\\ Theme-light/"
