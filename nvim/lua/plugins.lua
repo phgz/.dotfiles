@@ -151,6 +151,13 @@ function M.setup()
 
     use { 'machakann/vim-swap' } -- Swap delimited items, like function arguments
 
+    use { 'smjonas/live-command.nvim' } -- Live :norm
+
+    use { 'vladdoster/remember.nvim', config = require("remember").setup {
+        -- for example, open_folds is off by default, use this to turn it on
+        open_folds = true,
+    } } -- Reopen file in last position
+
     use({
       "folke/noice.nvim",
       requires = {

@@ -39,6 +39,7 @@ require('github-theme').setup({
       IlluminatedWordText = { style = 'bold' },
       IlluminatedWordRead = { style = 'bold' },
       IlluminatedWordWrite= { style = 'bold' },
+      VertSplit = { fg = "#babbbd" , bg = "None"},
       --     -- this will remove the highlight groups
       --     TSField = {},
     }
