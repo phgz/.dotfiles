@@ -1,5 +1,9 @@
--- require('github-theme.config').apply_configuration({
-require('github-theme').setup({
+M = {}
+
+local config = require('github-theme.config')
+local theme = require('github-theme.theme')
+
+local user_config = {
   theme_style = "light",
   transparent = true,
   hide_end_of_buffer = true,
@@ -44,4 +48,10 @@ require('github-theme').setup({
       --     TSField = {},
     }
   end
-})
+}
+
+config.apply_configuration(user_config)
+
+M.theme=theme.setup(config.schema)
+
+return M

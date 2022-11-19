@@ -1,4 +1,5 @@
-vim.api.nvim_exec([[
-hi clear
-colorscheme github_light
-]], false)
+local util = require('github-theme.util')
+local config = require('config.github-light')
+
+vim.cmd("hi clear")
+util.load(config.theme)
