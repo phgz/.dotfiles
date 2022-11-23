@@ -1,3 +1,4 @@
+
 require('nvim-treesitter.configs').setup {
   ensure_installed = 'all',
   ignore_install = { "phpdoc" },
@@ -32,13 +33,13 @@ require('nvim-treesitter.configs').setup {
     smart_rename = {
       enable = true,
       keymaps = {
-        smart_rename = '<leader>r',
+        smart_rename = '<localleader>r',
       },
     },
     navigation = {
       enable = true,
       keymaps = {
-        goto_definition = "gD",
+        goto_definition = "<leader>J",
         list_definitions = "`<nop>`",
         list_definitions_toc = "`<nop>`",
         goto_next_usage = "<a-*>",
@@ -85,30 +86,10 @@ require('nvim-treesitter.configs').setup {
     move = {
       enable = true,
       set_jumps = true, -- whether to set jumps in the jumplist
-      goto_next_start = {
-        -- ["]f"] = "@function.outer",
-        -- ["]]"] = "@class.outer",
-      },
-      goto_next_end = {
-        -- ["]e"] = "@function.outer",
-        -- ["]["] = "@class.outer",
-      },
-      goto_previous_start = {
-        -- ["[f"] = "@function.outer",
-        -- ["[["] = "@class.outer",
-      },
-      goto_previous_end = {
-        -- ["[e"] = "@function.outer",
-        -- ["[]"] = "@class.outer",
-      },
     },
     lsp_interop = {
       enable = true,
       border = 'rounded',
-      peek_definition_code = {
-        ["<leader>f"] = "@function.outer",
-        ["<leader>c"] = "@class.outer",
-      },
     },
   },
   playground = {
@@ -156,3 +137,13 @@ highlight! link TreesitterContext CursorLine
 ]], false)
 
 vim.keymap.set('n', '<localleader>t', '<cmd>TSHighlightCapturesUnderCursor<cr>')
+
+vim.keymap.set('n', '<leader>i', function()
+  local func = require("nvim-treesitter.textobjects.lsp_interop")["peek_definition_code"]
+  local captures = vim.treesitter.get_captures_at_cursor()
+  if vim.tbl_contains(captures, "constructor") or vim.tbl_contains(captures, "type") then
+    return func("@class.outer")
+  else
+    return func("@function.outer")
+  end
+end, {silent = true})

@@ -2,6 +2,11 @@ require("noice").setup({
   popupmenu = {
     enabled = false, -- enables the Noice popupmenu UI
   },
+  commands = {
+    last = {
+      view = "mini",
+    }
+  },
   notify = {
     enabled = false,
   },
@@ -18,6 +23,19 @@ require("noice").setup({
   },
   presets = {
     lsp_doc_border = true
+  },
+  views = {
+    mini = {
+      timeout = 4000,
+    --   position = {
+    --   row = -1,
+    --   col = "50%",
+    -- },
+    win_options = {
+      winblend = 0,
+      winhighlight = { Normal = "LineNr" },
+    },
+    }
   },
   routes = {
     {

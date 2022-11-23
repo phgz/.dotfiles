@@ -38,10 +38,10 @@ local dropdown_theme = require('telescope.themes').get_dropdown({
 
 vim.api.nvim_create_autocmd("User TelescopePreviewerLoaded", {command = "setlocal wrap" })
 
-vim.keymap.set('n', '<localLeader>f', function() builtin.git_files(dropdown_theme) end)
-vim.keymap.set('n', '<localLeader>g', function() builtin.live_grep(dropdown_theme) end)
-vim.keymap.set('n', '<localLeader>b', function() builtin.buffers(dropdown_theme) end)
-vim.keymap.set('n', '<localLeader>s', function() builtin.treesitter(dropdown_theme) end)
-vim.keymap.set('n', '<localleader>l', function() builtin.lsp_workspace_symbols(vim.tbl_extend("error", dropdown_theme, {query=vim.fn.expand("<cword>")})) end)
+vim.keymap.set('n', '<leader>f', function() builtin.git_files(dropdown_theme) end)
+vim.keymap.set('n', '<leader>g', function() builtin.live_grep(dropdown_theme) end)
+vim.keymap.set('n', '<leader>b', function() builtin.buffers(dropdown_theme) end)
+vim.keymap.set('n', '<leader>s', function() builtin.treesitter(dropdown_theme) end)
+vim.keymap.set('n', '<leader>l', function() builtin.lsp_workspace_symbols(vim.tbl_extend("error", dropdown_theme, {query=vim.fn.expand("<cword>")})) end)
 
-vim.keymap.set('n', '<localleader>r', require"telescope".extensions.repo.list)
+vim.keymap.set('n', '<leader>r', require"telescope".extensions.repo.list)

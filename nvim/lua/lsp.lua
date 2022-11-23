@@ -5,8 +5,14 @@ local on_attach = function(client, bufnr)
   -- Mappings.
   local opts = {buffer = bufnr, noremap = true, silent = true}
   vim.keymap.set('n', '<leader>j', vim.lsp.buf.definition, opts)
-  vim.keymap.set('n', 'h', vim.lsp.buf.signature_help, opts)
-  vim.keymap.set('n', '<leader>h', vim.lsp.buf.hover, opts)
+	vim.keymap.set('n', 'h', function()
+  local captures = vim.treesitter.get_captures_at_cursor()
+  if vim.tbl_contains(captures, "function.call") or vim.tbl_contains(captures, "method.call") then
+    return vim.lsp.buf.hover()
+  else
+    return vim.lsp.buf.signature_help()
+  end
+end, opts)
 
   local sign_define = vim.fn.sign_define
   sign_define({
@@ -35,7 +41,7 @@ local lsp_config = {
 local servers = {
   "bashls",
   "dockerls",
-  -- "pyright",
+  "pyright",
   "sumneko_lua",
   "vimls",
   "yamlls",

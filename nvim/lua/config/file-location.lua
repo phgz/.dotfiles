@@ -6,7 +6,7 @@ end
 
 -- custom config
 nvim_file_location.setup({
-  keymap = "<leader>l",
+  keymap = "<localleader>f",
   mode = "absolute", -- options: workdir | absolute
   add_line = true,
   add_column = false,
