@@ -1,0 +1,22 @@
+|n      => go to column n
+``      => go to last jump position
+3:      => :.,.+2
+
+<C-l>   => clear search highlight
+
+:*      => :'<,'>
+:=      => echo last line number
+:s/a/&b => append b to a
+:<C-v>  => insert literal
+:<C-f>  => expand command line
+
+g0      => go to first column of line
+gJ      => join without space
+gI      => Insert at column 1
+g?      => encode text ROT13
+g{#,*}  => search under cursor, no word boundary
+g{-,+}  => older/newer text state
+g{,,;}  => go to next/previous position in changelist
+
+v_gv    => toggle between current and last visual selection
+v_{o,O} => go to start/end of visual selection

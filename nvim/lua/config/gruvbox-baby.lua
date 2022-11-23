@@ -42,6 +42,8 @@ local config = {
 
     MatchParen = { bg = colors.medium_gray},
 
+    Substitute = { bg = colors.diff.text },
+
     StatusLine = { fg = colors.foreground, bg = "#413c37" },
 
     NormalFloat  = {bg = "None"},

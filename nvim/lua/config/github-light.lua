@@ -31,6 +31,7 @@ local user_config = {
       TurquoiseStatusLine = {fg = "turquoise", bg = "#babbbd"},
       MagentaStatusLine   = {fg = "magenta", bg = "#babbbd"  },
       GreyStatusLine      = {fg = "grey", bg = "#babbbd"     },
+			Substitute = { link = 'PMenuSel' },
       LspSignatureActiveParameter = {fg = c.green, style = "italic"},
       TelescopePromptTitle = { fg = c.border },
       TelescopePromptBorder = { fg = c.border },
