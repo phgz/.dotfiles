@@ -4,10 +4,45 @@ local fn = vim.fn
 local api = vim.api
 
 -- leader key
-set('n', '<leader>d', '<cmd>bdelete<cr>') -- delete buffer
 set('n', '<leader>t', '<cmd>:b #<cr>') -- Toggle alternate buffer
 set('n', '<leader>v', '<cmd>vsplit<cr>') -- Split vertical
 set('n', '<leader>h', '<cmd>split<cr>') -- Split horizontal
+
+set('n', '<leader>d', function() -- delete buffer and set alternate file
+	vim.cmd("bdelete")
+	local new_current_file = vim.fn.expand("%:p")
+	local context = vim.api.nvim_get_context({types={"jumps", "bufs"}})
+	local jumps = vim.fn.msgpackparse(context['jumps'])
+	local still_listed = vim.tbl_map(function(buf) return buf['f'] end, vim.fn.msgpackparse(context['bufs'])[4])
+
+	if #still_listed == 0 then
+		return
+
+	elseif #still_listed == 1 then
+		vim.cmd("call setreg('#', @%)")
+		return
+	end
+
+	local jumps_current_file_index
+
+	for i = #jumps, 1, -4 do
+		if jumps[i]['f'] == new_current_file then
+			jumps_current_file_index = i
+			break
+		end
+	end
+
+	local jumps_alternate_file_index = jumps_current_file_index - 4
+
+	for i = jumps_alternate_file_index, 1, -4 do
+		if vim.tbl_contains(still_listed, jumps[i]['f']) then
+			jumps_alternate_file_index = i
+			break
+		end
+	end
+
+	vim.api.nvim_call_function("setreg", {"#", jumps[jumps_alternate_file_index]['f']})
+end)
 
 set('n', '<leader>q', function() -- Close popups
 	local filter = function(win) return vim.api.nvim_win_get_config(win).relative ~= "" end
