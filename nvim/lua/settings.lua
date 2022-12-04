@@ -21,10 +21,11 @@ local bo = vim.bo
 local wo = vim.wo
 
 local function status_line()
-  local status = " %{%get(b:,'gitsigns_status','')%}"
-  status = status .. [[%=%#GreyStatusLine#%{%luaeval('require("noice.api.status").search.get() or require("noice.api.status").message.get() or ""')%}]]
-  status = status .. '%=%h%#RedStatusLine#%m%#BlueStatusLine#%r%#StatusLine# %F ▏%2c'
-  return status
+	local status = " %{%get(b:,'gitsigns_status','')%}"
+	status = status
+		.. [[%=%#GreyStatusLine#%{%luaeval('require("noice.api.status").search.get() or require("noice.api.status").message.get() or ""')%}]]
+	status = status .. "%=%h%#RedStatusLine#%m%#BlueStatusLine#%r%#StatusLine# %F"
+	return status
 end
 
 g.loaded_perl_provider = 0
@@ -41,12 +42,12 @@ bo.tabstop = 4
 go.autochdir = true
 -- go.clipboard = 'unnamed,unnamedplus'
 go.cmdheight = 0
-go.completeopt = 'menu,menuone,noinsert,noselect'
+go.completeopt = "menu,menuone,noinsert,noselect"
 go.gdefault = true
 go.hlsearch = false
 go.ignorecase = true
 go.laststatus = 3
-go.mouse = 'nicr'
+go.mouse = "nicr"
 go.pumblend = 30
 go.pumheight = 9
 go.shell = "/bin/sh"
@@ -57,29 +58,31 @@ go.splitright = true
 go.statusline = status_line()
 go.termguicolors = true
 go.timeoutlen = 4000
-go.wildmode = 'list:longest'
+go.wildmode = "list:longest"
 go.incsearch = true
 
 wo.cursorline = true
-wo.foldtext = 'getline(v:foldstart+1)'
+wo.foldtext = "getline(v:foldstart+1)"
 wo.linebreak = true
 wo.number = true
 wo.signcolumn = "yes"
 -- wo.winbar = "..." -- Use winbar feature
 
-opt.formatoptions:remove { "ro" }
-opt.iskeyword:append { "-" }
-opt.matchpairs:append { ">:<" }
-opt.shortmess:append { c = true, I = true --[[A = true]]}
+opt.formatoptions:remove({ "ro" })
+opt.iskeyword:append({ "-" })
+opt.matchpairs:append({ ">:<" })
+opt.shortmess:append({
+	c = true,
+	I = true,--[[A = true]]
+})
 
-vim.fn.matchadd('DiffText', '\\%97v')
+vim.fn.matchadd("DiffText", "\\%97v")
 
-vim.api.nvim_create_autocmd(
-"BufReadPost",
-{ callback = function()
-  local row, col = unpack(vim.api.nvim_buf_get_mark(0, '"'))
-  if row > 0 and row <= vim.api.nvim_buf_line_count(0) then
-    vim.api.nvim_win_set_cursor(0, {row, col})
-  end
-end }
-)
+vim.api.nvim_create_autocmd("BufReadPost", {
+	callback = function()
+		local row, col = unpack(vim.api.nvim_buf_get_mark(0, '"'))
+		if row > 0 and row <= vim.api.nvim_buf_line_count(0) then
+			vim.api.nvim_win_set_cursor(0, { row, col })
+		end
+	end,
+})

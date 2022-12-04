@@ -1,30 +1,29 @@
-require("Comment").setup{
-      toggler = {
-        --Line-comment toggle keymap
-        line = '<M-k>',
-    },
+require("Comment").setup({
+	toggler = {
+		--Line-comment toggle keymap
+		line = "<M-k>",
+	},
 
-    --LHS of operator-pending mappings in NORMAL + VISUAL mode
-    --@type table
-    opleader = {
-        -- Line-comment keymap
-        line = 'K',
-    },
-      extra = {
-        --Add comment on the line above
-        above = 'KO',
-        --Add comment on the line below
-        below = 'Ko',
-        --Add comment at the end of line
-        eol = 'KA',
-    },
-}
+	--LHS of operator-pending mappings in NORMAL + VISUAL mode
+	--@type table
+	opleader = {
+		-- Line-comment keymap
+		line = "K",
+	},
+	extra = {
+		--Add comment on the line above
+		above = "KO",
+		--Add comment on the line below
+		below = "Ko",
+		--Add comment at the end of line
+		eol = "KA",
+	},
+})
 
-vim.keymap.set('n', 'KD',
-function()
+vim.keymap.set("n", "KD", function()
 	local U = require("Comment.utils")
 
-	local col = vim.fn.col('.')
+	local col = vim.fn.col(".")
 	local range = U.get_region()
 	local lines = U.get_lines(range)
 
@@ -36,11 +35,10 @@ function()
 	require("Comment.api").comment.linewise()
 
 	-- Move the cursor
-	vim.api.nvim_win_set_cursor(0, { srow+1, col-1 })
-end
-, { silent = true, noremap = true })
+	vim.api.nvim_win_set_cursor(0, { srow + 1, col - 1 })
+end, { silent = true, noremap = true })
 
- --Textobject for adjacent commented lines
+--Textobject for adjacent commented lines
 local function commented_lines_textobject()
 	local U = require("Comment.utils")
 	local current_line = vim.api.nvim_win_get_cursor(0)[1] -- current line
@@ -71,10 +69,14 @@ local function commented_lines_textobject()
 	until next(line) == nil or not is_commented(line[1])
 	re = re - 1
 
-  vim.api.nvim_buf_set_mark(0,'<', rs, 0, {})
-  vim.api.nvim_buf_set_mark(0,'>', re, 0, {})
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("gvV", true, false, true), 'x', true)
+	vim.api.nvim_buf_set_mark(0, "<", rs, 0, {})
+	vim.api.nvim_buf_set_mark(0, ">", re, vim.fn.col("$"), {})
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("gv", true, false, true), "x", true)
 end
 
-vim.keymap.set("o", "u", commented_lines_textobject,
-	{ silent = true, desc = "Textobject for adjacent commented lines" })
+vim.keymap.set(
+	"o",
+	"u",
+	commented_lines_textobject,
+	{ silent = true, desc = "Textobject for adjacent commented lines" }
+)

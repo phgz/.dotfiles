@@ -1,1 +1,1 @@
-vim.keymap.set({'n', 'x'}, '<localleader>a', '<Plug>(LiveEasyAlign)')
+vim.keymap.set({ "n", "x" }, "<localleader>a", "<Plug>(LiveEasyAlign)")

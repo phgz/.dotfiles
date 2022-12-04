@@ -4,10 +4,9 @@ layout_poetry() {
     exit 2
   fi
 
-  local VENV=$(dirname $(poetry run which python))
-  export VIRTUAL_ENV=$(echo "$VENV" | rev | cut -d'/' -f2- | rev)
+  export VIRTUAL_ENV=$(python -c "import base64, hashlib, pathlib, tomllib; h = base64.urlsafe_b64encode(hashlib.sha256(bytes(pathlib.Path.cwd())).digest()).decode()[:8]; p=tomllib.load(open('pyproject.toml', 'rb'))['tool']['poetry']['name'].replace('.','-').replace('_', '-'); print(next(dir for dir in (pathlib.Path.home() / '.cache/pypoetry/virtualenvs').iterdir() if str(dir.name).startswith(p+'-'+h)))")
   export POETRY_ACTIVE=1
-  PATH_add "$VENV"
+  PATH_add "$VIRTUAL_ENV/bin"
 }
 
 source_env "$HOME"/.envrc

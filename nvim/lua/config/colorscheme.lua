@@ -1,7 +1,7 @@
-local colorFile = os.getenv( "HOME" ) .. '/.dotfiles/nvim/lua/config/current-theme.lua'
+local colorFile = os.getenv("HOME") .. "/.dotfiles/nvim/lua/config/current-theme.lua"
 
 local function reload()
-  vim.cmd('luafile ' .. colorFile)
+	vim.cmd("luafile " .. colorFile)
 end
 
 local w = vim.loop.new_fs_event()

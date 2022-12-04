@@ -1,5 +1,5 @@
-require("live-command").setup {
-  commands = {
-    Norm = { cmd = "norm" },
-  },
-}
+require("live-command").setup({
+	commands = {
+		Norm = { cmd = "norm" },
+	},
+})
