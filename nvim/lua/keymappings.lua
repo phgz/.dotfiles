@@ -105,9 +105,29 @@ set("", "j", "^") -- Go to first nonblank char
 set("", "k", "$") -- Go to last char
 set("", "0", "gg") -- Go to beggining of file
 set("", "-", "G") -- Go to end of file
-set("n", "sN", "<cmd>move .+1<cr>") -- Swap with next line
-set("n", "sP", "<cmd>move .-2<cr>") -- Swap with prev line
+set("n", "<M-]>", "<cmd>move .+1<cr>") -- Swap with next line
+set("n", "<M-[>", "<cmd>move .-2<cr>") -- Swap with prev line
 set("v", "y", "ygv<Esc>") -- Do not move cursor on yank
+
+set("n", "[<space>", function() -- Go left
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_win_set_cursor(0, { row, col - 1 })
+end)
+
+set("n", "]<space>", function() -- Go right
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_win_set_cursor(0, { row, col + 1 })
+end)
+
+set("n", "]<cr>", function() -- Go down one line
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_win_set_cursor(0, { row + 1, col })
+end)
+
+set("n", "[<cr>", function() -- Go up one line
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_win_set_cursor(0, { row - 1, col })
+end)
 
 set("", "(", function() -- Go to beginning of block
 	local line = fn.line("'{")
@@ -131,6 +151,7 @@ end)
 set("n", "<M-s>", "r<CR>") -- Split below
 set("n", "<M-S-s>", "r<CR><cmd>move .-2<cr>") -- Split up
 set("n", "<M-S-j>", "<cmd>move .+1 <bar> .-1 join<cr>") -- Join at end of below
+set("i", "<C-s>", "<space><space><left>") -- Add space after and before
 
 set("n", "<C-g>", function() -- Show file stats
 	local row, col = unpack(api.nvim_win_get_cursor(0))
@@ -138,8 +159,6 @@ set("n", "<C-g>", function() -- Show file stats
 	local relative = math.floor(row / line_count * 100 + 0.5)
 	print(row .. ":" .. col + 1 .. "; " .. line_count .. " lines --" .. relative .. "%--")
 end)
-
-set("i", "<C-s>", "<space><space><left>") -- Add space after and before
 
 set("n", "<M-S-d>", function() -- Duplicate line
 	local row = api.nvim_win_get_cursor(0)[1]
@@ -171,11 +190,13 @@ end)
 set("n", "<M-o>", function() -- New line down
 	local row = api.nvim_win_get_cursor(0)[1]
 	api.nvim_buf_set_lines(0, row, row, true, { "" })
+	api.nvim_win_set_cursor(0, { row + 1, 0 })
 end)
 
 set("n", "<M-S-o>", function() -- New line up
 	local row = api.nvim_win_get_cursor(0)[1]
 	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
+	api.nvim_win_set_cursor(0, { row, 0 })
 end)
 
 set("i", "<C-l>", function() -- Add new string parameter
@@ -187,10 +208,16 @@ set("i", "<C-l>", function() -- Add new string parameter
 	api.nvim_win_set_cursor(0, { row, col + 4 })
 end)
 
-set("", "<M-x>", function() -- Delete lastchar multiline
+set("", "<M-x>", function() -- Delete character after cursor
 	local content = api.nvim_get_current_line()
-	api.nvim_set_current_line(content:sub(1, #content - 1))
+	local col = api.nvim_win_get_cursor(0)[2]
+	api.nvim_set_current_line(content:sub(1, col + 1) .. content:sub(col + 3))
 end)
+
+-- set("", "<M-x>", function() -- Delete lastchar multiline
+-- 	local content = api.nvim_get_current_line()
+-- 	api.nvim_set_current_line(content:sub(1, #content - 1))
+-- end)
 
 set("", "<M-S-x>", function() -- Delete firstchar multiline
 	local row, col = unpack(api.nvim_win_get_cursor(0))

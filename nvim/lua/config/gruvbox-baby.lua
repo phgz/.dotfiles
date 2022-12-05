@@ -42,6 +42,7 @@ local config = {
 
 		MatchParen = { bg = colors.medium_gray },
 
+		IncSearch = { fg = colors.forest_green, bg = colors.comment },
 		Substitute = { bg = colors.diff.text },
 
 		StatusLine = { fg = colors.foreground, bg = "#413c37" },
