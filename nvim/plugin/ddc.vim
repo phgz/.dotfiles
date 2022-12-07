@@ -13,40 +13,46 @@ function! s:wise_tab() abort
         return "\<TAB>"
     endif
 endfunction
-
-call ddc#custom#patch_global('sources', ['ultisnips', 'treesitter', 'file', 'nvim-lsp'])
+" , 'treesitter'
+" call ddc#custom#patch_global('sources', ['ultisnips', 'file', 'nvim-lsp', 'tabnine'])
+call ddc#custom#patch_global('sources', ['tabnine'])
 
 " 'matcher_length' <- only matches candidates > current word length.
 call ddc#custom#patch_global('sourceOptions', {
-      \ '_': {
-      \   'matchers': ['matcher_fuzzy'],
-      \   'sorters': ['sorter_fuzzy'],
-      \   'converters': ['converter_remove_overlap'],
-      \   'minAutoCompleteLength' : 1,
-      \   'ignoreCase': v:false
-      \     }
-      \ })
+    \ '_': {
+    \   'matchers': ['matcher_fuzzy'],
+    \   'sorters': ['sorter_fuzzy'],
+    \   'converters': ['converter_remove_overlap'],
+    \   'minAutoCompleteLength' : 1,
+    \   'ignoreCase': v:false
+    \     }
+    \ })
 
 call ddc#custom#patch_global('filterParams', {
-  \   'matcher_fuzzy': {
-  \     'splitMode': 'word'
-  \   }
-  \ })
+    \   'matcher_fuzzy': {
+    \     'splitMode': 'word'
+    \   }
+    \ })
       
 call ddc#custom#patch_global('sourceOptions', {
-      \ 'treesitter': {'mark': 'TS'},
-      \ 'ultisnips': {'mark': 'U'},
-      \ 'omni': {'mark': 'O'},
-      \ 'nvim-lsp': {'forceCompletionPattern': '\.\w*|:\w*|->\w*'},
-      \ 'file': {
-      \ 'mark': 'F',
-	  \   'forceCompletionPattern': '\S/\S*',
-      \ }
-      \})
+    \ 'tabnine': {
+    \   'mark': 'TN',
+    \   'maxCandidates': 5,
+    \   'isVolatile': v:true,
+    \ },
+    \ 'treesitter': {'mark': 'TS'},
+    \ 'ultisnips': {'mark': 'U'},
+    \ 'omni': {'mark': 'O'},
+    \ 'nvim-lsp': {'forceCompletionPattern': '\.\w*|:\w*|->\w*'},
+    \ 'file': {
+    \ 'mark': 'F',
+    \   'forceCompletionPattern': '\S/\S*',
+    \ }
+    \})
 
 call ddc#custom#patch_global('sourceParams', {
-            \ 'file': {'trailingSlash': v:false}
-      \ })
+    \ 'file': {'trailingSlash': v:false}
+    \ })
 
 call ddc#custom#patch_global('completionMode', 'inline')
 "

@@ -72,6 +72,11 @@ require("nvim-treesitter.configs").setup({
 				["ap"] = "@parameter.outer",
 				["as"] = "@statement.outer",
 			},
+			-- selection_modes = {
+			-- 	['@parameter.outer'] = 'v', -- charwise
+			-- 	['@function.outer'] = 'V', -- linewise
+			-- 	['@class.outer'] = '<c-v>', -- blockwise
+			-- },
 		},
 		swap = {
 			enable = true,

@@ -89,6 +89,7 @@ function M.setup()
 				"Shougo/ddc-nvim-lsp",
 				"Shougo/ddc-converter_remove_overlap",
 				"LumaKernel/ddc-file",
+				"LumaKernel/ddc-tabnine",
 				"delphinus/ddc-treesitter",
 				"Shougo/ddc-matcher_length",
 				"tani/ddc-fuzzy",

@@ -14,8 +14,7 @@ local register_comamnd = function(kind, with_end)
 	return { ns = ns, ps = ps }
 end
 
--- Missing `class`, but what keymap to use?
-local kinds = { "function", "block", "conditional", "loop" }
+local kinds = { "function", "block", "conditional", "loop", "class" }
 local kinds_no_end = { "parameter", "statement", "call", "comment" }
 
 local mapping = {}
@@ -40,12 +39,12 @@ local next_fold = "'<cmd>norm! zj<CR>'"
 local prev_fold = "'<cmd>norm! zk<CR>'"
 mapping.zfold = { ns = next_fold, ps = prev_fold }
 
-mapping.parameter.ns = mapping.parameter.ns:gsub("outer", "inner")
-mapping.parameter.ps = mapping.parameter.ps:gsub("outer", "inner")
 mapping.kall = mapping.call
 mapping.call = nil
 mapping.Komment = mapping.comment
 mapping.comment = nil
+mapping.record = mapping.class
+mapping.class = nil
 
 local opts_noremap = { expr = true, noremap = true, silent = true }
 local opts = { expr = true, noremap = false, silent = true }
