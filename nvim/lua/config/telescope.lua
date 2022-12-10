@@ -51,7 +51,9 @@ vim.keymap.set("n", "<leader>s", function()
 	builtin.treesitter(dropdown_theme)
 end)
 vim.keymap.set("n", "<leader>l", function()
-	builtin.lsp_workspace_symbols(vim.tbl_extend("error", dropdown_theme, { query = vim.fn.expand("<cword>") }))
+	builtin.lsp_workspace_symbols(
+		vim.tbl_extend("error", dropdown_theme, { query = vim.api.nvim_call_function("expand", { "<cword>" }) })
+	)
 end)
 
 vim.keymap.set("n", "<leader>r", require("telescope").extensions.repo.list)

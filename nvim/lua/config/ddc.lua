@@ -1,6 +1,5 @@
 local api = vim.api
-local fn = vim.fn
-local call = vim.call
+local call = api.nvim_call_function
 
 vim.g.popup_preview_config = {
 	border = false,
@@ -15,21 +14,21 @@ local feed_special = function(action)
 end
 
 local insert_snippet_or_tab = function()
-	if call("UltiSnips#CanExpandSnippet") == 1 then
-		call("UltiSnips#ExpandSnippet")
+	if call("UltiSnips#CanExpandSnippet", {}) == 1 then
+		call("UltiSnips#ExpandSnippet", {})
 	else
 		feed_special("<tab>")
 	end
 end
 
 local get_wuc_start_col = function()
-	local word_under_cursor = fn.expand("<cword>")
-	return vim.fn.searchpos(word_under_cursor, "Wcnb")[2] - 1
+	local word_under_cursor = call("expand", { "<cword>" })
+	return call("searchpos", { word_under_cursor, "Wcnb" })[2] - 1
 end
 
 local insert_suggestion = function(suggestion)
-	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-	vim.api.nvim_win_set_cursor(0, { row, col - 1 })
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_win_set_cursor(0, { row, col - 1 })
 	local captures = vim.treesitter.get_captures_at_cursor()
 
 	local punctuation_captures = vim.tbl_filter(function(capture)
@@ -46,19 +45,17 @@ local insert_suggestion = function(suggestion)
 	-- print(1, line_content:sub(1, col - (is_punctuation and 0 or #word_under_cursor)))
 	-- print(2, line_content:sub(col + 1))
 
-	local new_line_content = line_content:sub(1, word_under_cursor_start_col )
-		.. suggestion
-		.. line_content:sub(col + 1)
+	local new_line_content = line_content:sub(1, word_under_cursor_start_col) .. suggestion .. line_content:sub(col + 1)
 
 	api.nvim_set_current_line(new_line_content)
-	api.nvim_win_set_cursor(0, { row, word_under_cursor_start_col  + #suggestion })
+	api.nvim_win_set_cursor(0, { row, word_under_cursor_start_col + #suggestion })
 end
 
 local wise_tab = function()
 	local items = vim.g["ddc#_items"]
 	local complete_pos = vim.g["ddc#_complete_pos"]
-	call("ddc#_hide", "CompleteDone")
-	call("ddc#complete#_on_complete_done", items[1])
+	call("ddc#_hide", { "CompleteDone" })
+	call("ddc#complete#_on_complete_done", { items[1] })
 
 	if not vim.tbl_isempty(items) and complete_pos >= 0 then
 		local item = items[1]
@@ -81,27 +78,27 @@ local opts = { silent = true, noremap = true }
 local opts_expr = vim.tbl_extend("error", opts, { expr = true })
 
 vim.keymap.set("i", "<Tab>", function()
-	return fn.pumvisible() == 1 and feed_special("<C-n>") or wise_tab()
+	return call("pumvisible", {}) == 1 and feed_special("<C-n>") or wise_tab()
 end, opts)
 
 local manual_complete = function()
-	if not call("ddc#_denops_running") then
-		call("ddc#enable")
-		call("denops#plugin#wait", "ddc")
+	if not call("ddc#_denops_running", {}) then
+		call("ddc#enable", {})
+		call("denops#plugin#wait", { "ddc" })
 	end
-	call("denops#notify", "ddc", "manualComplete", { { "nvim-lsp" }, "native" })
+	call("denops#notify", { "ddc", "manualComplete", { { "nvim-lsp" }, "native" } })
 end
 
 vim.keymap.set("i", "<S-Tab>", function()
-	return fn.pumvisible() == 1 and feed_special("<C-p>") or manual_complete()
+	return call("pumvisible", {}) == 1 and feed_special("<C-p>") or manual_complete()
 end, opts)
 
 vim.keymap.set("i", "<CR>", function()
-	return fn.pumvisible() == 1 and "<C-y>" or "<CR>"
+	return call("pumvisible", {}) == 1 and "<C-y>" or "<CR>"
 end, opts_expr)
 
 vim.keymap.set("i", "<ESC>", function()
-	return fn.pumvisible() == 1 and "<C-e>" or "<ESC>"
+	return call("pumvisible", {}) == 1 and "<C-e>" or "<ESC>"
 end, opts_expr)
 
 vim.cmd([[

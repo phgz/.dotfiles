@@ -1,5 +1,4 @@
-local util = require("formatter.util")
-local defaults = require("formatter.defaults")
+-- local call = vim.api.nvim_call_function
 
 require("formatter").setup({
 	logging = true,
@@ -27,15 +26,15 @@ require("formatter").setup({
 			-- black
 			function()
 				-- local home = os.getenv('HOME')
-				-- local current_dir = vim.fn.expand('%:p:h')
+				-- local current_dir = call("expand", {'%:p:h'})
 				-- local pyproject = current_dir .. 'pyproject.toml'
 				--
-				-- while not vim.fn.filereadable(pyproject) and current_dir ~= home do
-				--   current_dir = vim.fn.fnamemodify(current_dir, ':h')
+				-- while not call("filereadable", {pyproject}) and current_dir ~= home do
+				--   current_dir = call("fnamemodify", {current_dir, ':h'})
 				--   pyproject = current_dir .. 'pyproject.toml'
 				-- end
 				--
-				-- config_opt = vim.fn.filereadable(pyproject) and "--config " .. pyproject or ""
+				-- config_opt = call("filereadable", {pyproject}) and "--config " .. pyproject or ""
 				return {
 					exe = "isort",
 					args = { "--quiet", "--profile", "black", "--resolve-all-configs", "-" },

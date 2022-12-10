@@ -1,3 +1,5 @@
+local call = vim.api.nvim_call_function
+
 -- Add close_preview_on_escape
 vim.api.nvim_set_hl(0, "GitSignsDeleteLn", { default = true, link = "DiffDelete" })
 require("gitsigns").setup({
@@ -62,7 +64,7 @@ require("gitsigns").setup({
 			gs.blame_line({ full = true })
 		end)
 		map("n", "gc", function()
-			gs.diffthis(vim.fn.input("Compare to: "))
+			gs.diffthis(call("input", { "Compare to: " }))
 		end)
 
 		-- Text objects

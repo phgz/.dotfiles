@@ -1,6 +1,5 @@
 local get_range_motion = require("custom_plugins.utils").get_range_motion
 local set = vim.keymap.set
-local fn = vim.fn
 local api = vim.api
 local call = api.nvim_call_function
 local cmd = vim.cmd
@@ -19,7 +18,7 @@ end) -- Split horizontal
 set("n", "<leader>d", function() -- delete buffer and set alternate file
 	cmd("bdelete")
 	local new_current_file = call("expand", { "%:p" })
-	local context = vim.api.nvim_get_context({ types = { "jumps", "bufs" } })
+	local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
 	local jumps = call("msgpackparse", { context["jumps"] })
 	local still_listed = vim.tbl_map(function(buf)
 		return buf["f"]
@@ -61,11 +60,11 @@ end)
 
 set("n", "<leader>q", function() -- Close popups
 	local filter = function(win)
-		return vim.api.nvim_win_get_config(win).relative ~= ""
+		return api.nvim_win_get_config(win).relative ~= ""
 	end
-	local to_close = vim.tbl_filter(filter, vim.api.nvim_list_wins())
+	local to_close = vim.tbl_filter(filter, api.nvim_list_wins())
 	for _, win in ipairs(to_close) do
-		vim.api.nvim_win_close(win, false)
+		api.nvim_win_close(win, false)
 	end
 end)
 
@@ -78,7 +77,7 @@ set("v", "<leader>s", function() -- Sort selection
 end)
 
 set("n", "<leader>m", function() -- Add input to beginning of file
-	local input = fn.input("Add import: ")
+	local input = call("input", { "Add import: " })
 	if input == "" then
 		return
 	end
@@ -138,21 +137,21 @@ set({ "o", "n" }, "[<cr>", function() -- Go up one line
 end)
 
 set("", "(", function() -- Go to beginning of block
-	local line = fn.line("'{")
-	if line == fn.line(".") - 1 then
-		fn.cursor(line - 1, 0)
-		line = fn.line("'{")
+	local line = call("line", { "'{" })
+	if line == call("line", { "." }) - 1 then
+		call("cursor", { line - 1, 0 })
+		line = call("line", { "'{" })
 	end
-	fn.cursor(line + fn.empty(fn.getline(line)), 0)
+	call("cursor", { line + call("empty", { call("getline", { line }) }), 0 })
 end)
 
 set("", ")", function() -- Goto end of block
-	local line = fn.line("'}")
-	if line == fn.line(".") + 1 then
-		fn.cursor(line + 1, 0)
-		line = fn.line("'}")
+	local line = call("line", { "'}" })
+	if line == call("line", { "." }) + 1 then
+		call("cursor", { line + 1, 0 })
+		line = call("line", { "'}" })
 	end
-	fn.cursor(line - fn.empty(fn.getline(line)), 0)
+	call("cursor", { line - call("empty", { call("getline", { line }) }), 0 })
 end)
 
 --Modifiers keys

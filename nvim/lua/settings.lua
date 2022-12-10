@@ -1,3 +1,6 @@
+local api = vim.api
+local call = api.nvim_call_function
+
 --Global (g:) editor variables.
 local g = vim.g
 
@@ -30,7 +33,7 @@ end
 
 g.loaded_perl_provider = 0
 g.mapleader = " "
-g.maplocalleader = vim.api.nvim_replace_termcodes("<BS>", false, false, true)
+g.maplocalleader = api.nvim_replace_termcodes("<BS>", false, false, true)
 g.python3_host_prog = "~/.miniconda3/envs/neovim/bin/python"
 
 bo.expandtab = true
@@ -76,13 +79,13 @@ opt.shortmess:append({
 	I = true,--[[A = true]]
 })
 
-vim.fn.matchadd("DiffText", "\\%97v")
+call("matchadd", { "DiffText", "\\%97v" })
 
-vim.api.nvim_create_autocmd("BufReadPost", {
+api.nvim_create_autocmd("BufReadPost", {
 	callback = function()
-		local row, col = unpack(vim.api.nvim_buf_get_mark(0, '"'))
-		if row > 0 and row <= vim.api.nvim_buf_line_count(0) then
-			vim.api.nvim_win_set_cursor(0, { row, col })
+		local row, col = unpack(api.nvim_buf_get_mark(0, '"'))
+		if row > 0 and row <= api.nvim_buf_line_count(0) then
+			api.nvim_win_set_cursor(0, { row, col })
 		end
 	end,
 })

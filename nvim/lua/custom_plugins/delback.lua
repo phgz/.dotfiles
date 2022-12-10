@@ -1,8 +1,9 @@
+local api = vim.api
 local M = {}
 
 local feed = function(motion)
-	local seq = vim.api.nvim_replace_termcodes(motion, true, true, true)
-	vim.api.nvim_feedkeys(seq, "n", true)
+	local seq = api.nvim_replace_termcodes(motion, true, true, true)
+	api.nvim_feedkeys(seq, "n", true)
 end
 
 local split = function(str, sep)
@@ -16,8 +17,8 @@ local split = function(str, sep)
 end
 
 M.delete_backward = function(bigWord)
-	local col = vim.api.nvim_win_get_cursor(0)[2]
-	local char = vim.api.nvim_get_current_line():sub(col + 1, col + 1)
+	local col = api.nvim_win_get_cursor(0)[2]
+	local char = api.nvim_get_current_line():sub(col + 1, col + 1)
 
 	local keywords = vim.opt.iskeyword["_value"]
 	local token_kw = {}
@@ -45,13 +46,13 @@ M.delete_backward = function(bigWord)
 		end
 	end
 
-	local next_char = vim.api.nvim_get_current_line():sub(col + 2, col + 2)
+	local next_char = api.nvim_get_current_line():sub(col + 2, col + 2)
 	local prev_char = char
 	i = 0
 
 	while prev_char:match(all_kw_pattern) do
 		i = i + 1
-		prev_char = vim.api.nvim_get_current_line():sub(col - i, col - i)
+		prev_char = api.nvim_get_current_line():sub(col - i, col - i)
 	end
 
 	if next_char == " " then

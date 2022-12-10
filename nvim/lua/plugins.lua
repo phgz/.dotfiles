@@ -1,4 +1,6 @@
 local M = {}
+local call = vim.api.nvim_call_function
+local cmd = vim.cmd
 
 function M.setup()
 	-- Indicate first time installation
@@ -23,20 +25,16 @@ function M.setup()
 	-- Check if packer.nvim is installed
 	-- Run PackerCompile if there are changes in this file
 	local function packer_init()
-		local fn = vim.fn
-		local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-		if fn.empty(fn.glob(install_path)) > 0 then
-			packer_bootstrap = fn.system({
-				"git",
-				"clone",
-				"--depth",
-				"1",
-				"https://github.com/wbthomason/packer.nvim",
-				install_path,
-			})
-			vim.cmd([[packadd packer.nvim]])
+		local install_path = call("stdpath", { "data" }) .. "/site/pack/packer/start/packer.nvim"
+
+		if call("empty", { call("glob", { install_path }) }) > 0 then
+			packer_bootstrap = call(
+				"system",
+				{ { "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path } }
+			)
+			cmd([[packadd packer.nvim]])
 		end
-		vim.cmd("autocmd BufWritePost plugins.lua source <afile> | PackerCompile")
+		cmd("autocmd BufWritePost plugins.lua source <afile> | PackerCompile")
 	end
 
 	-- Plugings

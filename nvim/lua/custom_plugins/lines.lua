@@ -1,17 +1,20 @@
-local call = vim.api.nvim_call_function
+local api = vim.api
+local cmd = vim.cmd
+
+local call = api.nvim_call_function
 
 local get_range_motion = require("custom_plugins.utils").get_range_motion
 
 local M = {}
 
 local feed = function(motion)
-	local seq = vim.api.nvim_replace_termcodes(motion, true, true, true)
-	vim.api.nvim_feedkeys(seq, "n", true)
+	local seq = api.nvim_replace_termcodes(motion, true, true, true)
+	api.nvim_feedkeys(seq, "n", true)
 end
 
 local actualize_visual_selection = function(new_start, new_end)
-	vim.api.nvim_buf_set_mark(0, "<", new_start, 0, {})
-	vim.api.nvim_buf_set_mark(0, ">", new_end, 0, {})
+	api.nvim_buf_set_mark(0, "<", new_start, 0, {})
+	api.nvim_buf_set_mark(0, ">", new_end, 0, {})
 end
 
 local get_input = function(prompt)
@@ -36,32 +39,32 @@ local swap_aux = function(other, current)
 		current, other = other, current
 	end
 
-	vim.cmd(current .. "m " .. other - 1 .. "|" .. other + 1 .. "m " .. current)
+	cmd(current .. "m " .. other - 1 .. "|" .. other + 1 .. "m " .. current)
 	feed(other .. "gg==" .. current .. "gg==")
 end
 
 local copy_aux = function(tbl, to)
 	local params = get_range_params(tbl, to)
-	local lines = vim.api.nvim_buf_get_lines(0, tbl.start - 1, tbl.end_, false)
-	vim.api.nvim_buf_set_lines(0, to, to, true, lines)
+	local lines = api.nvim_buf_get_lines(0, tbl.start - 1, tbl.end_, false)
+	api.nvim_buf_set_lines(0, to, to, true, lines)
 	actualize_visual_selection(to + 1, to + 1 + params.range)
 	feed("gv=")
 end
 
 local duplicate_aux = function(other)
-	local line = vim.api.nvim_buf_get_lines(0, other - 1, other, false)
+	local line = api.nvim_buf_get_lines(0, other - 1, other, false)
 	local current = call("line", { "." })
-	vim.api.nvim_buf_set_lines(0, current - 1, current, true, line)
+	api.nvim_buf_set_lines(0, current - 1, current, true, line)
 	feed("==")
 end
 
 local kill_aux = function(line)
-	vim.api.nvim_buf_set_lines(0, line - 1, line, true, {})
+	api.nvim_buf_set_lines(0, line - 1, line, true, {})
 end
 
 local move_aux = function(tbl, to)
 	local params = get_range_params(tbl, to)
-	vim.cmd(tbl.start .. "," .. tbl.end_ .. "m " .. to)
+	cmd(tbl.start .. "," .. tbl.end_ .. "m " .. to)
 	local offset = params.forward and 0 or 1
 	actualize_visual_selection(params.new_start + offset, params.new_end + offset)
 	feed("gv=")
@@ -95,26 +98,26 @@ M.swap = function()
 end
 
 M.after_sep = function(fwd)
-	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-	local prev_char = vim.api.nvim_get_current_line():sub(col, col)
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	local prev_char = api.nvim_get_current_line():sub(col, col)
 	local back_on_edge = not fwd and prev_char == "_"
 	local opts = "Wn"
 	opts = fwd and opts or opts .. "b"
 
 	if back_on_edge then
-		vim.api.nvim_win_set_cursor(0, { row, col - 1 })
+		api.nvim_win_set_cursor(0, { row, col - 1 })
 	end
 
 	local new_row, new_col = unpack(call("searchpos", { "_", opts }))
 
 	if new_row == 0 then
 		if back_on_edge then
-			vim.api.nvim_win_set_cursor(0, { row, col })
+			api.nvim_win_set_cursor(0, { row, col })
 		else
 			return
 		end
 	else
-		vim.api.nvim_win_set_cursor(0, { new_row, new_col })
+		api.nvim_win_set_cursor(0, { new_row, new_col })
 	end
 end
 

@@ -1,3 +1,5 @@
+local call = vim.api.nvim_call_function
+
 local get_poetry_venv = function(project_root)
 	return require("plenary.job")
 		:new({
@@ -28,17 +30,18 @@ local on_attach = function(client, bufnr)
 		end
 	end, opts)
 
-	local sign_define = vim.fn.sign_define
-	sign_define({
+	call("sign_define", {
 		{
-			name = "DiagnosticSignError",
-			texthl = "DiagnosticSignError",
-			numhl = "DiagnosticLineNrError",
-			culhl = "DiagnosticLineNrWarn",
+			{
+				name = "DiagnosticSignError",
+				texthl = "DiagnosticSignError",
+				numhl = "DiagnosticLineNrError",
+				culhl = "DiagnosticLineNrWarn",
+			},
+			{ name = "DiagnosticSignWarn", texthl = "DiagnosticSignWarn", numhl = "DiagnosticLineNrWarn" },
+			{ name = "DiagnosticSignInfo", texthl = "DiagnosticSignInfo", numhl = "DiagnosticLineNrInfo" },
+			{ name = "DiagnosticSignHint", texthl = "DiagnosticSignHint", numhl = "DiagnosticLineNrHint" },
 		},
-		{ name = "DiagnosticSignWarn", texthl = "DiagnosticSignWarn", numhl = "DiagnosticLineNrWarn" },
-		{ name = "DiagnosticSignInfo", texthl = "DiagnosticSignInfo", numhl = "DiagnosticLineNrInfo" },
-		{ name = "DiagnosticSignHint", texthl = "DiagnosticSignHint", numhl = "DiagnosticLineNrHint" },
 	})
 end
 
@@ -146,8 +149,8 @@ require("mason-lspconfig").setup_handlers({
 					workspace = {
 						-- Make the server aware of Neovim runtime files
 						library = {
-							[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-							[vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
+							[call("expand", { "$VIMRUNTIME/lua" })] = true,
+							[call("expand", { "$VIMRUNTIME/lua/vim/lsp" })] = true,
 						},
 					},
 				},

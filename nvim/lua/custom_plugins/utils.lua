@@ -1,4 +1,5 @@
-local call = vim.api.nvim_call_function
+local api = vim.api
+local call = api.nvim_call_function
 
 local M = {}
 
@@ -8,7 +9,7 @@ M.get_range_motion = function(mode)
 
 	if mode == "v" then
 		range_start = call("line", { "v" })
-		range_end = vim.api.nvim_win_get_cursor(0)[1]
+		range_end = api.nvim_win_get_cursor(0)[1]
 		if range_start > range_end then
 			range_start, range_end = range_end, range_start
 		end
