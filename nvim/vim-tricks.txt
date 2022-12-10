@@ -10,6 +10,8 @@ g<C-g>     => show stats
 :=         => echo last line number
 :s/a/&b    => append b to a
 s/\%Va/b   => apply substitution only in previous visual range
+s/.\{-}/b  => non-greedy `*` equivalent
+s/.\zea/b  => until `a` (`a` not included in match)
 :g/p/s/a/b => apply substitution only where `p` pattern appears
 :<C-v>     => insert literal
 :<C-f>     => expand command line
