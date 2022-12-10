@@ -50,10 +50,10 @@ local insert_suggestion = function(suggestion)
 
 	local line_content = api.nvim_get_current_line()
 
-	print(vim.inspect(word_under_cursor_start_col))
-	print(vim.inspect(punctuation_captures))
-	print(1, line_content:sub(1, col - (is_punctuation and 0 or #word_under_cursor)))
-	print(2, line_content:sub(col + 1))
+	-- print(vim.inspect(word_under_cursor_start_col))
+	-- print(vim.inspect(punctuation_captures))
+	-- print(1, line_content:sub(1, col - (is_punctuation and 0 or #word_under_cursor)))
+	-- print(2, line_content:sub(col + 1))
 
 	local new_line_content = line_content:sub(1, word_under_cursor_start_col - 1)
 		.. suggestion
@@ -73,8 +73,8 @@ local wise_tab = function()
 		local item = items[1]
 		local prev_input = vim.api.nvim_get_var("ddc#_prev_input")
 		local suggestion = item["word"]
-		print("prev:", prev_input)
-		print("sugg:", suggestion)
+		-- print("prev:", prev_input)
+		-- print("sugg:", suggestion)
 
 		if prev_input:sub(-#suggestion) == suggestion then
 			insert_snippet_or_tab()
