@@ -133,15 +133,12 @@ require("nvim-treesitter.configs").setup({
 	},
 })
 
-vim.api.nvim_exec(
-	[[
+vim.cmd([[
 highlight! TSDefinition gui=underline
 highlight! TSDefinitionUsage gui=bold
 
 highlight! link TreesitterContext CursorLine
-]],
-	false
-)
+]])
 
 vim.keymap.set("n", "<localleader>t", "<cmd>TSHighlightCapturesUnderCursor<cr>")
 

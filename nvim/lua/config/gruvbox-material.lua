@@ -10,8 +10,7 @@ vim.g.gruvbox_material_diagnostic_virtual_text = "colored"
 vim.g.gruvbox_material_palette = "original"
 
 -- Change search hl to orange instead of red
-vim.api.nvim_exec(
-	[[
+vim.cmd([[
 hi clear
 set background=dark
 colorscheme gruvbox-material
@@ -41,6 +40,4 @@ highlight! link TSField Blue
 highlight! link TSFuncBuiltin Yellow
 highlight! link TSFunction AquaBold
 highlight! link TSMethod Aqua
-]],
-	false
-)
+]])

@@ -22,18 +22,9 @@ local insert_snippet_or_tab = function()
 	end
 end
 
-local get_wuc_info = function(is_punctuation, col)
-	local word_under_cursor = ""
-	local word_under_cursor_start_col
-
-	if is_punctuation then
-		word_under_cursor_start_col = col + 1
-	else
-		word_under_cursor = fn.expand("<cword>")
-		word_under_cursor_start_col = vim.fn.searchpos(word_under_cursor, "Wcnb")[2]
-	end
-
-	return word_under_cursor, word_under_cursor_start_col
+local get_wuc_start_col = function()
+	local word_under_cursor = fn.expand("<cword>")
+	return vim.fn.searchpos(word_under_cursor, "Wcnb")[2] - 1
 end
 
 local insert_suggestion = function(suggestion)
@@ -46,7 +37,7 @@ local insert_suggestion = function(suggestion)
 	end, captures)
 
 	local is_punctuation = not vim.tbl_isempty(punctuation_captures)
-	local word_under_cursor, word_under_cursor_start_col = get_wuc_info(is_punctuation, col)
+	local word_under_cursor_start_col = is_punctuation and col or get_wuc_start_col()
 
 	local line_content = api.nvim_get_current_line()
 
@@ -55,23 +46,23 @@ local insert_suggestion = function(suggestion)
 	-- print(1, line_content:sub(1, col - (is_punctuation and 0 or #word_under_cursor)))
 	-- print(2, line_content:sub(col + 1))
 
-	local new_line_content = line_content:sub(1, word_under_cursor_start_col - 1)
+	local new_line_content = line_content:sub(1, word_under_cursor_start_col )
 		.. suggestion
 		.. line_content:sub(col + 1)
 
 	api.nvim_set_current_line(new_line_content)
-	api.nvim_win_set_cursor(0, { row, col - #word_under_cursor + #suggestion })
+	api.nvim_win_set_cursor(0, { row, word_under_cursor_start_col  + #suggestion })
 end
 
 local wise_tab = function()
-	local items = vim.api.nvim_get_var("ddc#_items")
-	local complete_pos = vim.api.nvim_get_var("ddc#_complete_pos")
+	local items = vim.g["ddc#_items"]
+	local complete_pos = vim.g["ddc#_complete_pos"]
 	call("ddc#_hide", "CompleteDone")
 	call("ddc#complete#_on_complete_done", items[1])
 
 	if not vim.tbl_isempty(items) and complete_pos >= 0 then
 		local item = items[1]
-		local prev_input = vim.api.nvim_get_var("ddc#_prev_input")
+		local prev_input = vim.g["ddc#_prev_input"]
 		local suggestion = item["word"]
 		-- print("prev:", prev_input)
 		-- print("sugg:", suggestion)

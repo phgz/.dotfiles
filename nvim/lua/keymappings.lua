@@ -2,20 +2,28 @@ local get_range_motion = require("custom_plugins.utils").get_range_motion
 local set = vim.keymap.set
 local fn = vim.fn
 local api = vim.api
+local call = api.nvim_call_function
+local cmd = vim.cmd
 
 -- leader key
-set("n", "<leader>t", "<cmd>:b #<cr>") -- Toggle alternate buffer
-set("n", "<leader>v", "<cmd>vsplit<cr>") -- Split vertical
-set("n", "<leader>h", "<cmd>split<cr>") -- Split horizontal
+set("n", "<leader>t", function()
+	cmd(":b #")
+end) -- Toggle alternate buffer
+set("n", "<leader>v", function()
+	cmd("vsplit")
+end) -- Split vertical
+set("n", "<leader>h", function()
+	cmd("split")
+end) -- Split horizontal
 
 set("n", "<leader>d", function() -- delete buffer and set alternate file
-	vim.cmd("bdelete")
-	local new_current_file = vim.fn.expand("%:p")
+	cmd("bdelete")
+	local new_current_file = call("expand", { "%:p" })
 	local context = vim.api.nvim_get_context({ types = { "jumps", "bufs" } })
-	local jumps = vim.fn.msgpackparse(context["jumps"])
+	local jumps = call("msgpackparse", { context["jumps"] })
 	local still_listed = vim.tbl_map(function(buf)
 		return buf["f"]
-	end, vim.fn.msgpackparse(context["bufs"])[4])
+	end, call("msgpackparse", { context["bufs"] })[4])
 	local possible_alternatives = vim.tbl_filter(function(name)
 		return name ~= new_current_file
 	end, still_listed)
@@ -24,7 +32,7 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 	if #still_listed == 0 then
 		return
 	elseif #still_listed == 1 then
-		vim.cmd("call setreg('#', @%)")
+		call("setreg", { "#", call("getreg", { "%" }) })
 		return
 	end
 
@@ -48,7 +56,7 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 		end
 	end
 	-- print("found jumps_alternate_file_index", jumps[jumps_alternate_file_index]['f'])
-	vim.api.nvim_call_function("setreg", { "#", jumps[jumps_alternate_file_index]["f"] })
+	call("setreg", { "#", jumps[jumps_alternate_file_index]["f"] })
 end)
 
 set("n", "<leader>q", function() -- Close popups
@@ -81,7 +89,7 @@ end)
 set("n", "<localleader>d", "<cmd>:windo :diffthis<cr>") -- Diff
 set("n", "<localleader>q", function() -- Remove breakpoints
 	local cur_pos = api.nvim_win_get_cursor(0)
-	vim.cmd("g/breakpoint()/d")
+	cmd("g/breakpoint()/d")
 	api.nvim_win_set_cursor(0, cur_pos)
 end)
 
@@ -151,7 +159,6 @@ end)
 set("n", "<M-s>", "r<CR>") -- Split below
 set("n", "<M-S-s>", "r<CR><cmd>move .-2<cr>") -- Split up
 set("n", "<M-S-j>", "<cmd>move .+1 <bar> .-1 join<cr>") -- Join at end of below
-set("i", "<C-s>", "<space><space><left>") -- Add space after and before
 
 set("n", "<C-g>", function() -- Show file stats
 	local row, col = unpack(api.nvim_win_get_cursor(0))
@@ -170,21 +177,21 @@ set("n", "<M-d>", function() -- Delete line content
 end)
 
 set("n", "<M-p>", function() -- Append at EOL
-	api.nvim_set_current_line(api.nvim_get_current_line() .. vim.fn.getreg('"'))
+	api.nvim_set_current_line(api.nvim_get_current_line() .. call("getreg", { '"' }))
 end)
 
 set("n", "<M-S-p>", function() -- Append at EOL With space
-	api.nvim_set_current_line(api.nvim_get_current_line() .. " " .. vim.fn.getreg('"'))
+	api.nvim_set_current_line(api.nvim_get_current_line() .. " " .. call("getreg", { '"' }))
 end)
 
 set("n", "<M-a>", function() -- Paste buffer above
 	local row = api.nvim_win_get_cursor(0)[1]
-	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { vim.fn.getreg('"') })
+	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { call("getreg", { '"' }) })
 end)
 
 set("n", "<M-b>", function() -- Paste buffer below
 	local row = api.nvim_win_get_cursor(0)[1]
-	api.nvim_buf_set_lines(0, row, row, true, { vim.fn.getreg('"') })
+	api.nvim_buf_set_lines(0, row, row, true, { call("getreg", { '"' }) })
 end)
 
 set("n", "<M-o>", function() -- New line down
@@ -211,6 +218,8 @@ end)
 set("", "<M-x>", function() -- Delete character after cursor
 	local content = api.nvim_get_current_line()
 	local col = api.nvim_win_get_cursor(0)[2]
+	call("setreg", { '"', content:sub(col + 2, col + 2) })
+
 	api.nvim_set_current_line(content:sub(1, col + 1) .. content:sub(col + 3))
 end)
 

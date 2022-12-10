@@ -1,3 +1,5 @@
+local call = vim.api.nvim_call_function
+
 local get_range_motion = require("custom_plugins.utils").get_range_motion
 
 local M = {}
@@ -13,7 +15,7 @@ local actualize_visual_selection = function(new_start, new_end)
 end
 
 local get_input = function(prompt)
-	local input = vim.fn.input(prompt)
+	local input = call("input", { prompt })
 
 	if input == "" then
 		return
@@ -48,7 +50,7 @@ end
 
 local duplicate_aux = function(other)
 	local line = vim.api.nvim_buf_get_lines(0, other - 1, other, false)
-	local current = vim.fn.line(".")
+	local current = call("line", { "." })
 	vim.api.nvim_buf_set_lines(0, current - 1, current, true, line)
 	feed("==")
 end
@@ -84,7 +86,7 @@ M.copy = function(mode)
 end
 
 M.swap = function()
-	local current = vim.fn.line(".")
+	local current = call("line", { "." })
 	local input = get_input("Swap line " .. current .. " and ")
 	if input == nil then
 		return
@@ -103,7 +105,7 @@ M.after_sep = function(fwd)
 		vim.api.nvim_win_set_cursor(0, { row, col - 1 })
 	end
 
-	local new_row, new_col = unpack(vim.fn.searchpos("_", opts))
+	local new_row, new_col = unpack(call("searchpos", { "_", opts }))
 
 	if new_row == 0 then
 		if back_on_edge then
