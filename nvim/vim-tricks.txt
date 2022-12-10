@@ -3,6 +3,7 @@
 12:        => :.,.+11
 
 <C-g>      => show ruler
+g<C-g>     => show stats
 <C-l>      => clear search highlight
 
 :*         => :'<,'>

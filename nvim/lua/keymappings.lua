@@ -119,12 +119,12 @@ set("n", "]<space>", function() -- Go right
 	api.nvim_win_set_cursor(0, { row, col + 1 })
 end)
 
-set("n", "]<cr>", function() -- Go down one line
+set({ "o", "n" }, "]<cr>", function() -- Go down one line
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_win_set_cursor(0, { row + 1, col })
 end)
 
-set("n", "[<cr>", function() -- Go up one line
+set({ "o", "n" }, "[<cr>", function() -- Go up one line
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_win_set_cursor(0, { row - 1, col })
 end)

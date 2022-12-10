@@ -60,8 +60,10 @@ local lsp_config = {
 local servers = {
 	"bashls",
 	"dockerls",
-	"pyright",
+	"jsonls",
 	"sumneko_lua",
+	"pyright",
+	"taplo",
 	"vimls",
 	"yamlls",
 }
@@ -69,6 +71,10 @@ local servers = {
 local formatters = {
 	"black",
 	"isort",
+	"prettier",
+	"shfmt",
+	"stylua",
+	"yamlfmt",
 }
 
 local linters = {

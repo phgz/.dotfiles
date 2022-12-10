@@ -167,7 +167,7 @@ format = "[$user ]($style)"
 format = "[$hostname ]($style)"
 
 [status]
-disabled =false
+disabled = false
 format = "[$symbol $status ]($style)"
 
 [shell]

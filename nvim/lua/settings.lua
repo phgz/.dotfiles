@@ -30,7 +30,7 @@ end
 
 g.loaded_perl_provider = 0
 g.mapleader = " "
-g.maplocalleader = vim.api.nvim_replace_termcodes('<BS>', false, false, true)
+g.maplocalleader = vim.api.nvim_replace_termcodes("<BS>", false, false, true)
 g.python3_host_prog = "~/.miniconda3/envs/neovim/bin/python"
 
 bo.expandtab = true

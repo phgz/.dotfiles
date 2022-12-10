@@ -88,14 +88,18 @@ function M.setup()
 				"Shougo/ddc-omni",
 				"Shougo/ddc-nvim-lsp",
 				"Shougo/ddc-converter_remove_overlap",
+				"Shougo/ddc-ui-inline",
+				"Shougo/ddc-ui-native",
+				"Shougo/pum.vim",
 				"LumaKernel/ddc-file",
 				"LumaKernel/ddc-tabnine",
+				"nabezokodaikon/ddc-nvim-lsp_by-treesitter",
 				"delphinus/ddc-treesitter",
 				"Shougo/ddc-matcher_length",
 				"tani/ddc-fuzzy",
 				"matsui54/denops-popup-preview.vim",
 			},
-			commit = "042e3b1d4df310d5bbaba7a6c2e7f36a94e27977",
+			-- commit = "042e3b1d4df310d5bbaba7a6c2e7f36a94e27977",
 		}) -- Completion engine
 
 		use({

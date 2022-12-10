@@ -86,10 +86,11 @@ require("gitsigns").setup({
 	end,
 	preview_config = {
 		-- Options passed to nvim_open_win
+		anchor = "SW",
 		border = "rounded",
 		style = "minimal",
+		title = " Git diff ",
+		title_pos = "center",
 		relative = "cursor",
-		row = 0,
-		col = 1,
 	},
 })

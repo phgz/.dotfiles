@@ -1,7 +1,28 @@
+local util = require("formatter.util")
+local defaults = require("formatter.defaults")
+
 require("formatter").setup({
 	logging = true,
 	log_level = vim.log.levels.DEBUG,
 	filetype = {
+		fish = {
+			require("formatter.filetypes.fish").fishindent,
+		},
+		sh = {
+			require("formatter.filetypes.sh").shfmt,
+		},
+		markdown = {
+			require("formatter.filetypes.markdown").prettier,
+		},
+		toml = {
+			require("formatter.filetypes.toml").taplo,
+		},
+		yaml = {
+			require("formatter.filetypes.yaml").yamlfmt,
+		},
+		json = {
+			require("formatter.filetypes.json").prettier,
+		},
 		python = {
 			-- black
 			function()
@@ -38,7 +59,7 @@ require("formatter").setup({
 
 local formatGrp = vim.api.nvim_create_augroup("FormatAutogroup", { clear = true })
 vim.api.nvim_create_autocmd("BufWritePost", {
-	pattern = [[*.\(py\|lua\)]],
+	pattern = "*",
 	command = "FormatWrite",
 	group = formatGrp,
 })
