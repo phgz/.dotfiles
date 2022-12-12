@@ -43,10 +43,10 @@ function M.setup()
 		use({ "wbthomason/packer.nvim" })
 
 		-- Load time optimization
-		use({
-			"nathom/filetype.nvim",
-			setup = [[vim.cmd('runtime! autoload/dist/ft.vim')]],
-		})
+		-- use({
+		-- 	"nathom/filetype.nvim",
+		-- 	setup = [[vim.cmd('runtime! autoload/dist/ft.vim')]],
+		-- })
 		use({ "lewis6991/impatient.nvim" })
 
 		use({ "nvim-lua/plenary.nvim" }) -- Lua functions
@@ -79,6 +79,18 @@ function M.setup()
 		-- use { 'WhoIsSethDaniel/mason-tool-installer.nvim' } -- Auto install tools like shellcheck
 		use({ "onsails/lspkind-nvim" }) -- LSP pictograms
 		use({
+			"codota/tabnine-nvim",
+			run = "./dl_binaries.sh",
+			config = function()
+				require("tabnine").setup({
+					disable_auto_comment = true,
+					accept_keymap = "<Tab>",
+					debounce_ms = 300,
+					suggestion_color = { gui = "#808080", cterm = 244 },
+				})
+			end,
+		})
+		use({
 			"Shougo/ddc.vim",
 			requires = {
 				"vim-denops/denops.vim",
@@ -88,7 +100,6 @@ function M.setup()
 				"Shougo/ddc-converter_remove_overlap",
 				"Shougo/ddc-ui-inline",
 				"Shougo/ddc-ui-native",
-				"Shougo/pum.vim",
 				"LumaKernel/ddc-file",
 				"LumaKernel/ddc-tabnine",
 				"nabezokodaikon/ddc-nvim-lsp_by-treesitter",

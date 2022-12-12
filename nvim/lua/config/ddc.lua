@@ -40,11 +40,6 @@ local insert_suggestion = function(suggestion)
 
 	local line_content = api.nvim_get_current_line()
 
-	-- print(vim.inspect(word_under_cursor_start_col))
-	-- print(vim.inspect(punctuation_captures))
-	-- print(1, line_content:sub(1, col - (is_punctuation and 0 or #word_under_cursor)))
-	-- print(2, line_content:sub(col + 1))
-
 	local new_line_content = line_content:sub(1, word_under_cursor_start_col) .. suggestion .. line_content:sub(col + 1)
 
 	api.nvim_set_current_line(new_line_content)
@@ -55,14 +50,11 @@ local wise_tab = function()
 	local items = vim.g["ddc#_items"]
 	local complete_pos = vim.g["ddc#_complete_pos"]
 	call("ddc#_hide", { "CompleteDone" })
-	call("ddc#complete#_on_complete_done", { items[1] })
 
 	if not vim.tbl_isempty(items) and complete_pos >= 0 then
 		local item = items[1]
 		local prev_input = vim.g["ddc#_prev_input"]
 		local suggestion = item["word"]
-		-- print("prev:", prev_input)
-		-- print("sugg:", suggestion)
 
 		if prev_input:sub(-#suggestion) == suggestion then
 			insert_snippet_or_tab()
@@ -81,16 +73,16 @@ vim.keymap.set("i", "<Tab>", function()
 	return call("pumvisible", {}) == 1 and feed_special("<C-n>") or wise_tab()
 end, opts)
 
-local manual_complete = function()
+local manual_complete = function(sources, ui)
 	if not call("ddc#_denops_running", {}) then
 		call("ddc#enable", {})
 		call("denops#plugin#wait", { "ddc" })
 	end
-	call("denops#notify", { "ddc", "manualComplete", { { "nvim-lsp" }, "native" } })
+	call("denops#notify", { "ddc", "manualComplete", { sources, ui } })
 end
 
 vim.keymap.set("i", "<S-Tab>", function()
-	return call("pumvisible", {}) == 1 and feed_special("<C-p>") or manual_complete()
+	return call("pumvisible", {}) == 1 and feed_special("<C-p>") or manual_complete({ "nvim-lsp" }, "native")
 end, opts)
 
 vim.keymap.set("i", "<CR>", function()
@@ -102,7 +94,8 @@ vim.keymap.set("i", "<ESC>", function()
 end, opts_expr)
 
 vim.cmd([[
-call ddc#custom#patch_global('sources', ['nvim-lsp', 'ultisnips', 'file'])
+" call ddc#custom#patch_global('sources', ['nvim-lsp', 'ultisnips', 'file'])
+call ddc#custom#patch_global('sources', ['tabnine'])
 call ddc#custom#patch_global('sourceOptions', #{
             \ _: #{
             \   matchers: ['matcher_fuzzy'],
