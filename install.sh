@@ -261,7 +261,7 @@ if [ "$platform" == "Darwin" ]; then
     echo "sudo launchctl load /Library/LaunchDaemons/dotfiles.theme.{day,night}.plist"
 
 elif [ "$platform" == "Linux" ]; then
-    crontab -l | cat - "$HOME"/.dotfiles/theme/linux.txt | crontab -
+    crontab -l | cat - "$HOME"/.dotfiles/theme/crontab | crontab -
 
     # Do not display login message
     touch "$HOME"/.hushlogin
