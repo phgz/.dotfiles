@@ -71,7 +71,7 @@ wo.number = true
 wo.signcolumn = "yes"
 -- wo.winbar = "..." -- Use winbar feature
 
-opt.formatoptions:remove({ "ro" })
+opt.formatoptions:remove({ "clor" })
 opt.iskeyword:append({ "-" })
 opt.matchpairs:append({ ">:<" })
 opt.shortmess:append({

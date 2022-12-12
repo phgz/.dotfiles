@@ -1,2 +1,2 @@
-0 6 * * * PATH=$HOME/.local/bin:/usr/bin fish -lc "theme light"
-0 18 * * * PATH=$HOME/.local/bin:/usr/bin fish -lc "theme dark"
+0 6 * * * PATH=$HOME/.local/bin:/usr/bin fish -lc "theme day"
+0 18 * * * PATH=$HOME/.local/bin:/usr/bin fish -lc "theme night"

@@ -6,4 +6,4 @@
     helper = store
 
 [filter "currentThemeFilter"]
-    clean = sed "s/^#\\ Theme-dark$/#\\ Theme-light/"
+    clean = sed "s/^#\\ Theme-night$/#\\ Theme-day/"
