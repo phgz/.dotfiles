@@ -78,18 +78,18 @@ function M.setup()
 		use({ "williamboman/mason-lspconfig.nvim" })
 		-- use { 'WhoIsSethDaniel/mason-tool-installer.nvim' } -- Auto install tools like shellcheck
 		use({ "onsails/lspkind-nvim" }) -- LSP pictograms
-		use({
-			"codota/tabnine-nvim",
-			run = "./dl_binaries.sh",
-			config = function()
-				require("tabnine").setup({
-					disable_auto_comment = true,
-					accept_keymap = "<Tab>",
-					debounce_ms = 300,
-					suggestion_color = { gui = "#808080", cterm = 244 },
-				})
-			end,
-		})
+		-- use({
+		-- 	"codota/tabnine-nvim",
+		-- 	run = "./dl_binaries.sh",
+		-- 	config = function()
+		-- 		require("tabnine").setup({
+		-- 			disable_auto_comment = true,
+		-- 			accept_keymap = "<Tab>",
+		-- 			debounce_ms = 300,
+		-- 			suggestion_color = { gui = "#808080", cterm = 244 },
+		-- 		})
+		-- 	end,
+		-- })
 		use({
 			"Shougo/ddc.vim",
 			requires = {

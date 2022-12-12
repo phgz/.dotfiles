@@ -8,6 +8,20 @@ vim.g.popup_preview_config = {
 	supportUltisnips = true,
 }
 
+local _denops_running = function()
+	return vim.g.loaded_denops
+		and call("denops#server#status", {}) == "running"
+		and call("denops#plugin#is_loaded", { "ddc" }) == 1
+end
+
+local _hide = function(event)
+	if not _denops_running() then
+		return
+	end
+
+	call("denops#notify", { "ddc", "hide", { event } })
+end
+
 local feed_special = function(action)
 	api.nvim_feedkeys(api.nvim_replace_termcodes(action, true, false, true), "n", true)
 	return true
@@ -38,23 +52,22 @@ local insert_suggestion = function(suggestion)
 	local is_punctuation = not vim.tbl_isempty(punctuation_captures)
 	local word_under_cursor_start_col = is_punctuation and col or get_wuc_start_col()
 
-	local line_content = api.nvim_get_current_line()
-
-	local new_line_content = line_content:sub(1, word_under_cursor_start_col) .. suggestion .. line_content:sub(col + 1)
-
-	api.nvim_set_current_line(new_line_content)
+	api.nvim_buf_set_text(0, row - 1, word_under_cursor_start_col, row - 1, col, { suggestion })
 	api.nvim_win_set_cursor(0, { row, word_under_cursor_start_col + #suggestion })
 end
 
 local wise_tab = function()
 	local items = vim.g["ddc#_items"]
 	local complete_pos = vim.g["ddc#_complete_pos"]
-	call("ddc#_hide", { "CompleteDone" })
+
+	_hide("CompleteDone")
 
 	if not vim.tbl_isempty(items) and complete_pos >= 0 then
 		local item = items[1]
 		local prev_input = vim.g["ddc#_prev_input"]
 		local suggestion = item["word"]
+
+		call("denops#request", { "ddc", "onCompleteDone", { item.__sourceName, item.user_data } })
 
 		if prev_input:sub(-#suggestion) == suggestion then
 			insert_snippet_or_tab()
@@ -66,20 +79,21 @@ local wise_tab = function()
 	end
 end
 
+local manual_complete = function(sources, ui)
+	if not _denops_running() then
+		call("ddc#enable", {})
+		call("denops#plugin#wait", { "ddc" })
+	end
+
+	call("denops#notify", { "ddc", "manualComplete", { sources, ui } })
+end
+
 local opts = { silent = true, noremap = true }
 local opts_expr = vim.tbl_extend("error", opts, { expr = true })
 
 vim.keymap.set("i", "<Tab>", function()
 	return call("pumvisible", {}) == 1 and feed_special("<C-n>") or wise_tab()
 end, opts)
-
-local manual_complete = function(sources, ui)
-	if not call("ddc#_denops_running", {}) then
-		call("ddc#enable", {})
-		call("denops#plugin#wait", { "ddc" })
-	end
-	call("denops#notify", { "ddc", "manualComplete", { sources, ui } })
-end
 
 vim.keymap.set("i", "<S-Tab>", function()
 	return call("pumvisible", {}) == 1 and feed_special("<C-p>") or manual_complete({ "nvim-lsp" }, "native")
@@ -95,7 +109,7 @@ end, opts_expr)
 
 vim.cmd([[
 " call ddc#custom#patch_global('sources', ['nvim-lsp', 'ultisnips', 'file'])
-call ddc#custom#patch_global('sources', ['tabnine'])
+call ddc#custom#patch_global('sources', ['nvim-lsp'])
 call ddc#custom#patch_global('sourceOptions', #{
             \ _: #{
             \   matchers: ['matcher_fuzzy'],

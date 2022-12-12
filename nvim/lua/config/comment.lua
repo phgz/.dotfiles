@@ -79,7 +79,7 @@ end
 
 vim.keymap.set(
 	"o",
-	"u",
+	"K",
 	commented_lines_textobject,
 	{ silent = true, desc = "Textobject for adjacent commented lines" }
 )
