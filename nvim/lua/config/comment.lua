@@ -72,8 +72,10 @@ local function commented_lines_textobject()
 	until next(line) == nil or not is_commented(line[1])
 	re = re - 1
 
+	local last_line = api.nvim_buf_get_lines(0, re - 1, re, false)
+
 	api.nvim_buf_set_mark(0, "<", rs, 0, {})
-	api.nvim_buf_set_mark(0, ">", re, call("col", { "$" }), {})
+	api.nvim_buf_set_mark(0, ">", re, #last_line[1], {})
 	api.nvim_feedkeys(api.nvim_replace_termcodes("gv", true, false, true), "x", true)
 end
 
