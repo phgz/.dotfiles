@@ -18,8 +18,8 @@ set fish_cursor_replace_one underscore
 
 bind -M insert \ca beginning-of-line
 bind -M insert \ce end-of-line
-bind -M insert \ck kill-line
-bind -M insert \cn kill-word
+bind -M insert \c_ kill-line
+bind -M insert \ck kill-word
 bind -M insert \cs 'clear; commandline -f repaint'
 bind -M insert \cc kill-whole-line repaint
 
