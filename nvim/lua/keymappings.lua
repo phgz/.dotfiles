@@ -205,6 +205,33 @@ set("n", "<M-S-o>", function() -- New line up
 	api.nvim_win_set_cursor(0, { row, 0 })
 end)
 
+set("i", "<C-f>", function() -- Go one character right
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_win_set_cursor(0, { row, col + 1 })
+end)
+
+set("i", "<C-b>", function() -- Go one character right
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_win_set_cursor(0, { row, col - 1 })
+end)
+
+set("i", "<C-q>", function() -- Go to normal mode one char right
+	api.nvim_feedkeys(api.nvim_replace_termcodes("<esc>", true, false, true), "t", true)
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_win_set_cursor(0, { row, col + 1 })
+end)
+
+set("i", "<C-_>", function() -- Delete line after cursor
+	local col = api.nvim_win_get_cursor(0)[2]
+	api.nvim_set_current_line(api.nvim_get_current_line():sub(1, col))
+end)
+
+set("i", "<C-k>", function() -- Delete next character
+	local col = api.nvim_win_get_cursor(0)[2]
+	local line_content = api.nvim_get_current_line()
+	api.nvim_set_current_line(line_content:sub(1, col) .. line_content:sub(col + 2))
+end)
+
 set("i", "<C-l>", function() -- Add new string parameter
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	local content = api.nvim_get_current_line()
