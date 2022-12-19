@@ -157,7 +157,22 @@ end)
 --Modifiers keys
 set("n", "<M-s>", "r<CR>") -- Split below
 set("n", "<M-S-s>", "r<CR><cmd>move .-2<cr>") -- Split up
-set("n", "<M-S-j>", "<cmd>move .+1 <bar> .-1 join<cr>") -- Join at end of below
+set("n", "<M-S-j>", function()
+	cmd("move .+1 | .-1 join")
+end) -- Join at end of below
+
+set("n", "<M-left>", function()
+	vim.cmd("wincmd h")
+end) -- Go left window
+set("n", "<M-right>", function()
+	vim.cmd("wincmd l")
+end) -- Go right window
+set("n", "<M-up>", function()
+	vim.cmd("wincmd k")
+end) -- Go up window
+set("n", "<M-down>", function()
+	vim.cmd("wincmd j")
+end) -- Go down window
 
 set("n", "<C-g>", function() -- Show file stats
 	local row, col = unpack(api.nvim_win_get_cursor(0))

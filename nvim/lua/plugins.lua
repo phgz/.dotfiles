@@ -61,20 +61,54 @@ function M.setup()
 		use({ "luisiacc/gruvbox-baby" }) -- Color scheme
 		use({ "projekt0n/github-nvim-theme" }) -- Color scheme
 
-		use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }) -- using Treesitter
+		use({
+			"nvim-treesitter/nvim-treesitter",
+			run = ":TSUpdate",
+			config = function()
+				require("config.treesitter")
+			end,
+		}) -- using Treesitter
 		use({ "nvim-treesitter/playground" }) -- See parsed tree
 		use({ "nvim-treesitter/nvim-treesitter-textobjects" }) -- More text motions
 		use({ "nvim-treesitter/nvim-treesitter-refactor" }) -- Highlight definitions, Rename
-		use({ "RRethy/vim-illuminate" }) -- Word highlighting
+		use({
+			"RRethy/vim-illuminate",
+			config = function()
+				require("config.illuminate")
+			end,
+		}) -- Word highlighting
 		use({ "RRethy/nvim-treesitter-endwise" }) -- Add `end` statement when opening a context
 		use({ "p00f/nvim-ts-rainbow" }) -- "Enclosers" coloring
-		use({ "s1n7ax/nvim-comment-frame" }) -- Comment frame
-		use({ "SmiteshP/nvim-gps" }) -- Context in the status bar
-		use({ "ThePrimeagen/refactoring.nvim", requires = "plenary.nvim" }) --  Extract block in new function
-		use({ "danymat/neogen" }) -- Annotation generator
+		use({
+			"s1n7ax/nvim-comment-frame",
+			config = function()
+				require("config.commentframe")
+			end,
+		}) -- Comment frame
+		use({
+			"SmiteshP/nvim-gps",
+			config = function()
+				require("config.gps")
+			end,
+		}) -- Context in the status bar
+		use({
+			"ThePrimeagen/refactoring.nvim",
+			requires = "plenary.nvim",
+			config = function()
+				require("config.refactoring")
+			end,
+		}) --  Extract block in new function
+		use({
+			"danymat/neogen",
+			config = function()
+				require("config.neogen")
+			end,
+		}) -- Annotation generator
 
 		use({ "neovim/nvim-lspconfig" }) -- LSP and completion
-		use({ "williamboman/mason.nvim" }) -- LSP installer
+		use({
+			"williamboman/mason.nvim",
+		}) -- LSP installer
 		use({ "williamboman/mason-lspconfig.nvim" })
 		-- use { 'WhoIsSethDaniel/mason-tool-installer.nvim' } -- Auto install tools like shellcheck
 		use({ "onsails/lspkind-nvim" }) -- LSP pictograms
@@ -84,7 +118,7 @@ function M.setup()
 		-- 	config = function()
 		-- 		require("tabnine").setup({
 		-- 			disable_auto_comment = true,
-		-- 			accept_keymap = "<Tab>",
+		-- 			accept_keymap = "<right>",
 		-- 			debounce_ms = 300,
 		-- 			suggestion_color = { gui = "#808080", cterm = 244 },
 		-- 		})
@@ -108,48 +142,94 @@ function M.setup()
 				"tani/ddc-fuzzy",
 				"matsui54/denops-popup-preview.vim",
 			},
+			config = function()
+				require("config.ddc")
+			end,
 			-- commit = "042e3b1d4df310d5bbaba7a6c2e7f36a94e27977",
 		}) -- Completion engine
 
 		use({
 			"nvim-telescope/telescope.nvim",
 			requires = { "popup.nvim", "plenary.nvim" },
+			config = function()
+				require("config.telescope")
+			end,
 		}) -- Fuzzy finder
 
 		use({ "cljoly/telescope-repo.nvim" }) --Jump around the repositories in the filesystem
 
-		use({ "kylechui/nvim-surround" })
+		use({
+			"kylechui/nvim-surround",
+			config = function()
+				require("config.surround")
+			end,
+		})
 
 		use({
 			"beauwilliams/focus.nvim",
 			config = function()
-				require("focus").setup({ signcolumn = false, cursorline = false })
+				require("config.focus")
 			end,
 		}) -- Split and resize window intelligently
 
-		use({ "mhartington/formatter.nvim" }) -- Formatting
+		use({
+			"mhartington/formatter.nvim",
+			config = function()
+				require("config.formatting")
+			end,
+		}) -- Formatting
 
-		use({ "lewis6991/gitsigns.nvim" }) -- Git integration
+		use({
+			"lewis6991/gitsigns.nvim",
+			config = function()
+				require("config.gitsigns")
+			end,
+		}) -- Git integration
 
 		use({ "honza/vim-snippets" }) -- Snippets
-		use({ "SirVer/ultisnips" }) -- Snippets engine
+		use({
+			"SirVer/ultisnips",
+			config = function()
+				require("config.ultisnips")
+			end,
+		}) -- Snippets engine
 
-		use({ "ibhagwan/smartyank.nvim" })
+		use({
+			"ibhagwan/smartyank.nvim",
+			config = function()
+				require("config.smartyank")
+			end,
+		})
 
 		use({
 			"numToStr/Comment.nvim",
 			config = function()
-				require("Comment").setup()
+				require("config.comment")
 			end,
 		}) -- Comments
 
-		use({ "windwp/nvim-autopairs" }) -- Pairwise
+		use({
+			"windwp/nvim-autopairs",
+			config = function()
+				require("config.autopairs")
+			end,
+		}) -- Pairwise
 
-		use({ "lukas-reineke/indent-blankline.nvim" }) -- Indentation line
+		use({
+			"lukas-reineke/indent-blankline.nvim",
+			config = function()
+				require("config.indentblankline")
+			end,
+		}) -- Indentation line
 
 		use({ "tpope/vim-repeat" }) -- Repeat plugins commands
 
-		use({ "phaazon/hop.nvim" }) -- Vim Motions
+		use({
+			"phaazon/hop.nvim",
+			config = function()
+				require("config.hop")
+			end,
+		}) -- Vim Motions
 
 		use({
 			"Weissle/easy-action",
@@ -159,47 +239,80 @@ function M.setup()
 					module = { "async" },
 				},
 			},
+			config = function()
+				require("config.easy-action")
+			end,
 		})
 
-		use({ "diegoulloao/nvim-file-location" })
+		use({
+			"diegoulloao/nvim-file-location",
+			config = function()
+				require("config.file-location")
+			end,
+		})
 
-		use({ "jose-elias-alvarez/null-ls.nvim" })
+		use({ "jose-elias-alvarez/null-ls.nvim", config = function() end })
 
-		use({ "Houl/repmo-vim" }) -- More motions with , and ;
+		use({
+			"Houl/repmo-vim",
+			config = function()
+				require("config.repmotion")
+			end,
+		}) -- More motions with , and ;
 
 		use({ "wellle/targets.vim" }) -- More motions objects
 
-		use({ "junegunn/vim-easy-align" }) -- Tabularize
+		use({
+			"junegunn/vim-easy-align",
+			config = function()
+				require("config.easyalign")
+			end,
+		}) -- Tabularize
 
 		use({ "airblade/vim-matchquote" }) -- Add matching for ' " ` |
 
 		use({ "machakann/vim-swap" }) -- Swap delimited items, like function arguments
 
-		use({ "smjonas/live-command.nvim" }) -- Live :norm
+		use({
+			"smjonas/live-command.nvim",
+			config = function()
+				require("config.live-command")
+			end,
+		}) -- Live :norm
 
 		use({
 			"folke/noice.nvim",
 			requires = {
 				"MunifTanjim/nui.nvim",
 			},
-			-- commit = "7b62ccfc236e51e78e5b2fc7d3068eacd65e4590"
+			config = function()
+				require("config.noice")
+			end,
 		})
 
-		use({ "nixon/vim-vmath" }) -- Visual block math mode
+		use({
+			"nixon/vim-vmath",
+			config = function()
+				require("config.vmath")
+			end,
+		}) -- Visual block math mode
 
 		use({ "dahu/vim-fanfingtastic" }) -- Use f/F/t/T multiline
 
-		use({
-			"nacro90/numb.nvim",
-			config = function()
-				require("numb").setup()
-			end,
-		}) -- Line preview
+		-- use({
+		-- 	"nacro90/numb.nvim",
+		-- 	config = function()
+		-- 		require("numb").setup()
+		-- 	end,
+		-- }) -- Line preview
 
 		use({
 			"philipGaudreau/nvim-cheat.sh",
 			branch = "feature/rounded-borders",
 			requires = "popfix",
+			config = function()
+				require("config.cheat")
+			end,
 		}) -- cheat.sh
 
 		-- use { 'vimpostor/vim-tpipeline' } -- Status line in TMUX bar
