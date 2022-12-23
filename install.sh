@@ -8,11 +8,11 @@ PKG_CONFIG_VERSION=0.29.2
 LIBEVENT_VERSION=2.1.12
 NCURSES_VERSION=6.3
 CMAKE_VERSION=3.23.2
-FISH_SHELL_VERSION=3.5.0
+FISH_SHELL_VERSION=3.5.1
 TMUX_VERSION=3.3a
 NODE_VERSION=18.4.0
-POETRY_VERSION=1.2.2
-PYTHON_VERSION=3.10
+POETRY_VERSION=1.2.3
+PYTHON_VERSION=3.11
 
 mkdir -p "$HOME"/.local/bin
 
@@ -38,12 +38,8 @@ if [ "$platform" == "Darwin" ]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    #------------------------------------------------------------------------------#
-    #                              kitty fish neovim                               #
-    #------------------------------------------------------------------------------#
-    $brew install kitty fish node yarn shellcheck neovim tmux fontconfig
-    $brew tap crescentrose/sunshine
-    $brew install sunshine
+    $brew install kitty fish node tmux fontconfig wget
+    $brew install --HEAD neovim
 
 #------------------------------------------------------------------------------#
 #                               Linux (no root)                                #
@@ -130,10 +126,6 @@ elif [ "$platform" == "Linux" ]; then
     tar -xf node-v"$NODE_VERSION"-linux-x64.tar.xz && rm node-v"$NODE_VERSION"-linux-x64.tar.xz
     mv node-v"$NODE_VERSION"-linux-x64 "$HOME"/.local/node
 
-    PATH=$HOME/.local/node/bin:$PATH "$HOME"/.local/node/bin/corepack enable
-    PATH=$HOME/.local/node/bin:$PATH "$HOME"/.local/node/bin/npm install -g neovim
-    PATH=$HOME/.local/node/bin:$PATH "$HOME"/.local/node/bin/npm install -g bash-language-server
-
     #------------------------------------------------------------------------------#
     #                       Remove dependencies src folders                        #
     #------------------------------------------------------------------------------#
@@ -163,6 +155,24 @@ chmod 700 "$HOME"/.ssh
 chmod 600 "$HOME"/.ssh/*
 
 #------------------------------------------------------------------------------#
+#                                  Cargo/Rust                                  #
+#------------------------------------------------------------------------------#
+if [ ! -d "$HOME"/.cargo ]; then
+    mkdir -p "$HOME"/.cargo
+
+    curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
+    cargo=$HOME/.cargo/bin/cargo
+    $cargo install --locked exa ripgrep bat fd-find du-dust nu starship || exit
+
+    git clone https://github.com/crescentrose/sunshine
+    pushd sunshine || exit
+    $cargo install --path .
+    success=$?
+    popd && rm -rf sunshine
+    test $success -ne 0 && exit
+fi
+
+#------------------------------------------------------------------------------#
 #                                  Miniconda                                   #
 #------------------------------------------------------------------------------#
 if [ ! -d "$HOME"/.miniconda3 ]; then
@@ -173,32 +183,12 @@ if [ ! -d "$HOME"/.miniconda3 ]; then
     fi
 
     url_prefix=https://repo.anaconda.com/miniconda
-    curl -L $url_prefix/Miniconda3-latest-$platform_name-"$arch".sh -o miniconda.sh
+    curl -L $url_prefix/Miniconda3-latest-"$platform_name"-"$arch".sh -o miniconda.sh
     bash miniconda.sh -b -p "$HOME"/.miniconda3
     rm miniconda.sh
-    "$HOME"/.miniconda3/bin/conda install --yes python="$PYTHON_VERSION"
-    "$HOME"/.miniconda3/bin/conda create --yes --name neovim python="$PYTHON_VERSION"
+    "$HOME"/.miniconda3/bin/conda install --yes python="$PYTHON_VERSION" --channel conda-forge
+    "$HOME"/.miniconda3/bin/conda create --yes --name neovim python="$PYTHON_VERSION" --channel conda-forge
     "$HOME"/.miniconda3/envs/neovim/bin/pip install pynvim
-fi
-
-#------------------------------------------------------------------------------#
-#                                  Cargo/Rust                                  #
-#------------------------------------------------------------------------------#
-if [ ! -d "$HOME"/.cargo ]; then
-    mkdir -p "$HOME"/.cargo
-
-    curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
-    cargo=$HOME/.cargo/bin/cargo
-    $cargo install exa ripgrep bat fd-find du-dust || exit
-    $cargo install deno --locked || exit
-
-    pkg_config_dir=$("$HOME/.cargo/bin/fd" --max-results 1 "^openssl.pc" /usr/lib/) || exit
-    git clone https://github.com/crescentrose/sunshine
-    pushd sunshine || exit
-    PKG_CONFIG_PATH=${pkg_config_dir%/*} cargo install --path .
-    success=$?
-    popd && rm -rf sunshine
-    test $success -ne 0 && exit
 fi
 
 #------------------------------------------------------------------------------#
@@ -206,13 +196,6 @@ fi
 #------------------------------------------------------------------------------#
 if [ ! -f "$HOME"/.local/bin/poetry ]; then
     curl -sSL https://install.python-poetry.org | POETRY_VERSION="$POETRY_VERSION" "$HOME"/.miniconda3/bin/python3 - --yes
-fi
-
-#------------------------------------------------------------------------------#
-#                                   Starship                                   #
-#------------------------------------------------------------------------------#
-if [ ! -f "$HOME"/.local/bin/starship ]; then
-    sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --bin-dir "$HOME"/.local/bin --yes
 fi
 
 #------------------------------------------------------------------------------#
