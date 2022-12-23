@@ -18,9 +18,17 @@ local on_attach = function(client, bufnr)
 	-- Enable completion triggered by <c-x><c-o>
 	vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
 
+	local function on_list(options)
+		vim.fn.setqflist({}, " ", options)
+		vim.cmd("silent cfirst")
+	end
+
 	-- Mappings.
+
 	local opts = { buffer = bufnr, noremap = true, silent = true }
-	vim.keymap.set("n", "<leader>j", vim.lsp.buf.definition, opts)
+	vim.keymap.set("n", "<leader>j", function()
+		vim.lsp.buf.definition({ on_list = on_list })
+	end, opts)
 	vim.keymap.set("n", "h", function()
 		local captures = vim.treesitter.get_captures_at_cursor()
 		if vim.tbl_contains(captures, "function.call") or vim.tbl_contains(captures, "method.call") then
@@ -55,7 +63,8 @@ local lsp_config = {
 		float = {
 			focusable = true,
 			style = "minimal",
-			border = "rounded",
+			border = "none",
+			winblend = 30,
 		},
 	},
 }
@@ -69,6 +78,7 @@ local servers = {
 	"taplo",
 	"vimls",
 	"yamlls",
+	"denols",
 }
 
 local formatters = {
@@ -152,6 +162,7 @@ require("mason-lspconfig").setup_handlers({
 							[call("expand", { "$VIMRUNTIME/lua" })] = true,
 							[call("expand", { "$VIMRUNTIME/lua/vim/lsp" })] = true,
 						},
+						checkThirdParty = false,
 					},
 				},
 			},

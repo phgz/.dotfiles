@@ -47,12 +47,12 @@ local config = {
 
 		StatusLine = { fg = colors.foreground, bg = "#413c37" },
 
-		NormalFloat = { bg = "None" },
-		ErrorFloat = { bg = "None" },
-		WarningFloat = { bg = "None" },
-		InfoFloat = { bg = "None" },
-		HintFloat = { bg = "None" },
-		FloatBorder = { bg = "None" },
+		NormalFloat = { bg = colors.background_dark },
+		ErrorFloat = { bg = colors.background_dark },
+		WarningFloat = { bg = colors.background_dark },
+		InfoFloat = { bg = colors.background_dark },
+		HintFloat = { bg = colors.background_dark },
+		FloatBorder = { bg = colors.background_dark },
 
 		PopupPreviewDocument = { fg = colors.foreground, bg = colors.background_light },
 		PopupPreviewBorder = { fg = colors.foreground, bg = colors.background_light },

@@ -1,3 +1,4 @@
+require("config.colorscheme")
 require("settings")
 require("plugins").setup()
 require("custom_plugins")

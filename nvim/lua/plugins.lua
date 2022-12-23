@@ -15,7 +15,7 @@ function M.setup()
 
 		display = {
 			open_fn = function()
-				return require("packer.util").float({ border = "rounded" })
+				return require("packer.util").float({ border = "none" })
 			end,
 		},
 
@@ -32,7 +32,7 @@ function M.setup()
 				"system",
 				{ { "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path } }
 			)
-			cmd([[packadd packer.nvim]])
+			vim.cmd([[packadd packer.nvim]])
 		end
 		cmd("autocmd BufWritePost plugins.lua source <afile> | PackerCompile")
 	end
@@ -105,6 +105,7 @@ function M.setup()
 			end,
 		}) -- Annotation generator
 
+		use({ "https://gitlab.com/yorickpeterse/vim-paper.git" })
 		use({ "neovim/nvim-lspconfig" }) -- LSP and completion
 		use({
 			"williamboman/mason.nvim",
@@ -128,24 +129,20 @@ function M.setup()
 			"Shougo/ddc.vim",
 			requires = {
 				"vim-denops/denops.vim",
+				"matsui54/denops-popup-preview.vim",
 				"matsui54/ddc-ultisnips",
-				"Shougo/ddc-omni",
-				"Shougo/ddc-nvim-lsp",
+				"LumaKernel/ddc-file",
 				"Shougo/ddc-converter_remove_overlap",
+				"Shougo/ddc-nvim-lsp",
+				"Shougo/ddc-source-around",
 				"Shougo/ddc-ui-inline",
 				"Shougo/ddc-ui-native",
-				"LumaKernel/ddc-file",
-				"LumaKernel/ddc-tabnine",
-				"nabezokodaikon/ddc-nvim-lsp_by-treesitter",
-				"delphinus/ddc-treesitter",
-				"Shougo/ddc-matcher_length",
 				"tani/ddc-fuzzy",
-				"matsui54/denops-popup-preview.vim",
+				"tani/ddc-path",
 			},
 			config = function()
 				require("config.ddc")
 			end,
-			-- commit = "042e3b1d4df310d5bbaba7a6c2e7f36a94e27977",
 		}) -- Completion engine
 
 		use({
@@ -194,12 +191,12 @@ function M.setup()
 			end,
 		}) -- Snippets engine
 
-		use({
-			"ibhagwan/smartyank.nvim",
-			config = function()
-				require("config.smartyank")
-			end,
-		})
+		-- use({
+		-- 	"ibhagwan/smartyank.nvim",
+		-- 	config = function()
+		-- 		require("config.smartyank")
+		-- 	end,
+		-- })
 
 		use({
 			"numToStr/Comment.nvim",

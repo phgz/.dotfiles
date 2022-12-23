@@ -1,7 +1,7 @@
 -- local call = vim.api.nvim_call_function
 
 require("formatter").setup({
-	logging = true,
+	logging = false,
 	log_level = vim.log.levels.DEBUG,
 	filetype = {
 		fish = {

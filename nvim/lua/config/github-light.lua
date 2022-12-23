@@ -39,7 +39,7 @@ local user_config = {
 			LspSignatureActiveParameter = { fg = c.green, style = "italic" },
 			TelescopePromptTitle = { fg = c.border },
 			TelescopePromptBorder = { fg = c.border },
-			NormalFloat = { bg = "None" },
+			NormalFloat = { bg = c.bg },
 			ErrorFloat = { bg = "None" },
 			WarningFloat = { bg = "None" },
 			InfoFloat = { bg = "None" },
@@ -48,7 +48,6 @@ local user_config = {
 			IlluminatedWordText = { style = "bold" },
 			IlluminatedWordRead = { style = "bold" },
 			IlluminatedWordWrite = { style = "bold" },
-			VertSplit = { fg = "#babbbd", bg = "None" },
 			--     -- this will remove the highlight groups
 			--     TSField = {},
 		}

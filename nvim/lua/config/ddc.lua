@@ -37,6 +37,7 @@ end
 
 local get_wuc_start_col = function()
 	local word_under_cursor = call("expand", { "<cword>" })
+	print(word_under_cursor)
 	return call("searchpos", { word_under_cursor, "Wcnb" })[2] - 1
 end
 
@@ -50,28 +51,36 @@ local insert_suggestion = function(suggestion)
 	end, captures)
 
 	local is_punctuation = not vim.tbl_isempty(punctuation_captures)
-	local word_under_cursor_start_col = is_punctuation and col or get_wuc_start_col()
+	print(api.nvim_get_current_line():sub(col, col))
+	local word_under_cursor_start_col = (is_punctuation or api.nvim_get_current_line():sub(col, col) == "/") and col
+		or get_wuc_start_col()
+	print(is_punctuation, col)
+	print(word_under_cursor_start_col)
+	api.nvim_win_set_cursor(0, { row, col })
+	local bs_seq = api.nvim_replace_termcodes("<BS>", true, true, true)
+	local construct = string.rep(bs_seq, col - word_under_cursor_start_col)
 
-	api.nvim_buf_set_text(0, row - 1, word_under_cursor_start_col, row - 1, col, { suggestion })
-	api.nvim_win_set_cursor(0, { row, word_under_cursor_start_col + #suggestion })
+	api.nvim_feedkeys(construct .. suggestion, "n", false)
+	-- api.nvim_buf_set_text(0, row - 1, word_under_cursor_start_col, row - 1, col, { suggestion })
+	-- api.nvim_win_set_cursor(0, { row, word_under_cursor_start_col + #suggestion })
 end
 
 local wise_tab = function()
 	local items = vim.g["ddc#_items"]
 	local complete_pos = vim.g["ddc#_complete_pos"]
 
-	_hide("CompleteDone")
-
 	if not vim.tbl_isempty(items) and complete_pos >= 0 then
 		local item = items[1]
 		local prev_input = vim.g["ddc#_prev_input"]
 		local suggestion = item["word"]
 
-		call("denops#request", { "ddc", "onCompleteDone", { item.__sourceName, item.user_data } })
-
-		if prev_input:sub(-#suggestion) == suggestion then
+		if vim.endswith(prev_input, suggestion) then
 			insert_snippet_or_tab()
 		else
+			_hide("CompleteDone")
+			if type(item.user_data) == "table" then
+				call("denops#request", { "ddc", "onCompleteDone", { item.__sourceName, item.user_data } })
+			end
 			insert_suggestion(suggestion)
 		end
 	else
@@ -109,31 +118,26 @@ end, opts_expr)
 
 vim.cmd([[
 " call ddc#custom#patch_global('sources', ['nvim-lsp', 'ultisnips', 'file'])
-call ddc#custom#patch_global('sources', ['nvim-lsp'])
+call ddc#custom#patch_global('sources', ['nvim-lsp', 'around', 'ultisnips', 'file'])
 call ddc#custom#patch_global('sourceOptions', #{
             \ _: #{
             \   matchers: ['matcher_fuzzy'],
             \   sorters: ['sorter_fuzzy'],
             \   converters: ['converter_remove_overlap'],
             \   minAutoCompleteLength : 1,
-            \   ignoreCase: v:false
             \     }
             \ })
+call ddc#custom#patch_global('backspaceCompletion', 'v:true')
 call ddc#custom#patch_global('filterParams', #{
             \   matcher_fuzzy: #{ splitMode: 'word' }
             \ })
 call ddc#custom#patch_global('sourceOptions', #{
-            \ tabnine: #{ mark: 'TN', maxCandidates: 5, isVolatile: v:true },
-            \ treesitter: #{mark: 'TS'},
             \ ultisnips: #{mark: 'U'},
-            \ omni: #{mark: 'O'},
-            \ nvim-lsp_by-treesitter: #{ mark: 'lsp'},
+            \ around: #{mark: 'A', enabledIf: 'luaeval("vim.tbl_count(vim.lsp.get_active_clients()) == 0")'},
             \ nvim-lsp: #{mark: 'LSP',forceCompletionPattern: '\.\w*|:\w*|->\w*'},
             \ file: #{mark: 'F', forceCompletionPattern: '\S/\S*' }
             \})
 call ddc#custom#patch_global('sourceParams', #{
-            \ nvim-lsp_by-treesitter: #{ kindLabels: #{ Class: 'c' } },
-            \ file: #{trailingSlash: v:false}
             \ })
 call ddc#custom#patch_global('ui', 'inline')
 call popup_preview#enable()

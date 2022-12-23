@@ -61,14 +61,9 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 	call("setreg", { "#", jumps[jumps_alternate_file_index]["f"] })
 end)
 
-set("n", "<leader>q", function() -- Close popups
-	local filter = function(win)
-		return api.nvim_win_get_config(win).relative ~= ""
-	end
-	local to_close = vim.tbl_filter(filter, api.nvim_list_wins())
-	for _, win in ipairs(to_close) do
-		api.nvim_win_close(win, false)
-	end
+set("n", "<leader>q", function() -- Close window
+	local win = api.nvim_get_current_win()
+	api.nvim_win_close(win, false)
 end)
 
 set("v", "<leader>s", function() -- Sort selection
@@ -106,7 +101,8 @@ end)
 -- Normal key
 set("n", "<LeftDrag>", "<LeftMouse>") -- No drag
 set("n", "Z", function()
-	vim.cmd("write")
+	vim.cmd("silent write")
+	print("buffer written")
 end) -- Write buffer
 set("n", "Q", function()
 	vim.cmd("quit!")
@@ -289,6 +285,19 @@ end)
 -- 	local content = api.nvim_get_current_line()
 -- 	api.nvim_set_current_line(content:sub(1, #content - 1))
 -- end)
+
+set(
+	"",
+	"<M-r>",
+	mk_repeatable(function() -- Replace word under cursor with " bufffer
+		local word_under_cursor = call("expand", { "<cword>" })
+		local to_replace = call("getreg", { '"' })
+		local row, col = unpack(api.nvim_win_get_cursor(0))
+		-- api.nvim_win_set_cursor(0, { row, col - 1 })
+		local wuc_start_col = call("searchpos", { word_under_cursor, "Wcnb" })[2] - 1
+		api.nvim_buf_set_text(0, row - 1, wuc_start_col, row - 1, wuc_start_col + #word_under_cursor, { to_replace })
+	end)
+)
 
 set("", "<M-S-x>", function() -- Delete firstchar multiline
 	local row, col = unpack(api.nvim_win_get_cursor(0))

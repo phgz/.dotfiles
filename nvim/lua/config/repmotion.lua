@@ -31,8 +31,8 @@ local next_hunk = "&diff ? ']h' : '<cmd>lua require\"gitsigns.actions\".next_hun
 local prev_hunk = "&diff ? '[h' : '<cmd>lua require\"gitsigns.actions\".prev_hunk()<CR>'"
 mapping.hunk = { ns = next_hunk, ps = prev_hunk }
 
-local next_diagnostic = "'<cmd>lua vim.diagnostic.goto_next({ float = { border = \"rounded\" } })<CR>'"
-local prev_diagnostic = "'<cmd>lua vim.diagnostic.goto_prev({ float = { border = \"rounded\" } })<CR>'"
+local next_diagnostic = "'<cmd>lua vim.diagnostic.goto_next({ float = { border = \"none\" } })<CR>'"
+local prev_diagnostic = "'<cmd>lua vim.diagnostic.goto_prev({ float = { border = \"none\" } })<CR>'"
 mapping.diagnostic = { ns = next_diagnostic, ps = prev_diagnostic }
 
 local next_fold = "'<cmd>norm! zj<CR>'"

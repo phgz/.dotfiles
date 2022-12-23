@@ -61,7 +61,7 @@ require("gitsigns").setup({
 		map("n", "gd", gs.preview_hunk)
 		map("n", "gi", gs.preview_hunk_inline)
 		map("n", "gb", function()
-			gs.blame_line({ full = true })
+			gs.blame_line({ ignore_whitespace = true })
 		end)
 		map("n", "gc", function()
 			gs.diffthis(call("input", { "Compare to: " }))
@@ -89,7 +89,7 @@ require("gitsigns").setup({
 	preview_config = {
 		-- Options passed to nvim_open_win
 		anchor = "SW",
-		border = "rounded",
+		border = "none",
 		style = "minimal",
 		title = " Git diff ",
 		title_pos = "center",

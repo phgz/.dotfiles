@@ -1,2 +1,2 @@
-require("config.colorscheme")
+-- require("config.colorscheme")
 require("config.lines")

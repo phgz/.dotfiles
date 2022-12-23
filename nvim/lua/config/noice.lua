@@ -22,9 +22,15 @@ require("noice").setup({
 		},
 	},
 	presets = {
-		lsp_doc_border = true,
+		lsp_doc_border = false,
 	},
 	views = {
+		messages = {
+			enter = false,
+			win_options = {
+				winhighlight = { Normal = "Normal" },
+			},
+		},
 		mini = {
 			timeout = 4000,
 			--   position = {
@@ -34,6 +40,12 @@ require("noice").setup({
 			win_options = {
 				winblend = 0,
 				winhighlight = { Normal = "LineNr" },
+			},
+		},
+		hover = {
+			size = {
+				max_height = 9,
+				max_width = 96,
 			},
 		},
 	},
