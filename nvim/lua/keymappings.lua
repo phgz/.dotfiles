@@ -1,22 +1,25 @@
-local get_range_motion = require("custom_plugins.utils").get_range_motion
+local mk_repeatable = require("utils").mk_repeatable
+local get_range = require("utils").get_range
+local detect_selection_mode = require("utils").detect_selection_mode
+local update_selection = require("utils").update_selection
+
 local set = vim.keymap.set
 local api = vim.api
 local call = api.nvim_call_function
-local cmd = vim.cmd
 
 -- leader key
 set("n", "<leader>t", function()
-	cmd(":b #")
+	vim.cmd(":b #")
 end) -- Toggle alternate buffer
 set("n", "<leader>v", function()
-	cmd("vsplit")
+	vim.cmd("vsplit")
 end) -- Split vertical
 set("n", "<leader>h", function()
-	cmd("split")
+	vim.cmd("split")
 end) -- Split horizontal
 
 set("n", "<leader>d", function() -- delete buffer and set alternate file
-	cmd("bdelete")
+	vim.cmd("bdelete")
 	local new_current_file = call("expand", { "%:p" })
 	local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
 	local jumps = call("msgpackparse", { context["jumps"] })
@@ -69,10 +72,10 @@ set("n", "<leader>q", function() -- Close popups
 end)
 
 set("v", "<leader>s", function() -- Sort selection
-	local range = get_range_motion("v")
-	local lines = api.nvim_buf_get_lines(0, range.start - 1, range.end_, false)
+	local start_row, _, end_row, _ = get_range()
+	local lines = api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
 	table.sort(lines)
-	api.nvim_buf_set_lines(0, range.start - 1, range.end_, true, lines)
+	api.nvim_buf_set_lines(0, start_row - 1, end_row, true, lines)
 	api.nvim_feedkeys(api.nvim_replace_termcodes("<esc>", true, false, true), "x", true)
 end)
 
@@ -88,7 +91,7 @@ end)
 set("n", "<localleader>d", "<cmd>:windo :diffthis<cr>") -- Diff
 set("n", "<localleader>q", function() -- Remove breakpoints
 	local cur_pos = api.nvim_win_get_cursor(0)
-	cmd("g/breakpoint()/d")
+	vim.cmd("g/breakpoint()/d")
 	api.nvim_win_set_cursor(0, cur_pos)
 end)
 
@@ -102,9 +105,15 @@ end)
 
 -- Normal key
 set("n", "<LeftDrag>", "<LeftMouse>") -- No drag
-set("n", "Z", "<cmd>write<CR>") -- Write buffer
-set("n", "Q", "<cmd>quit!<CR>") -- Quit no wirte buffer
-set("n", "U", "<cmd>redo<cr>") -- Redo
+set("n", "Z", function()
+	vim.cmd("write")
+end) -- Write buffer
+set("n", "Q", function()
+	vim.cmd("quit!")
+end) -- Quit no wirte buffer
+set("n", "U", function()
+	vim.cmd("redo")
+end) -- Redo
 set("n", "cq", "ct_") -- Change until _
 set("n", "yq", "yt_") -- Yank until _
 set("n", "dq", "df_") -- Delete find _
@@ -112,8 +121,20 @@ set("", "j", "^") -- Go to first nonblank char
 set("", "k", "$") -- Go to last char
 set("", "0", "gg") -- Go to beggining of file
 set("", "-", "G") -- Go to end of file
-set("n", "<M-]>", "<cmd>move .+1<cr>") -- Swap with next line
-set("n", "<M-[>", "<cmd>move .-2<cr>") -- Swap with prev line
+set(
+	{ "n", "x" },
+	"<M-]>",
+	mk_repeatable(function()
+		vim.cmd("move .+1")
+	end)
+) -- Swap with next line
+set(
+	{ "n", "x" },
+	"<M-[>",
+	mk_repeatable(function()
+		vim.cmd("move .-2")
+	end)
+) -- Swap with prev line
 set("v", "y", "ygv<Esc>") -- Do not move cursor on yank
 
 set("n", "[<space>", function() -- Go left
@@ -158,7 +179,7 @@ end)
 set("n", "<M-s>", "r<CR>") -- Split below
 set("n", "<M-S-s>", "r<CR><cmd>move .-2<cr>") -- Split up
 set("n", "<M-S-j>", function()
-	cmd("move .+1 | .-1 join")
+	vim.cmd("move .+1 | .-1 join")
 end) -- Join at end of below
 
 set("n", "<M-left>", function()
@@ -275,3 +296,34 @@ set("", "<M-S-x>", function() -- Delete firstchar multiline
 	api.nvim_set_current_line(content:sub(2))
 	api.nvim_win_set_cursor(0, { row, col - 1 })
 end)
+
+local after_sep = function(fwd)
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	local prev_char = api.nvim_get_current_line():sub(col, col)
+	local back_on_edge = not fwd and prev_char == "_"
+	local opts = "Wn"
+	opts = fwd and opts or opts .. "b"
+
+	if back_on_edge then
+		api.nvim_win_set_cursor(0, { row, col - 1 })
+	end
+
+	local new_row, new_col = unpack(call("searchpos", { "_", opts }))
+
+	if new_row == 0 then
+		if back_on_edge then
+			api.nvim_win_set_cursor(0, { row, col })
+		else
+			return
+		end
+	else
+		api.nvim_win_set_cursor(0, { new_row, new_col })
+	end
+end
+
+vim.keymap.set("n", "q", function()
+	after_sep(true)
+end, { silent = true })
+vim.keymap.set("n", "gq", function()
+	after_sep(false)
+end, { silent = true })

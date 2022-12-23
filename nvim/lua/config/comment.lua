@@ -1,10 +1,11 @@
 local api = vim.api
 local call = api.nvim_call_function
+local utils = require("Comment.utils")
 
 require("Comment").setup({
 	toggler = {
 		--Line-comment toggle keymap
-		line = "<M-k>",
+		line = "KL",
 	},
 
 	--LHS of operator-pending mappings in NORMAL + VISUAL mode
@@ -24,11 +25,9 @@ require("Comment").setup({
 })
 
 vim.keymap.set("n", "KD", function()
-	local U = require("Comment.utils")
-
 	local col = call("col", { "." })
-	local range = U.get_region()
-	local lines = U.get_lines(range)
+	local range = utils.get_region()
+	local lines = utils.get_lines(range)
 
 	-- Copying the block
 	local srow = range.erow
@@ -42,18 +41,18 @@ vim.keymap.set("n", "KD", function()
 end, { silent = true, noremap = true })
 
 --Textobject for adjacent commented lines
-local function commented_lines_textobject()
-	local U = require("Comment.utils")
+
+vim.keymap.set("o", "K", function()
 	local current_line = api.nvim_win_get_cursor(0)[1] -- current line
 	local range = { srow = current_line, scol = 0, erow = current_line, ecol = 0 }
 	local ctx = {
-		ctype = U.ctype.linewise,
+		ctype = utils.ctype.linewise,
 		range = range,
 	}
 	local cstr = require("Comment.ft").calculate(ctx) or vim.bo.commentstring
-	local ll, rr = U.unwrap_cstr(cstr)
+	local ll, rr = utils.unwrap_cstr(cstr)
 	local padding = true
-	local is_commented = U.is_commented(ll, rr, padding)
+	local is_commented = utils.is_commented(ll, rr, padding)
 
 	local line = api.nvim_buf_get_lines(0, current_line - 1, current_line, false)
 	if next(line) == nil or not is_commented(line[1]) then
@@ -72,16 +71,5 @@ local function commented_lines_textobject()
 	until next(line) == nil or not is_commented(line[1])
 	re = re - 1
 
-	local last_line = api.nvim_buf_get_lines(0, re - 1, re, false)
-
-	api.nvim_buf_set_mark(0, "<", rs, 0, {})
-	api.nvim_buf_set_mark(0, ">", re, #last_line[1], {})
-	api.nvim_feedkeys(api.nvim_replace_termcodes("gv", true, false, true), "x", true)
-end
-
-vim.keymap.set(
-	"o",
-	"K",
-	commented_lines_textobject,
-	{ silent = true, desc = "Textobject for adjacent commented lines" }
-)
+	require("utils").update_selection("V", rs, 0, re, 0)
+end, { silent = true, desc = "Textobject for adjacent commented lines" })

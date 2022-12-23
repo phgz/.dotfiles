@@ -3,22 +3,20 @@ local call = api.nvim_call_function
 
 local M = {}
 
-M.get_range_motion = function(mode)
-	local range_start
-	local range_end
+M.get_range = function()
+	local _, start_row, start_col, _ = unpack(call("getpos", { "v" }))
+	local _, end_row, end_col, _ = unpack(call("getpos", { "." }))
 
-	if mode == "v" then
-		range_start = call("line", { "v" })
-		range_end = api.nvim_win_get_cursor(0)[1]
-		if range_start > range_end then
-			range_start, range_end = range_end, range_start
+	if start_row == end_row then
+		if start_col > end_col then
+			start_col, end_col = end_col, start_col
 		end
-	else
-		range_start = call("line", { "." })
-		range_end = range_start
+	elseif start_row > end_row then
+		start_row, end_row = end_row, start_row
+		start_col, end_col = end_col, start_col
 	end
 
-	return { start = range_start, end_ = range_end }
+	return start_row, start_col, end_row, end_col
 end
 
 return M

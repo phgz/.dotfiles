@@ -1,9 +1,11 @@
+local mk_repeatable = require("utils").mk_repeatable
+
 require("nvim-treesitter.configs").setup({
 	ensure_installed = "all",
 	ignore_install = { "phpdoc" },
 	highlight = {
 		enable = true,
-		disable = { "toml" },
+		-- disable = { "toml" },
 		additional_vim_regex_highlighting = { "python" },
 	},
 	indent = {
@@ -80,12 +82,6 @@ require("nvim-treesitter.configs").setup({
 		},
 		swap = {
 			enable = true,
-			swap_next = {
-				["sn"] = "@parameter.inner",
-			},
-			swap_previous = {
-				["sp"] = "@parameter.inner",
-			},
 		},
 		move = {
 			enable = true,
@@ -142,8 +138,56 @@ highlight! link TreesitterContext CursorLine
 
 vim.keymap.set("n", "<localleader>t", "<cmd>TSHighlightCapturesUnderCursor<cr>")
 
+local get_text_object = function()
+	local mapping = {
+		comment = "comment",
+		function_definition = "function",
+		call = "statement",
+		if_statement = "conditional",
+		for_statement = "loop",
+		class_definition = "class",
+		argument_list = "parameter",
+		parameters = "parameter",
+		keyword_argument = "parameter",
+		pair = "parameter",
+	}
+	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+	local node = vim.treesitter.get_node_at_pos(0, row - 1, col)
+	local kind = node:type()
+	local keys = vim.tbl_keys(mapping)
+
+	while not (vim.tbl_contains(keys, kind) or vim.endswith(kind, "statement") or node == nil) do
+		node = node:parent()
+		kind = node:type()
+	end
+
+	local correspondance = mapping[kind]
+	if correspondance == nil then
+		correspondance = "statement"
+	end
+	return string.format("@%s.%s", correspondance, correspondance == "parameter" and "inner" or "outer")
+end
+
+vim.keymap.set(
+	"n",
+	"sp",
+	mk_repeatable(function()
+		require("nvim-treesitter.textobjects.swap").swap_previous(get_text_object())
+	end),
+	{ silent = true }
+)
+
+vim.keymap.set(
+	"n",
+	"sn",
+	mk_repeatable(function()
+		return require("nvim-treesitter.textobjects.swap").swap_next(get_text_object())
+	end),
+	{ silent = true }
+)
+
 vim.keymap.set("n", "<leader>i", function()
-	local func = require("nvim-treesitter.textobjects.lsp_interop")["peek_definition_code"]
+	local func = require("nvim-treesitter.textobjects.lsp_interop").peek_definition_code
 	local captures = vim.treesitter.get_captures_at_cursor()
 	if vim.tbl_contains(captures, "constructor") or vim.tbl_contains(captures, "type") then
 		return func("@class.outer")
