@@ -153,8 +153,8 @@ symbol = " "
 symbol = "ﯣ "
 
 [character]
-success_symbol = "[➜ ](bold green)"
-# error_symbol = "[✖ ](bold red)"
+success_symbol = "[  ](bright-black)"
+error_symbol = "[ ](bright-black)"
 
 [line_break]
 # disabled = true
@@ -168,7 +168,7 @@ format = "[$hostname ]($style)"
 
 [status]
 disabled = false
-format = "[$symbol $status ]($style)"
+format = "[$status ]($style)"
 
 [shell]
 disabled = false

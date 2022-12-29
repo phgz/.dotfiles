@@ -10,11 +10,8 @@ set -gx PYTHONBREAKPOINT pdbr.set_trace
 ### "bat" as manpager
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 
-fish_vi_key_bindings
-set fish_cursor_default block
-set fish_cursor_insert line
-set fish_cursor_replace_one underscore
-# set fish_vi_force_cursor 1
+set fish_cursor_default underscore
+fish_vi_cursor
 
 bind -M insert \ca beginning-of-line
 bind -M insert \ce end-of-line
