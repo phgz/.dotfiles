@@ -33,23 +33,16 @@ return {
 				},
 				python = {
 					-- black
-					function()
-						-- local home = os.getenv('HOME')
-						-- local current_dir = call("expand", {'%:p:h'})
-						-- local pyproject = current_dir .. 'pyproject.toml'
-						--
-						-- while not call("filereadable", {pyproject}) and current_dir ~= home do
-						--   current_dir = call("fnamemodify", {current_dir, ':h'})
-						--   pyproject = current_dir .. 'pyproject.toml'
-						-- end
-						--
-						-- config_opt = call("filereadable", {pyproject}) and "--config " .. pyproject or ""
-						return {
-							exe = "isort",
-							args = { "--quiet", "--profile", "black", "--resolve-all-configs", "-" },
-							stdin = true,
-						}
-					end,
+					-- local home = os.getenv('HOME')
+					-- local current_dir = call("expand", {'%:p:h'})
+					-- local pyproject = current_dir .. 'pyproject.toml'
+					--
+					-- while not call("filereadable", {pyproject}) and current_dir ~= home do
+					--   current_dir = call("fnamemodify", {current_dir, ':h'})
+					--   pyproject = current_dir .. 'pyproject.toml'
+					-- end
+					--
+					-- config_opt = call("filereadable", {pyproject}) and "--config " .. pyproject or ""
 					-- isort
 					function()
 						return {
