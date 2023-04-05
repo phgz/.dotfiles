@@ -8,7 +8,7 @@ PKG_CONFIG_VERSION=0.29.2
 LIBEVENT_VERSION=2.1.12
 NCURSES_VERSION=6.3
 CMAKE_VERSION=3.23.2
-FISH_SHELL_VERSION=3.5.1
+FISH_SHELL_VERSION=3.6.0
 TMUX_VERSION=3.3a
 NODE_VERSION=18.4.0
 POETRY_VERSION=1.2.3
@@ -38,7 +38,7 @@ if [ "$platform" == "Darwin" ]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    $brew install kitty fish node tmux fontconfig wget
+    $brew install kitty fish node tmux fontconfig wget python"$PYTHON_VERSION" wezterm
     $brew install --HEAD neovim
 
 #------------------------------------------------------------------------------#
@@ -91,6 +91,7 @@ elif [ "$platform" == "Linux" ]; then
     mkdir build
     pushd build || exit
     ../../cmake-"$CMAKE_VERSION"-linux-"$arch"/bin/cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local ..
+    # Check for PCRE2 (headers and libraries) if missing
     # Try this instead if previous line fails:
     # ../../cmake-"$CMAKE_VERSION"-linux-"$arch"/bin/cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local -DCMAKE_CXX_FLAGS=-I\ "$HOME"/.local/include/ncurses ..
     make && make install && popd || exit
@@ -110,7 +111,13 @@ elif [ "$platform" == "Linux" ]; then
     rm -rf tmux-*/
 
     # Add Terminfo for tmux:
-    # curl https://gist.githubusercontent.com/nicm/ea9cf3c93f22e0246ec858122d9abea1/raw/37ae29fc86e88b48dbc8a674478ad3e7a009f357/tmux-256color | tic -x -
+    # curl https://gist.githubusercontent.com/nicm/ea9cf3c93f22e0246ec858122d9abea1/raw/37ae29fc86e88b48dbc8a674478ad3e7a009f357/tmux-256color | /usr/bin/tic -x -
+    #
+    # Add Terminfo for wezterm:
+    # tempfile=$(mktemp) \
+    # && curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo \
+    # && /usr/bin/tic -x -o ~/.terminfo $tempfile \
+    # && rm $tempfile
 
     #------------------------------------------------------------------------------#
     #                                    Neovim                                    #
