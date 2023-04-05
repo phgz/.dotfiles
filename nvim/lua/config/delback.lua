@@ -1,2 +1,0 @@
--- vim.keymap.set('n', 'db', '<cmd>lua require("custom_plugins.delback").delete_backward(false)<cr>', {silent = false})
--- vim.keymap.set('n', 'dB', '<cmd>lua require("custom_plugins.delback").delete_backward(true)<cr>', {silent = true})
