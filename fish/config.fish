@@ -1,6 +1,6 @@
 set -g fish_greeting
 string match -q (uname -ms) "Darwin arm64" && fish_add_path /opt/homebrew/bin
-fish_add_path $HOME/.local/bin $HOME/.cargo/bin $HOME/.local/node/bin $HOME/.miniconda/bin
+fish_add_path $HOME/.local/bin $HOME/.cargo/bin $HOME/.local/node/bin $HOME/.local/wezterm/usr/bin $HOME/.miniconda/bin
 set -gx MANPATH $HOME/.local/share/man /usr/share/man $MANPATH
 set -gx DIRENV_LOG_FORMAT ""
 
@@ -10,6 +10,7 @@ set -gx PYTHONBREAKPOINT pdbr.set_trace
 ### "bat" as manpager
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 
+set fish_vi_force_cursor 1
 set fish_cursor_default underscore
 fish_vi_cursor
 
@@ -22,13 +23,11 @@ bind -M insert \cc kill-whole-line repaint
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-eval $HOME/.miniconda3/bin/conda "shell.fish" hook $argv | source
+# eval $HOME/.miniconda3/bin/conda "shell.fish" hook $argv | source
 # <<< conda initialize <<<
 
 ~/.local/bin/starship init fish | source
 direnv hook fish | source
-
-abbr -ag :q exit
 
 abbr -ag nv nvim
 
@@ -36,7 +35,7 @@ abbr -ag ga git add
 abbr -ag gb git branch
 abbr -ag gco git checkout
 abbr -ag gcl git clone
-abbr -ag gc git commit -m
+abbr -ag gc --set-cursor "git commit -m \"%\""
 abbr -ag gd git diff
 abbr -ag gf git fetch
 abbr -ag gfp git fetch --prune
@@ -55,11 +54,18 @@ abbr -ag gm git merge
 abbr -ag gcln git clean -df
 abbr -ag gcane git commit --amend --no-edit
 
+abbr 4DIRS --set-cursor=! "$(string join \n -- 'for dir in */' 'cd $dir' '!' 'cd ..' 'end')"
+
+function multicd
+    echo cd (string repeat -n (math (string length -- $argv[1]) - 1) ../)
+end
+
+abbr --add dotdot --regex '^\.\.\.+$' --function multicd
+
 abbr -ag cat bat
 abbr -ag ls exa
 abbr -ag ll exal
 abbr -ag la exal -a
 abbr -ag grep rg
-abbr -ag psh poetry shell
 
-test -t 0 && initialize_tmux
+# test -t 0 && initialize_tmux

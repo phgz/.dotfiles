@@ -22,7 +22,7 @@ function theme
 
         kitty +kitten themes --reload-in=all Theme-$argv 2>/dev/null
 
-        /bin/cp $HOME/.dotfiles/nvim/lua/config/$argv-theme.lua $HOME/.dotfiles/nvim/lua/config/current-theme.lua
+        /bin/cp $HOME/.dotfiles/nvim/theme/lua/$argv-theme.lua $HOME/.dotfiles/nvim/theme/lua/current-theme.lua
 
         echo $argv >$HOME/.dotfiles/theme/current
     end
