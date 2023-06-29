@@ -14,12 +14,13 @@ set fish_vi_force_cursor 1
 set fish_cursor_default underscore
 fish_vi_cursor
 
-bind -M insert \ca beginning-of-line
-bind -M insert \ce end-of-line
-bind -M insert \c_ kill-line
-bind -M insert \ck kill-word
-bind -M insert \cs 'clear; commandline -f repaint'
-bind -M insert \cc kill-whole-line repaint
+bind \ca beginning-of-line
+bind \ce end-of-line
+bind \c_ kill-line
+bind \ck kill-word
+bind \cs 'clear; commandline -f repaint'
+bind \cc kill-whole-line repaint
+bind \cg expand-abbr
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!

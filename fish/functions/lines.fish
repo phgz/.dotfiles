@@ -1,9 +1,11 @@
-function lines
-    set sum 0
-    for file in (fd)
-        if test -f $file
-            set sum (math $sum + (bat $file | count))
+function lines --argument arg
+    set -f sum 0
+    if test -d $arg
+        for file in (fd -t f . $arg)
+            set sum (math $sum + (cat $file | count))
         end
+        echo $sum
+    else
+        cat $arg | count
     end
-    echo $sum
 end
