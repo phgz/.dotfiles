@@ -68,7 +68,7 @@ $status\
 $character"""
 
 [sudo]
-format = "[$symbol]($style)"
+format = "[ ]($style)"
 disabled = false
 
 [aws]
@@ -119,6 +119,9 @@ symbol = " "
 
 [memory_usage]
 symbol = " "
+
+[lua]
+symbol = " "
 
 [nim]
 symbol = " "
@@ -176,10 +179,10 @@ format = "[$indicator ](bold blue)"
 
 [time]
 disabled = false
-format = "[$time ](bold)"
+format = "[$time](bold)"
 
 [cmd_duration]
-format = "\\([$duration](white)\\)"
+format = " \\([$duration](white)\\)"
 
 # GIT STATUS
 # conflicted "=" 
