@@ -1,5 +1,4 @@
 local api = vim.api
-local call = api.nvim_call_function
 
 --Global (g:) editor variables.
 local g = vim.g
@@ -25,7 +24,7 @@ local wo = vim.wo
 
 g.loaded_perl_provider = 0
 g.mapleader = " "
-g.maplocalleader = api.nvim_replace_termcodes("<BS>", false, false, true)
+g.maplocalleader = vim.keycode("<BS>")
 g.python3_host_prog = "~/.miniconda3/envs/neovim/bin/python"
 
 bo.expandtab = true
@@ -34,7 +33,7 @@ bo.smartindent = true
 bo.softtabstop = 4
 bo.tabstop = 4
 
-go.autochdir = true
+go.autochdir = true -- False to work with vim rooter, telescope-repo
 -- go.clipboard = "unnamedplus"
 go.cmdheight = 0
 go.completeopt = "menu,menuone,noinsert,noselect"
@@ -42,12 +41,12 @@ go.gdefault = true
 go.hlsearch = false
 go.ignorecase = true
 go.laststatus = 3
-go.mouse = "nivc"
-go.mousemodel = ""
+go.mouse = ""
 go.pumblend = 30
 go.pumheight = 9
 go.shell = "/bin/sh"
 go.shiftround = true
+go.showcmd = false
 go.smartcase = true
 go.splitbelow = true
 go.splitright = true

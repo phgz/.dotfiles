@@ -8,23 +8,21 @@ api.nvim_create_autocmd(
 	{ pattern = { "help", "startuptime", "qf", "lspinfo" }, command = [[nnoremap <buffer><silent> q :close<CR>]] }
 )
 
--- api.nvim_create_autocmd("BufWritePost", {
--- 	callback = function()
--- 		vim.cmd("redraw")
--- 		print("saved")
--- 	end,
--- })
+api.nvim_create_autocmd("TextYankPost", {
+	callback = function()
+		vim.highlight.on_yank()
+	end,
+})
 
 api.nvim_create_autocmd("VimEnter", {
 	callback = function()
 		vim.keymap.set("n", "<esc>", function() -- Close popups
-			local filter = function(win)
+			local relative = function(win)
 				return api.nvim_win_get_config(win).relative ~= ""
 			end
-			local to_close = vim.tbl_filter(filter, api.nvim_list_wins())
-			for _, win in ipairs(to_close) do
+			vim.iter(api.nvim_list_wins()):filter(relative):each(function(win)
 				api.nvim_win_close(win, false)
-			end
+			end)
 		end)
 	end,
 })
