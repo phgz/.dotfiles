@@ -1,9 +1,5 @@
 fish=/home/philip/.local/bin/fish
 
-20,40 5 * * *$fish -lc "theme day"
-*/20 6-7 * * * $fish -lc "theme day"
-0 8 * * * $fish -lc "theme day"
-
-20,40 16 * * * $fish -lc "theme night"
-*/20 17-20 * * * $fish -lc "theme night"
-0 21 * * * $fish -lc "theme night"
+20,40 5,16 * * * $fish -lc "theme"
+*/20 6-7,17-20 * * * $fish -lc "theme"
+0 8,21 * * * $fish -lc "theme"
