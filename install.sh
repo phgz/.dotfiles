@@ -8,10 +8,10 @@ PKG_CONFIG_VERSION=0.29.2
 LIBEVENT_VERSION=2.1.12
 NCURSES_VERSION=6.3
 CMAKE_VERSION=3.23.2
-FISH_SHELL_VERSION=3.6.0
+FISH_SHELL_VERSION=3.6.1
 TMUX_VERSION=3.3a
-NODE_VERSION=18.4.0
-POETRY_VERSION=1.2.3
+NODE_VERSION=18.16.0
+POETRY_VERSION=1.5.0
 PYTHON_VERSION=3.11
 
 mkdir -p "$HOME"/.local/bin
@@ -247,8 +247,9 @@ sed "s/<<EMAIL>>/$(git log | head -2 | rg Author | sed -r 's/.*<(.*)>.*/\1/')/" 
 #------------------------------------------------------------------------------#
 if [ "$platform" == "Darwin" ]; then
     echo "Run the following command to enable theme daemons"
-    echo "sudo cp $HOME/.dotfiles/theme/dotfiles.theme.{day,night}.plist /Library/LaunchDaemons/"
-    echo "sudo launchctl load /Library/LaunchDaemons/dotfiles.theme.{day,night}.plist"
+    echo "sudo cp $HOME/.dotfiles/theme/dotfiles.theme.plist /Library/LaunchDaemons/"
+    echo "sudo launchctl load /Library/LaunchDaemons/dotfiles.theme.plist"
+    # To test: sudo launchctl unload /Library/LaunchDaemons/dotfiles.theme.plist && sudo launchctl load /Library/LaunchDaemons/dotfiles.theme.plist && sudo launchctl list | rg dotfiles
 
 elif [ "$platform" == "Linux" ]; then
     crontab -l | cat - "$HOME"/.dotfiles/theme/crontab | crontab -
