@@ -14,10 +14,17 @@
         <key>ProgramArguments</key>
         <array>
             <string>/opt/homebrew/bin/fish</string>
-            <string>/Users/philip/.dotfiles/fish/functions/theme.fish</string>
+            <string>-c</string>
+            <string>source /Users/philip/.dotfiles/fish/functions/theme.fish && theme</string>
         </array>
         <key>StartCalendarInterval</key>
         <array>
+            <dict>
+                <key>Minute</key>
+                <integer>0</integer>
+                <key>Hour</key>
+                <integer>0</integer>
+            </dict>
             <dict>
                 <key>Minute</key>
                 <integer>20</integer>
