@@ -1,11 +1,9 @@
 vim.wo.foldmethod = "syntax"
 local call = vim.api.nvim_call_function
 
-for _, match in ipairs(call("getmatches", {})) do
-	if match["group"] == "DiffText" then
-		call("matchdelete", {match["id"]})
-		break
-	end
-end
+local match = vim.iter(call("getmatches", {})):find(function(match)
+	return match["group"] == "DiffText"
+end)
 
-call("matchadd", {"DiffText", "\\%89v"})
+call("matchdelete", { match["id"] })
+call("matchadd", { "DiffText", "\\%89v" })

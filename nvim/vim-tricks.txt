@@ -1,11 +1,12 @@
 ``          => go to last jump position
 12|         => go to column 12
 12:         => :.,.+11
-            
+
 <C-g>       => show ruler
 g<C-g>      => show stats
 <C-l>       => clear search highlight
-            
+<Ctrl-]>    => jump to tag definition
+
 :*          => :'<,'>
 :=          => echo last line number
 :s/a/&b     => append b to a
@@ -18,15 +19,18 @@ g<C-g>      => show stats
 :g/p/s/a/b  => apply substitution only where `p` pattern appears
 :<C-v>      => insert literal
 :<C-f>      => expand command line
-            
+:cd %:h     => change to the directory of the current file
+:write ++p  => creates parent directories
+
 g0          => go to first column of line
 gJ          => join without space
 gI          => Insert at column 1
+gUU         => Make line uppercase (`guu` for lowercase)
 g?          => encode text ROT13
 g{#,*}      => search under cursor, no word boundary
 g{-,+}      => older/newer text state
 g{,,;}      => go to next/previous position in changelist
-            
+
 v_gv        => toggle between current and last visual selection
 v_g<C-a>    => In visual block, increment sequentially
 v_{o,O}     => go to start/end of visual selection
