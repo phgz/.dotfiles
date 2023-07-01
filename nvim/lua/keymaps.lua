@@ -132,13 +132,12 @@ set("", "<M-j>", "^") -- Go to first nonblank char
 set("", "<M-k>", "$") -- Go to last char
 set("", "0", function() -- Go to beggining of file
 	vim.cmd.normal({ "gg", bang = true })
-	if vim.v.count == 0 then
-		vim.cmd.call("cursor(1,1)")
-	end
+	vim.cmd.call("cursor(1,1)")
 end)
 set("", "-", function() -- Go to end of file
-	vim.cmd.normal({ "G", bang = true })
-	if vim.v.count == 0 then
+	local count = vim.v.count
+	vim.cmd.normal({ (count == 0 and "" or count) .. "G", bang = true })
+	if count == 0 then
 		vim.cmd.call("cursor(line('$'),1)")
 	end
 end)

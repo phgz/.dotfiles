@@ -1,13 +1,92 @@
 return {
 	"nvim-lua/plenary.nvim", -- Lua functions
 	"nvim-lua/popup.nvim",
-	"mrjones2014/nvim-ts-rainbow", -- "Enclosers" coloring
 	"tpope/vim-repeat", -- Repeat plugins commands
 	{
-		dir = "~/.dotfiles/nvim/theme",
+		"ayu-theme/ayu-vim", -- midnight theme
+		lazy = true,
+		config = function() end,
+	},
+	{
+		"phgz/nvim-paper", -- transition theme
+		lazy = true,
+		config = function() end,
+	},
+	{
+		"luisiacc/gruvbox-baby", -- night theme
+		lazy = true,
+		config = function() end,
+	},
+	{
+		"projekt0n/github-nvim-theme", -- day theme
+		lazy = true,
+		tag = "v0.0.7",
+		config = function() end,
+	},
+	{
+		dir = "~/.dotfiles/nvim/theme", -- colorscheme
 		priority = 1000,
 		config = function()
 			require("colorscheme")
+		end,
+	},
+	{
+		dir = "~/.dotfiles/nvim/multiline-ft", -- multiline find/repeat
+		config = function()
+			require("multiline_ft")
+		end,
+	},
+	{
+		"kwkarlwang/bufresize.nvim", -- keep windows proportions
+		config = function()
+			require("bufresize").setup()
+			vim.keymap.set("n", "<leader>q", function() -- Close window
+				require("bufresize").block_register()
+				local win = vim.api.nvim_get_current_win()
+				vim.api.nvim_win_close(win, false)
+				require("bufresize").resize_close()
+			end)
+		end,
+	},
+	{
+		"mrjones2014/smart-splits.nvim", -- smart window navigation
+		keys = vim.iter.map(
+			function(key)
+				return { key, mode = { "i", "n", "o", "v" } }
+			end,
+			vim.tbl_flatten(vim.iter.map(function(key)
+				return { "<C-S-" .. key .. ">", "<S-M-" .. key .. ">", "<S-" .. key .. ">" }
+			end, { "left", "right", "up", "down" }))
+		),
+		config = function()
+			require("smart-splits").setup({
+				default_amount = 2,
+				at_edge = "wrap", -- split
+				move_cursor_same_row = false,
+				cursor_follows_swapped_bufs = false,
+				multiplexer_integration = false,
+				disable_multiplexer_nav_when_zoomed = false,
+				resize_mode = {
+					hooks = {
+						on_leave = require("bufresize").register,
+					},
+				},
+			})
+			-- moving between splits
+			vim.keymap.set({ "i", "n", "o", "v" }, "<S-left>", require("smart-splits").move_cursor_left)
+			vim.keymap.set({ "i", "n", "o", "v" }, "<S-down>", require("smart-splits").move_cursor_down)
+			vim.keymap.set({ "i", "n", "o", "v" }, "<S-up>", require("smart-splits").move_cursor_up)
+			vim.keymap.set({ "i", "n", "o", "v" }, "<S-right>", require("smart-splits").move_cursor_right)
+			-- resizing splits
+			vim.keymap.set({ "i", "n", "o", "v" }, "<C-S-left>", require("smart-splits").resize_left)
+			vim.keymap.set({ "i", "n", "o", "v" }, "<C-S-down>", require("smart-splits").resize_down)
+			vim.keymap.set({ "i", "n", "o", "v" }, "<C-S-up>", require("smart-splits").resize_up)
+			vim.keymap.set({ "i", "n", "o", "v" }, "<C-S-right>", require("smart-splits").resize_right)
+			-- swapping buffers between windows
+			vim.keymap.set({ "i", "n", "o", "v" }, "<S-M-left>", require("smart-splits").swap_buf_left)
+			vim.keymap.set({ "i", "n", "o", "v" }, "<S-M-down>", require("smart-splits").swap_buf_down)
+			vim.keymap.set({ "i", "n", "o", "v" }, "<S-M-up>", require("smart-splits").swap_buf_up)
+			vim.keymap.set({ "i", "n", "o", "v" }, "<S-M-right>", require("smart-splits").swap_buf_right)
 		end,
 	},
 	{
@@ -53,7 +132,7 @@ return {
 		end,
 	}, -- Word highlighting
 	{
-		"s1n7ax/nvim-comment-frame",
+		"s1n7ax/nvim-comment-frame", -- Wirte comments in frames
 		keys = { "Kf", "Km" },
 		opts = {
 
@@ -81,54 +160,39 @@ return {
 		},
 	}, -- Comment frame
 	{
-		"ibhagwan/smartyank.nvim",
-		event = "BufReadPost",
+		"EtiamNullam/deferred-clipboard.nvim", -- Sync system clipboard with nvim
 		config = function()
-			require("smartyank").setup({
-				highlight = {
-					enabled = true, -- highlight yanked text
-					higroup = "IncSearch", -- highlight group of yanked text
-					timeout = 140, -- timeout for clearing the highlight
-				},
-				clipboard = {
-					enabled = true,
-				},
-				tmux = {
-					enabled = true,
-					-- remove `-w` to disable copy to host client's clipboard
-					cmd = { "tmux", "set-buffer", "-w" },
-				},
-				osc52 = {
-					enabled = true,
-					ssh_only = true, -- false to OSC52 yank also in local sessions
-					silent = true, -- true to disable the "n chars copied" echo
-					echo_hl = "Directory", -- highlight group of the OSC52 echo message
-				},
+			local deferred_clipboard = require("deferred-clipboard")
+			deferred_clipboard.setup()
+			vim.api.nvim_create_autocmd("CmdlineEnter", {
+				callback = function()
+					deferred_clipboard.write()
+				end,
 			})
 		end,
 	},
-
 	{
-		"SmiteshP/nvim-gps",
+		"SmiteshP/nvim-gps", -- Context in the status bar
 		keys = "<leader>w",
 		config = function()
 			require("nvim-gps").setup()
 			vim.keymap.set("n", "<leader>w", function()
-				print(require("nvim-gps").get_location())
+				vim.notify(require("nvim-gps").get_location())
+				vim.wo.statusline = vim.wo.statusline
 			end, { silent = true })
 		end,
-	}, -- Context in the status bar
+	},
 	{
-		"ThePrimeagen/refactoring.nvim",
+		"ThePrimeagen/refactoring.nvim", --  Extract block in new function
 		keys = { { "<leader>e", mode = "v" } },
 		config = function()
 			vim.keymap.set("v", "<Leader>e", function()
 				require("refactoring").refactor("Extract Function")
 			end, { silent = true })
 		end,
-	}, --  Extract block in new function
+	},
 	{
-		"danymat/neogen",
+		"danymat/neogen", -- Annotation generator
 		keys = "<leader>a",
 		config = function()
 			require("neogen").setup({
@@ -145,9 +209,9 @@ return {
 
 			vim.keymap.set("n", "<leader>a", require("neogen").generate, { silent = true })
 		end,
-	}, -- Annotation generator
+	},
 	{
-		"kylechui/nvim-surround",
+		"kylechui/nvim-surround", -- Surround motion with delimiters
 		keys = {
 			{ "<C-g>s", mode = "i" },
 			{ "<C-s>", mode = "i" },
@@ -178,10 +242,9 @@ return {
 		end,
 	},
 	{
-		"Wansmer/sibling-swap.nvim",
+		"Wansmer/sibling-swap.nvim", -- Swap sibling treesitter nodes
 		keys = { "sN", "sP" },
 		config = function()
-			print("hey")
 			require("sibling-swap").setup({
 				use_default_keymaps = false,
 			})
@@ -190,16 +253,7 @@ return {
 		end,
 	},
 	{
-		"beauwilliams/focus.nvim",
-		cmd = "Focus",
-		opts = {
-			signcolumn = false,
-			cursorline = false,
-		},
-	}, -- Split and resize window intelligently
-
-	{
-		"windwp/nvim-autopairs",
+		"windwp/nvim-autopairs", -- End pairs like (), [], {}
 		event = "VeryLazy",
 		opts = {
 			enable_afterquote = true, -- add bracket pairs after quote
@@ -208,18 +262,17 @@ return {
 			map_cr = false,
 			map_bs = true,
 		},
-	}, -- Pairwise
-	--
+	},
 	{
-		"lukas-reineke/indent-blankline.nvim",
+		"lukas-reineke/indent-blankline.nvim", -- Indentation line
 		event = "BufReadPre",
 		opts = {
 			show_trailing_blankline_indent = false,
 			show_first_indent_level = false,
 		},
-	}, -- Indentation line
+	},
 	{
-		"numToStr/Comment.nvim",
+		"numToStr/Comment.nvim", -- Treesitter based commenting
 		keys = { "K", "dK", "yK", "cK", { "K", mode = "x" } },
 		config = function()
 			require("Comment").setup({
@@ -256,20 +309,25 @@ return {
 		end,
 	},
 	{
-		"ggandor/leap.nvim",
+		"https://github.com/karb94/neoscroll.nvim", -- Smooth scrolling
+		config = function()
+			require("neoscroll").setup()
+
+			vim.keymap.set({ "n", "x" }, "k", function()
+				require("neoscroll").scroll(0.33, false, 200)
+			end, { silent = true })
+			vim.keymap.set({ "n", "x" }, "j", function()
+				require("neoscroll").scroll(-0.33, false, 200)
+			end, { silent = true })
+		end,
+	},
+	{
+		"ggandor/leap.nvim", -- Label based motions
 		dependencies = { "ggandor/leap-ast.nvim" },
-		keys = vim.tbl_map(function(key)
-			return { key, mode = "" }
-		end, { "<M-f>", "<M-S-f>", "<leader>z" }),
 		config = function()
 			vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
 			vim.api.nvim_set_hl(0, "LeapLabelPrimary", { link = "IncSearch" })
 			vim.api.nvim_set_hl(0, "LeapMatch", { link = "DiagnosticLineNrWarn" })
-			-- vim.api.nvim_set_hl(0, "LeapMatch", {
-			-- 	fg = "red", -- for light themes, set to 'black' or similar
-			-- 	bold = true,
-			-- 	nocombine = true,
-			-- })
 			require("leap").opts.highlight_unlabeled_phase_one_targets = true
 			vim.keymap.set("", "<M-f>", function()
 				require("leap").leap({ backward = false })
@@ -281,46 +339,7 @@ return {
 		end,
 	},
 	{
-		"Shatur/neovim-session-manager",
-		dependencies = {
-			"airblade/vim-rooter",
-			config = function()
-				vim.g.rooter_cd_cmd = "lcd"
-				require("session_manager").setup({
-					autoload_mode = require("session_manager.config").AutoloadMode.Disabled,
-				})
-			end,
-		},
-	},
-	-- {
-	-- 	"phaazon/hop.nvim",
-	-- 	keys = vim.tbl_map(function(key)
-	-- 		return { key, mode = "" }
-	-- 	end, { "<left>", "<right>", "<up>", "<down>", "<M-f>" }),
-	-- 	config = function()
-	-- 		local hop = require("hop")
-	-- 		local hint = require("hop.hint")
-	--
-	-- 		require("hop").setup({})
-	--
-	-- 		vim.keymap.set("", "<left>", function()
-	-- 			hop.hint_char1({ direction = hint.HintDirection.BEFORE_CURSOR })
-	-- 		end)
-	-- 		vim.keymap.set("", "<right>", function()
-	-- 			hop.hint_char1({ direction = hint.HintDirection.AFTER_CURSOR })
-	-- 		end)
-	-- 		vim.keymap.set("", "<up>", function()
-	-- 			hop.hint_vertical({ direction = hint.HintDirection.BEFORE_CURSOR })
-	-- 		end)
-	-- 		vim.keymap.set("", "<down>", function()
-	-- 			hop.hint_vertical({ direction = hint.HintDirection.AFTER_CURSOR })
-	-- 		end)
-	-- 		vim.keymap.set("", "<M-f>", hop.hint_patterns)
-	-- 	end,
-	-- }, -- Vim Motions
-
-	{
-		"Weissle/easy-action",
+		"Weissle/easy-action", -- Remote actions
 		keys = { "<leader>k", "\\" },
 		dependencies = {
 			{
@@ -390,7 +409,7 @@ return {
 		end,
 	},
 	{
-		"ckolkey/ts-node-action",
+		"ckolkey/ts-node-action", -- Treesitter based node transformer (quote, bool, etc.)
 		dependencies = { "nvim-treesitter" },
 		keys = "<leader>n",
 		config = function()
@@ -403,25 +422,14 @@ return {
 		end,
 	},
 	{
-		"diegoulloao/nvim-file-location",
-		keys = "<localleader>f",
-		opts = {
-			keymap = "<localleader>f",
-			mode = "absolute", -- options: workdir | absolute
-			add_line = true,
-			add_column = false,
-		},
-	},
-	{
-		"junegunn/vim-easy-align",
+		"junegunn/vim-easy-align", -- Align text based on pattern
 		keys = { { "<localleader>a", mode = { "n", "x" } } },
 		config = function()
 			vim.keymap.set({ "n", "x" }, "<localleader>a", "<Plug>(LiveEasyAlign)")
 		end,
-	}, -- Tabularize
-
+	},
 	{
-		"folke/noice.nvim",
+		"folke/noice.nvim", -- Notification system
 		event = "VeryLazy",
 		dependencies = {
 			"MunifTanjim/nui.nvim",
@@ -495,18 +503,4 @@ return {
 			},
 		},
 	},
-	{
-		"philipGaudreau/nvim-cheat.sh",
-		branch = "feature/rounded-borders",
-		dependencies = "philipGaudreau/popfix",
-		keys = "<leader>c",
-		config = function()
-			vim.keymap.set("n", "<leader>c", "<cmd>Cheat<cr>a")
-		end,
-	}, -- cheat.sh
-
-	--	-- "jose-elias-alvarez/null-ls.nvim", -- Bridge for non-LSP stuff
-	--	--  'WhoIsSethDaniel/mason-tool-installer.nvim'  -- Auto install tools like shellcheck
-	--	--  "nacro90/numb.nvim"  -- Line preview
-	--	--  'vimpostor/vim-tpipeline'  -- Status line in TMUX bar
 }

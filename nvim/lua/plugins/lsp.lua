@@ -6,6 +6,7 @@ return {
 		dependencies = {
 			{
 				"williamboman/mason.nvim",
+				--  'WhoIsSethDaniel/mason-tool-installer.nvim'  -- Auto install tools like shellcheck
 				opts = {
 					ui = {
 						keymaps = {
@@ -22,11 +23,13 @@ return {
 						"dockerls",
 						"jsonls",
 						"lua_ls",
-						"pyright",
+						-- "pyright",
+						"pylyzer",
 						"taplo",
 						"vimls",
 						"yamlls",
 						"denols",
+						-- "azure_pipelines_ls",
 					}
 
 					local formatters = {
@@ -85,7 +88,7 @@ return {
 				end, opts)
 				vim.keymap.set("n", "h", function()
 					local captures = vim.treesitter.get_captures_at_cursor()
-					if vim.tbl_contains(captures, "function.call") or vim.tbl_contains(captures, "method.call") then
+					if vim.list_contains(captures, "function.call") or vim.list_contains(captures, "method.call") then
 						vim.lsp.buf.hover()
 					else
 						vim.lsp.buf.signature_help()
@@ -94,15 +97,11 @@ return {
 
 				call("sign_define", {
 					{
-						{
-							name = "DiagnosticSignError",
-							texthl = "DiagnosticSignError",
-							numhl = "DiagnosticLineNrError",
-							culhl = "DiagnosticLineNrWarn",
-						},
-						{ name = "DiagnosticSignWarn", texthl = "DiagnosticSignWarn", numhl = "DiagnosticLineNrWarn" },
-						{ name = "DiagnosticSignInfo", texthl = "DiagnosticSignInfo", numhl = "DiagnosticLineNrInfo" },
-						{ name = "DiagnosticSignHint", texthl = "DiagnosticSignHint", numhl = "DiagnosticLineNrHint" },
+						{ name = "DiagnosticSignError", numhl = "DiagnosticLineNrError" },
+						{ name = "DiagnosticSignWarn", numhl = "DiagnosticLineNrWarn" },
+						{ name = "DiagnosticSignInfo", numhl = "DiagnosticLineNrInfo" },
+						{ name = "DiagnosticSignHint", numhl = "DiagnosticLineNrHint" },
+						{ name = "DiagnosticSignOk", numhl = "DiagnosticLineNrOk" },
 					},
 				})
 			end
@@ -126,38 +125,52 @@ return {
 			vim.keymap.set("n", "l", vim.diagnostic.open_float, { silent = true })
 			vim.diagnostic.config(lsp_config.diagnostic)
 
-			-- vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, lsp_config.diagnostic.float)
-			-- vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, lsp_config.diagnostic.float)
-
-			local capabilities = vim.lsp.protocol.make_client_capabilities
+			-- local capabilities = vim.lsp.protocol.make_client_capabilities
+			local capabilities = require("ddc_nvim_lsp").make_client_capabilities
 			require("mason-lspconfig").setup_handlers({
 				function(server_name) -- default handler
 					require("lspconfig")[server_name].setup({ on_attach = on_attach, capabilities = capabilities() })
 				end,
 
-				["pyright"] = function()
-					require("lspconfig").pyright.setup({
+				["pylyzer"] = function()
+					require("lspconfig").pylyzer.setup({
 						on_attach = on_attach,
 						capabilities = capabilities(),
-						before_init = function(_, config)
-							local venv = vim.env.VIRTUAL_ENV
-
-							if not venv then
-								local is_poetry = vim.fs.find(
-									{ "poetry.lock" },
-									{ upward = true, path = config.root_dir }
-								)[1] ~= nil
-
-								if is_poetry then
-									local venv_path = get_poetry_venv(config.root_dir)
-									vim.env.VIRTUAL_ENV = venv_path
-									config.settings.python.pythonPath =
-										require("lspconfig.util").path.join(vim.env.VIRTUAL_ENV, "bin", "python3")
-								end
-							end
-						end,
+						-- root_dir = function(fname)
+						-- 	local root_files = {
+						-- 		"setup.py",
+						-- 		"tox.ini",
+						-- 		"requirements.txt",
+						-- 		"Pipfile",
+						-- 		"pyproject.toml",
+						-- 	}
+						-- 	return require("lspconfig").util.root_pattern(unpack(root_files))(fname)
+						-- end,
 					})
 				end,
+				-- ["pyright"] = function()
+				-- 	require("lspconfig").pyright.setup({
+				-- 		on_attach = on_attach,
+				-- 		capabilities = capabilities(),
+				-- 		before_init = function(_, config)
+				-- 			local venv = vim.env.VIRTUAL_ENV
+				--
+				-- 			if not venv then
+				-- 				local is_poetry = vim.fs.find(
+				-- 					{ "poetry.lock" },
+				-- 					{ upward = true, path = config.root_dir }
+				-- 				)[1] ~= nil
+				--
+				-- 				if is_poetry then
+				-- 					local venv_path = get_poetry_venv(config.root_dir)
+				-- 					vim.env.VIRTUAL_ENV = venv_path
+				-- 					config.settings.python.pythonPath =
+				-- 						require("lspconfig.util").path.join(vim.env.VIRTUAL_ENV, "bin", "python3")
+				-- 				end
+				-- 			end
+				-- 		end,
+				-- 	})
+				-- end,
 
 				["lua_ls"] = function()
 					require("lspconfig").lua_ls.setup({

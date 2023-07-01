@@ -8,18 +8,6 @@ return {
 			"nvim-telescope/telescope-ui-select.nvim",
 		},
 
-		keys = {
-			"<leader>f",
-			"<leader>g",
-			"<leader>b",
-			"<leader>s",
-			"<leader>l",
-			"<leader>r",
-			"<leader>u",
-			"<leader>B",
-		},
-		cmd = "Telescope",
-
 		config = function()
 			local actions = require("telescope.actions")
 			local builtin = require("telescope.builtin")
@@ -44,9 +32,12 @@ return {
 								"--max-depth=2",
 							},
 						},
-						-- settings = {
-						-- 	auto_lcd = true,
-						-- },
+						settings = {
+							auto_lcd = true,
+						},
+					},
+					undo = {
+						time_format = "%c",
 					},
 				},
 			})
@@ -61,8 +52,24 @@ return {
 			vim.api.nvim_create_autocmd("FileType", {
 				pattern = "TelescopePrompt",
 				callback = function()
-					vim.wo.statusline =
-						[[ %{%getbufvar(bufnr('#'),'gitsigns_status')%}%#StatusLine#%=%{%expand('#:~')%}]]
+					local is_modifiable = vim.fn.getbufvar(vim.fn.bufnr("#"), "&modifiable") == 1
+					local is_modified = vim.fn.getbufvar(vim.fn.bufnr("#"), "&modified") == 1
+					local modified = is_modifiable and (is_modified and "[+]" or "") or "[-]"
+					local read_only = vim.fn.getbufvar(vim.fn.bufnr("#"), "&readonly") == 1 and "[RO]" or ""
+					local help = vim.fn.getbufvar(vim.fn.bufnr("#"), "&buftype") == "help" and "[Help]" or ""
+					local git_status = vim.fn.getbufvar(vim.fn.bufnr("#"), "gitsigns_status")
+					if git_status ~= "" then
+						git_status = " " .. git_status
+					end
+					vim.wo.statusline = git_status
+						.. [[%#GreyStatusLine#%=]]
+						.. help
+						.. [[%#RedStatusLine#]]
+						.. modified
+						.. [[%#BlueStatusLine#]]
+						.. read_only
+						.. [[%#StatusLine#]]
+						.. [[ %{%expand('#:~')%}]]
 				end,
 			})
 
@@ -91,6 +98,9 @@ return {
 			vim.keymap.set("n", "<leader>b", function()
 				builtin.buffers(vim.tbl_extend("error", dropdown_theme, { cwd_only = true }))
 			end)
+			vim.keymap.set("n", "<leader>B", function()
+				builtin.buffers(dropdown_theme)
+			end)
 			vim.keymap.set("n", "<leader>l", function()
 				builtin.lsp_workspace_symbols(
 					vim.tbl_extend(
@@ -104,40 +114,43 @@ return {
 			local post_action_fn = function(prefix)
 				local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
 				local jumps = call("msgpackparse", { context["jumps"] })
-				local listed_bufs = vim.tbl_map(function(buf)
+				local listed_bufs = vim.iter.map(function(buf)
 					return buf["f"]
 				end, call("msgpackparse", { context["bufs"] })[4])
 				local to_edit
 				for i = #jumps, 1, -4 do
 					local file = jumps[i]["f"]
-					if vim.startswith(file, prefix) and vim.tbl_contains(listed_bufs, file) then
+					if vim.startswith(file, prefix) and vim.list_contains(listed_bufs, file) then
 						to_edit = file
 						break
 					end
 				end
-				vim.cmd("e " .. to_edit)
+				vim.cmd.edit(to_edit)
 			end
 
 			vim.keymap.set("n", "<leader>s", function() --
-				local home = os.getenv("HOME")
+				local project_paths = require("telescope._extensions.repo.autocmd_lcd").get_project_paths()
 				local context = api.nvim_get_context({ types = { "bufs" } })
-				local bufs_project_root = vim.tbl_map(function(buf)
-					return buf["f"]:match("(" .. home .. "/.-)/.*")
-				end, call("msgpackparse", { context["bufs"] })[4])
-				local open_projects = {}
-				for _, b in ipairs(bufs_project_root) do
-					if not vim.tbl_contains(open_projects, b) then
-						table.insert(open_projects, b)
-					end
-				end
+				local bufs = call("msgpackparse", { context["bufs"] })[4]
+
+				local open_projects = vim.iter.filter(function(project_path)
+					local found = vim.iter(bufs):find(function(buf_path)
+						return vim.startswith(buf_path["f"], project_path)
+					end)
+					return found or false
+				end, project_paths)
+
 				require("telescope").extensions.repo.list(vim.tbl_extend("error", dropdown_theme, {
-					search_dirs = open_projects,
+					search_dirs = vim.tbl_isempty(open_projects) and { "" } or open_projects,
 					post_action = post_action_fn,
 					prompt = " (opened projects)",
 				}))
 			end)
 
-			vim.keymap.set("n", "<leader>r", require("telescope").extensions.repo.list)
+			vim.keymap.set("n", "<leader>r", function()
+				vim.go.autochdir = false
+				require("telescope").extensions.repo.list()
+			end)
 			vim.keymap.set("n", "<leader>u", require("telescope").extensions.undo.undo)
 		end,
 	},

@@ -3,7 +3,17 @@ return {
 	event = "InsertEnter",
 	dependencies = {
 		"vim-denops/denops.vim",
-		"matsui54/denops-popup-preview.vim",
+		{
+			"matsui54/denops-popup-preview.vim",
+			config = function()
+				vim.g.popup_preview_config = {
+					border = false,
+					winblend = 30,
+					maxHeight = 12,
+					supportUltisnips = true,
+				}
+			end,
+		},
 		"matsui54/ddc-ultisnips",
 		"LumaKernel/ddc-file",
 		"Shougo/ddc-converter_remove_overlap",
@@ -32,33 +42,12 @@ return {
 
 	config = function()
 		local api = vim.api
-
 		local call = api.nvim_call_function
-		vim.g.UltiSnipsSnippetDirectories = { os.getenv("HOME") .. "/.local/share/nvim/lazy/vim-snippets/UltiSnips" }
-
-		vim.g.UltiSnipsExpandTrigger = "`<nop>`"
-		vim.g.UltiSnipsJumpForwardTrigger = "<tab>"
-		vim.g.UltiSnipsJumpBackwardTrigger = "<s-tab>"
-		vim.g.ultisnips_python_style = "numpy"
-		vim.g.popup_preview_config = {
-			border = false,
-			winblend = 30,
-			maxHeight = 12,
-			supportUltisnips = true,
-		}
 
 		local _denops_running = function()
 			return vim.g.loaded_denops
 				and call("denops#server#status", {}) == "running"
 				and call("denops#plugin#is_loaded", { "ddc" }) == 1
-		end
-
-		local _hide = function(event)
-			if not _denops_running() then
-				return
-			end
-
-			call("denops#notify", { "ddc", "hide", { event } })
 		end
 
 		local feed_special = function(action)
@@ -84,11 +73,10 @@ return {
 			api.nvim_win_set_cursor(0, { row, col - 1 })
 			local captures = vim.treesitter.get_captures_at_cursor()
 
-			local punctuation_captures = vim.tbl_filter(function(capture)
+			local is_punctuation = vim.iter(captures):any(function(capture)
 				return capture:match("^punctuation%.")
-			end, captures)
+			end)
 
-			local is_punctuation = not vim.tbl_isempty(punctuation_captures)
 			print(api.nvim_get_current_line():sub(col, col))
 			local word_under_cursor_start_col = (is_punctuation or api.nvim_get_current_line():sub(col, col) == "/")
 					and col
@@ -100,8 +88,6 @@ return {
 			local construct = string.rep(bs_seq, col - word_under_cursor_start_col)
 
 			api.nvim_feedkeys(construct .. suggestion, "n", false)
-			-- api.nvim_buf_set_text(0, row - 1, word_under_cursor_start_col, row - 1, col, { suggestion })
-			-- api.nvim_win_set_cursor(0, { row, word_under_cursor_start_col + #suggestion })
 		end
 
 		local wise_tab = function()
@@ -110,16 +96,28 @@ return {
 
 			if not vim.tbl_isempty(items) and complete_pos >= 0 then
 				local item = items[1]
-				local prev_input = vim.g["ddc#_prev_input"]
+				local prev_input = api.nvim_get_current_line()
 				local suggestion = item["word"]
 
 				if vim.endswith(prev_input, suggestion) then
 					insert_snippet_or_tab()
 				else
-					_hide("CompleteDone")
+					vim.v.completed_item = item
+					call("ddc#_notify", { "hide", { "CompleteDone" } })
 					if type(item.user_data) == "table" then
 						call("denops#request", { "ddc", "onCompleteDone", { item.__sourceName, item.user_data } })
 					end
+					-- Is this nvim_create_autocmd necessary?
+					-- api.nvim_cmd("TextChangedI", {
+					-- 	once = true,
+					-- 	group = "ddc",
+					-- 	callback = function()
+					-- 		vim.v.completed_item = item
+					-- 		api.nvim_exec_autocmds("CompleteDone", {
+					-- 			modeline = false,
+					-- 		})
+					-- 	end,
+					-- })
 					insert_suggestion(suggestion)
 				end
 			else
@@ -164,32 +162,9 @@ return {
 		end, opts_expr)
 
 		vim.cmd([[
-" call ddc#custom#patch_global('sources', ['nvim-lsp', 'ultisnips', 'file'])
-call ddc#custom#patch_global('sources', ['nvim-lsp', 'around', 'ultisnips', 'file'])
-call ddc#custom#patch_global('sourceOptions', #{
-	\ _: #{
-		\   matchers: ['matcher_fuzzy'],
-		\   sorters: ['sorter_fuzzy'],
-		\   converters: ['converter_remove_overlap'],
-		\   minAutoCompleteLength : 1,
-		\     }
-		\ })
-		call ddc#custom#patch_global('backspaceCompletion', 'v:true')
-		call ddc#custom#patch_global('filterParams', #{
-			\   matcher_fuzzy: #{ splitMode: 'word' }
-			\ })
-			call ddc#custom#patch_global('sourceOptions', #{
-				\ ultisnips: #{mark: 'U'},
-				\ around: #{mark: 'A', enabledIf: 'luaeval("vim.tbl_count(vim.lsp.get_active_clients()) == 0")'},
-				\ nvim-lsp: #{mark: 'LSP',forceCompletionPattern: '\.\w*|:\w*|->\w*'},
-				\ file: #{mark: 'F', forceCompletionPattern: '\S/\S*' }
-				\})
-				call ddc#custom#patch_global('sourceParams', #{
-					\ })
-					call ddc#custom#patch_global('ui', 'inline')
-
-					call popup_preview#enable()
-					call ddc#enable()
-					]])
+			call ddc#custom#load_config(expand('$HOME') . "/.dotfiles/nvim/ddc.ts")
+			call popup_preview#enable()
+			call ddc#enable(#{context_filetype: 'treesitter'})
+				]])
 	end,
 }

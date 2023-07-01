@@ -8,11 +8,11 @@ return {
 	},
 	{
 		"andymass/vim-matchup",
-		-- event = "BufReadPost",
 	},
 	"nvim-treesitter/nvim-treesitter-textobjects", -- More text motions
 	"nvim-treesitter/nvim-treesitter-refactor", -- Highlight definitions, Rename
-	"RRethy/nvim-treesitter-endwise",
+	"HiPhish/nvim-ts-rainbow2", -- "Enclosers" coloring
+	"RRethy/nvim-treesitter-endwise", -- Add Delimiters for Pascal-like languages
 	{
 		"nvim-treesitter/nvim-treesitter",
 		build = function()
@@ -25,9 +25,10 @@ return {
 			vim.g.matchup_motion_cursor_end = 0
 			vim.g.matchup_text_obj_linewise_operators = { "d", "y" } -- "c"?
 
+			local call = vim.api.nvim_call_function
+			local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
 			local mk_repeatable = require("utils").mk_repeatable
 			require("nvim-treesitter.configs").setup({
-				-- ensure_installed = "all",
 				highlight = {
 					enable = true,
 					additional_vim_regex_highlighting = { "python" },
@@ -38,8 +39,16 @@ return {
 				},
 				rainbow = {
 					enable = true,
-					extended_mode = true, -- Highlight also non-parentheses delimiters, boolean or table: lang -> boolean
-					max_file_lines = 1000, -- Do not enable for files with more than 1000 lines, int
+					query = "rainbow-parens",
+					strategy = {
+						function()
+							if call("line", { "$" }) > 10000 then
+								return nil
+							else
+								return require("ts-rainbow").strategy.global
+							end
+						end,
+					},
 				},
 				incremental_selection = {
 					enable = true,
@@ -49,12 +58,6 @@ return {
 					},
 				},
 				refactor = {
-					-- highlight_definitions = {
-					--   enable = true,
-					--   -- Set to false if you have an `updatetime` of ~100.
-					--   clear_on_cursor_move = true,
-					-- },
-					-- highlight_current_scope = { enable = true },
 					smart_rename = {
 						enable = true,
 						keymaps = {
@@ -81,23 +84,32 @@ return {
 
 						keymaps = {
 							-- You can use the capture groups defined in textobjects.scm
-							-- ["ib"] = "@block.inner",
-							-- ["ab"] = "@block.outer",
-							["ik"] = "@call.inner",
+							["aa"] = "@assignment.lhs",
+							["ia"] = "@assignment.lhs",
+							["av"] = "@assignment.rhs",
+							["iv"] = "@assignment.rhs",
 							["ak"] = "@call.outer",
+							["ik"] = "@call.inner",
 							["aC"] = "@class.outer",
 							["iC"] = "@class.inner",
 							["aK"] = "@comment.outer",
-							["ic"] = "@conditional.inner",
+							["iK"] = "@comment.outer",
 							["ac"] = "@conditional.outer",
+							["ic"] = "@conditional.inner",
 							["af"] = "@function.outer",
 							["if"] = "@function.inner",
-							["il"] = "@loop.inner",
 							["al"] = "@loop.outer",
-							["ip"] = "@parameter.inner",
+							["il"] = "@loop.inner",
+							["an"] = "@number.inner",
+							["in"] = "@number.inner",
 							["ap"] = "@parameter.outer",
+							["ip"] = "@parameter.inner",
+							["ar"] = "@return.outer",
+							["ir"] = "@return.inner",
 							["as"] = "@statement.outer",
+							["is"] = "@statement.outer",
 						},
+						include_surrounding_whitespace = false,
 						selection_modes = {
 							-- 	['@parameter.outer'] = 'v', -- charwise
 							-- ["@function.outer"] = "V", -- linewise
@@ -110,6 +122,62 @@ return {
 					move = {
 						enable = true,
 						set_jumps = true, -- whether to set jumps in the jumplist
+						goto_next_start = {
+							["]a"] = "@assignment.lhs",
+							["]v"] = "@assignment.rhs",
+							["]k"] = "@call.outer",
+							["]C"] = "@class.outer",
+							["]K"] = "@comment.outer",
+							["]c"] = "@conditional.outer",
+							["]f"] = "@function.outer",
+							["]l"] = "@loop.outer",
+							["]n"] = "@number.inner",
+							["]p"] = "@parameter.inner",
+							["]r"] = "@return.outer",
+							["]s"] = "@statement.outer",
+						},
+						goto_next_end = {
+							["]ga"] = "@assignment.lhs",
+							["]gv"] = "@assignment.rhs",
+							["]gk"] = "@call.outer",
+							["]gC"] = "@class.outer",
+							["]gK"] = "@comment.outer",
+							["]gc"] = "@conditional.outer",
+							["]gf"] = "@function.outer",
+							["]gl"] = "@loop.outer",
+							["]gn"] = "@number.inner",
+							["]gp"] = "@parameter.inner",
+							["]gr"] = "@return.outer",
+							["]gs"] = "@statement.outer",
+						},
+						goto_previous_start = {
+							["[a"] = "@assignment.lhs",
+							["[v"] = "@assignment.rhs",
+							["[k"] = "@call.outer",
+							["[C"] = "@class.outer",
+							["[K"] = "@comment.outer",
+							["[c"] = "@conditional.outer",
+							["[f"] = "@function.outer",
+							["[l"] = "@loop.outer",
+							["[n"] = "@number.inner",
+							["[p"] = "@parameter.inner",
+							["[r"] = "@return.outer",
+							["[s"] = "@statement.outer",
+						},
+						goto_previous_end = {
+							["[ga"] = "@assignment.lhs",
+							["[gv"] = "@assignment.rhs",
+							["[gk"] = "@call.outer",
+							["[gC"] = "@class.outer",
+							["[gK"] = "@comment.outer",
+							["[gc"] = "@conditional.outer",
+							["[gf"] = "@function.outer",
+							["[gl"] = "@loop.outer",
+							["[gn"] = "@number.inner",
+							["[gp"] = "@parameter.inner",
+							["[gr"] = "@return.outer",
+							["[gs"] = "@statement.outer",
+						},
 					},
 					lsp_interop = {
 						enable = true,
@@ -144,6 +212,7 @@ return {
 				},
 				matchup = {
 					enable = true, -- mandatory, false will disable the whole extension
+					enable_quotes = true,
 					-- disable = { },  -- optional, list of language that will be disabled
 					-- [options]
 					-- do not use virtual text to highlight the virtual end of a block,
@@ -159,7 +228,6 @@ return {
 		highlight! link TreesitterContext CursorLine
 		]])
 
-			-- TODO: Make more general
 			local get_text_object = function()
 				local info =
 					vim.inspect_pos(nil, nil, nil, { syntax = false, extmarks = false, semantic_tokens = false })
@@ -170,55 +238,114 @@ return {
 				end
 
 				local lang = ts_info.lang
-				local query = vim.treesitter.query.get_query(lang, "textobjects")
-				local node = vim.treesitter.get_node_at_pos(0, info.row, info.col + 1, {})
+				local query = vim.treesitter.query.get(lang, "textobjects")
+				local node = vim.treesitter.get_node({ bufnr = 0, pos = { info.row, info.col + 1 } })
 
 				while not query.captures[query:iter_captures(node, info.buffer)()] do
 					node = node:parent()
 				end
 
-				local textobject
-				for id, _, _ in query:iter_captures(node, 0) do
+				local capture_id = vim.iter(query:iter_captures(node, 0)):find(function(id, _, _)
 					local name = query.captures[id] -- name of the capture in the query
-					if name ~= "block.outer" then
-						textobject = name
-						print(textobject)
-						break
+					print(id, name)
+					return name ~= "block.outer"
+				end)
+
+				return "@" .. query.captures[capture_id]
+			end
+
+			-- ensure ; goes forward and , goes backward regardless of the last direction
+			-- vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next)
+			-- vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous)
+
+			-- vim way: ; goes to the direction you were moving.
+			vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move)
+			vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_opposite)
+			local gs = require("gitsigns")
+			local next_hunk, prev_hunk = ts_repeat_move.make_repeatable_move_pair(gs.next_hunk, gs.prev_hunk)
+			local next_diagnostic, prev_diagnostic = ts_repeat_move.make_repeatable_move_pair(function()
+				vim.diagnostic.goto_next({ float = { border = "none" } })
+			end, function()
+				vim.diagnostic.goto_prev({ float = { border = "none" } })
+			end)
+			local next_quote, prev_quote = ts_repeat_move.make_repeatable_move_pair(function()
+				require("utils").goto_quote(true)
+			end, function()
+				require("utils").goto_quote(false)
+			end)
+			local next_fold, prev_fold = ts_repeat_move.make_repeatable_move_pair(function()
+				vim.cmd("norm! zj")
+			end, function()
+				vim.cmd("norm! zk")
+			end)
+			local next_line, prev_line = ts_repeat_move.make_repeatable_move_pair(function()
+				vim.cmd("norm! j")
+			end, function()
+				vim.cmd("norm! k")
+			end)
+			local next_col, prev_col = ts_repeat_move.make_repeatable_move_pair(function()
+				vim.cmd("norm! l")
+			end, function()
+				vim.cmd("norm! h")
+			end)
+			local find_unmatched = function(visual, forward)
+				return function()
+					call("matchup#motion#find_unmatched", { visual, forward })
+				end
+			end
+			local nnext_match, nprev_match =
+				ts_repeat_move.make_repeatable_move_pair(find_unmatched(0, 1), find_unmatched(0, 0))
+			local xnext_match, xprev_match =
+				ts_repeat_move.make_repeatable_move_pair(find_unmatched(1, 1), find_unmatched(1, 0))
+
+			local rhs =
+				"<cmd>lua require('multiline_ft').multiline_find(%s,%s,require('nvim-treesitter.textobjects.repeatable_move'))<cr>"
+			vim.keymap.set({ "n", "x", "o" }, "f", string.format(rhs, "true", "false"))
+			vim.keymap.set({ "n", "x", "o" }, "F", string.format(rhs, "false", "false"))
+			vim.keymap.set({ "n", "x", "o" }, "t", string.format(rhs, "true", "true"))
+			vim.keymap.set({ "n", "x", "o" }, "T", string.format(rhs, "false", "true"))
+			vim.api.nvim_create_autocmd("CmdlineLeave", {
+				callback = function()
+					if not vim.v.event.abort and call("getcmdline", {}):match("norm%s") then
+						-- Cannot set vim.v.event as it is read-only and to modify a key in a dict from lua,
+						-- we must first copy dict, then assign the key, then reassing key, so we use "let"
+						vim.cmd("let v:event.abort = 1")
+
+						vim.keymap.set({ "n", "x", "o" }, "f", ts_repeat_move.builtin_f)
+						vim.keymap.set({ "n", "x", "o" }, "F", ts_repeat_move.builtin_F)
+						vim.keymap.set({ "n", "x", "o" }, "t", ts_repeat_move.builtin_t)
+						vim.keymap.set({ "n", "x", "o" }, "T", ts_repeat_move.builtin_T)
+
+						local success, err = pcall(vim.cmd, call("getcmdline", {}))
+
+						vim.keymap.set({ "n", "x", "o" }, "f", string.format(rhs, "true", "false"))
+						vim.keymap.set({ "n", "x", "o" }, "F", string.format(rhs, "false", "false"))
+						vim.keymap.set({ "n", "x", "o" }, "t", string.format(rhs, "true", "true"))
+						vim.keymap.set({ "n", "x", "o" }, "T", string.format(rhs, "false", "true"))
+						if not success then
+							vim.cmd(
+								'echohl ErrorMsg | echom "' .. string.match(err, "Vim[^:]*:(.*)") .. '" | echohl None'
+							)
+						end
 					end
-				end
-
-				return "@" .. textobject
-			end
-
-			local function match(fwd)
-				local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-				local node = vim.treesitter.get_node_at_pos(0, row - 1, col, {})
-
-				if node:type() ~= "string" then
-					vim.api.nvim_call_function("matchup#motion#find_matching_pair", { 0, fwd and 1 or 0 })
-					return
-				end
-
-				local row1, col1, row2, col2 = node:range() -- range of the capture
-				row1, row2 = row1 + 1, row2 + 1
-				col2 = col2 - 1
-				local match_begin = { row1, col1 }
-				local match_end = { row2, col2 }
-				local current_pos = { row, col }
-				if not fwd then
-					match_begin, match_end = match_end, match_begin
-				end
-
-				vim.api.nvim_win_set_cursor(0, vim.deep_equal(current_pos, match_end) and match_begin or match_end)
-			end
-
-			vim.keymap.set("", "%", function()
-				match(true)
-			end, { silent = true })
-			vim.keymap.set("", "g%", function()
-				match(false)
-			end, { silent = true })
-
+				end,
+			})
+			vim.keymap.set({ "n", "x", "o" }, "]h", next_hunk)
+			vim.keymap.set({ "n", "x", "o" }, "[h", prev_hunk)
+			vim.keymap.set({ "n", "x", "o" }, "]d", next_diagnostic)
+			vim.keymap.set({ "n", "x", "o" }, "[d", prev_diagnostic)
+			vim.keymap.set({ "n", "x", "o" }, "]q", next_quote)
+			vim.keymap.set({ "n", "x", "o" }, "[q", prev_quote)
+			vim.keymap.set({ "n", "x", "o" }, "]z", next_fold)
+			vim.keymap.set({ "n", "x", "o" }, "[z", prev_fold)
+			vim.keymap.set({ "n", "x", "o" }, "]<cr>", next_line)
+			vim.keymap.set({ "n", "x", "o" }, "[<cr>", prev_line)
+			vim.keymap.set({ "n", "x", "o" }, "]<space>", next_col)
+			vim.keymap.set({ "n", "x", "o" }, "[<space>", prev_col)
+			vim.keymap.set({ "n" }, "]%", nnext_match)
+			vim.keymap.set({ "n" }, "[%", nprev_match)
+			vim.keymap.set({ "x" }, "]%", xnext_match)
+			vim.keymap.set({ "x" }, "[%", xprev_match)
 			vim.keymap.set(
 				"n",
 				"sp",
@@ -240,7 +367,7 @@ return {
 			vim.keymap.set("n", "<leader>i", function()
 				local func = require("nvim-treesitter.textobjects.lsp_interop").peek_definition_code
 				local captures = vim.treesitter.get_captures_at_cursor()
-				if vim.tbl_contains(captures, "constructor") or vim.tbl_contains(captures, "type") then
+				if vim.list_contains(captures, "constructor") or vim.list_contains(captures, "type") then
 					func("@class.outer")
 				else
 					func("@function.outer")
