@@ -60,6 +60,7 @@ end
 wezterm.add_to_config_reload_watch_list(current_path)
 
 local ssh_domains = {}
+local remote_server = "ai-dev-0"
 
 for host, config in pairs(wezterm.enumerate_ssh_hosts()) do
 	-- Since April 2023, no longer needed, but could be faster to manually define?
@@ -301,7 +302,7 @@ c.keys = {
 		action = act.SwitchToWorkspace({
 			name = "remote",
 			spawn = {
-				domain = { DomainName = "ai-dev-0" },
+				domain = { DomainName = remote_server },
 			},
 		}),
 	},
@@ -312,11 +313,11 @@ c.keys = {
 			win:perform_action(
 				act.SwitchToWorkspace({
 					name = "remote",
-					spawn = { domain = { DomainName = "ai-dev-0" } },
+					spawn = { domain = { DomainName = remote_server } },
 				}),
 				pane
 			)
-			local domain = mux.get_domain("ai-dev-0")
+			local domain = mux.get_domain(remote_server)
 			while domain:state() == "Detached" do
 				wezterm.sleep_ms(80)
 			end
