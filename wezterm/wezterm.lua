@@ -1,10 +1,70 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 local mux = wezterm.mux
+local dotfiles_path = wezterm.home_dir .. "/.dotfiles"
+local current_path = dotfiles_path .. "/theme/current"
+local accepted_extensions = {
+	"java",
+	"c",
+	"py",
+	"cpp",
+	"vb",
+	"js",
+	"php",
+	"cs",
+	"sql",
+	"rb",
+	"swift",
+	"R",
+	"ts",
+	"go",
+	"pl",
+	"lua",
+	"sh",
+	"rs",
+	"jl",
+	"asm",
+	"hs",
+	"fs",
+	"cob",
+	"scm",
+	"ada",
+	"lisp",
+	"html",
+	"htm",
+	"xml",
+	"md",
+	"json",
+	"yml",
+	"yaml",
+	"tex",
+	"csv",
+	"rst",
+	"toml",
+	"txt",
+}
+
+local file_regex =
+	string.format([[([a-zA-Z0-9_\-/.~]+\.(?:%s)\b)(?:.*line (\d+))?]], table.concat(accepted_extensions, "|"))
+
+local color_scheme_mapping = { day = "github-light", night = "gruvbox-dark", transition = "paper", midnight = "ayu" }
+
+local function get_color_scheme()
+	local current
+	for line in io.lines(current_path) do
+		current = line
+	end
+	return color_scheme_mapping[current]
+end
+
+wezterm.add_to_config_reload_watch_list(current_path)
 
 local ssh_domains = {}
 
 for host, config in pairs(wezterm.enumerate_ssh_hosts()) do
+	-- Since April 2023, no longer needed, but could be faster to manually define?
+	-- edit remote: `/etc/ssh/sshd_config`, `sudo /usr/sbin/sshd -t`
+	-- then `sudo systemctl restart ssh`
 	table.insert(ssh_domains, {
 		-- the name can be anything you want; we're just using the hostname
 		name = host,
@@ -13,31 +73,17 @@ for host, config in pairs(wezterm.enumerate_ssh_hosts()) do
 	})
 end
 
--- wezterm.on("mux-startup", function()
--- 	local tab, pane, window = mux.spawn_window({})
--- 	pane:split({ direction = "Top" })
--- end)
-
--- edit remote: `/etc/ssh/sshd_config`, `sudo /usr/sbin/sshd -t`
--- then `sudo systemctl restart ssh`
-
 wezterm.on("open-uri", function(window, pane, uri)
-	print(uri)
-	-- vim "+call cursor(<LINE>, <COLUMN>)"
 	local is_url = uri:match([[^https?://]])
-	-- local match = uri:match([[[a-zA-Z0-9_%-/%.]+]])
 	if not is_url then
-		-- local match = uri:match([[[a-zA-Z0-9_%-/%.]+%.[a-z][a-z][a-z]?[a-z]?$]])
-		-- local success, stdout, stderr = wezterm.run_child_process({ "ls", "-l" })
-		-- maybe just pane:send_text(text)
-		pane:send_text("nvim " .. uri .. "\x0A")
-		-- window:perform_action(
-		-- 	act.SendString("nvim " .. uri .. "\x0A"),
-		-- 	-- act.SpawnCommandInNewTab({
-		-- 	-- 	args = { "nvim", uri },
-		-- 	-- }),
-		-- 	pane
-		-- )
+		local file = uri:match([[(.*)>]])
+		local line_number = uri:match([[>(%d+)$]])
+		if line_number then
+			-- vim "+call cursor(<LINE>, <COLUMN>)"
+			pane:send_text(" nvim '+ call cursor(" .. line_number .. ",1)' " .. file .. "\x0A")
+		else
+			pane:send_text("nvim " .. file .. "\x0A")
+		end
 		-- prevent the default action from opening in a browser
 		return false
 	end
@@ -51,105 +97,47 @@ wezterm.on("update-status", function(window, pane)
 	local date = wezterm.strftime("%H:%M")
 
 	window:set_right_status(wezterm.format({
-		-- { Foreground = { AnsiColor = "Grey" } },
-		{ Attribute = { Intensity = "Half" } },
+		{ Foreground = { AnsiColor = "Yellow" } },
+		-- { Attribute = { Intensity = "Half" } },
+		-- ▏ split char
 		{
-			Text = "▏"
+			Text = "domain: "
 				.. pane:get_domain_name():gsub("SSH to", "")
-				.. "/"
+				.. ", workspace: "
 				.. window:active_workspace()
-				.. ", "
+				.. ", time: "
 				.. date,
 		},
 	}))
-	-- window:set_right_status(wezterm.format({
-	-- 	{ Text =  .. " " .. date },
-	-- }))
 end)
 
--- wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
--- 	local edge_background = "#0b0022"
--- 	local background = "#1b1032"
--- 	local foreground = "#808080"
---
--- 	if tab.is_active then
--- 		background = "#2b2042"
--- 		foreground = "#c0c0c0"
--- 	elseif hover then
--- 		background = "#3b3052"
--- 		foreground = "#909090"
--- 	end
---
--- 	local edge_foreground = background
---
--- 	-- ensure that the titles fit in the available space,
--- 	-- and that we have room for the edges.
--- 	-- local title = wezterm.truncate_right(tab.active_pane.title, max_width - 2)
---
--- 	return {
--- 		{ Foreground = { Color = edge_foreground } },
--- 		{ Text = SOLID_LEFT_ARROW },
--- 		{ Background = { Color = background } },
--- 		{ Foreground = { Color = foreground } },
--- 		{ Text = tab.tab_index + 1 .. ": " .. tab.active_pane.title },
--- 		"ResetAttributes",
--- 		{ Foreground = { Color = edge_foreground } },
--- 		{ Text = SOLID_RIGHT_ARROW },
--- 	}
--- end)
-
--- wezterm.on("gui-startup", function(cmd)
--- 	-- allow `wezterm start -- something` to affect what we spawn
--- 	-- in our initial window
--- 	local args = {}
--- 	print(cmd)
--- 	if cmd then
--- 		args = cmd.args
--- 	end
---
--- 	-- Set a workspace for coding on a current project
--- 	-- Top pane is for the editor, bottom pane is for the build tool
--- 	local project_dir = wezterm.home_dir .. "/dir2"
--- 	-- local tab, build_pane, window = mux.spawn_window({
--- 	-- 	workspace = "coding",
--- 	-- 	cwd = project_dir,
--- 	-- 	args = {},
--- 	-- })
--- 	-- -- may as well kick off a build in that pane
--- 	-- build_pane:send_text("cargo build")
---
--- 	-- A workspace for interacting with a local machine that
--- 	-- runs some docker containners for home automation
--- 	-- local tab, pane, window = mux.spawn_window({
--- 	-- 	workspace = "automation",
--- 	-- 	cwd = project_dir,
--- 	-- 	args = args,
--- 	-- })
--- 	-- local editor_pane = pane:split({
--- 	-- 	direction = "Top",
--- 	-- 	size = 0.6,
--- 	-- 	cwd = project_dir,
--- 	-- 	-- args = args,
--- 	-- })
--- 	-- for _, domain in ipairs(ssh_domains) do
--- 	-- 	mux.spawn_window({
--- 	-- 		workspace = "ws_" .. domain.name,
--- 	-- 		-- args = { 'ssh', 'vault' },
--- 	-- 	})
--- 	-- end
--- 	-- wezterm.mux.spawn_window({ workpace = "work", domain = { DomainName = "ai-dev-0" } })
--- 	-- We want to startup in the coding workspace
--- 	-- local windows = wezterm.mux.all_windows()
--- 	-- print(windows)
--- 	-- windows[1].perform_action(act({
--- 	-- 	SwitchToWorkspace = {
--- 	-- 		name = "aidev0",
--- 	-- 		spawn = {
--- 	-- 			domain = { DomainName = "ai-dev-0" },
--- 	-- 		},
--- 	-- 	},
--- 	-- }))
--- end)
+local get_tab_title = function(tab, reserved)
+	reserved = reserved or 0
+	local path
+	local cwd = tab:active_pane():get_current_working_dir()
+	local username = wezterm.home_dir:match("/.*/(.*)")
+	local home = cwd:match("/Users/" .. username) or cwd:match("/home/" .. username)
+	if home then
+		local rel_dir = cwd:match(home .. "/(.*)")
+		if rel_dir then
+			path = rel_dir:match("[^/]+") -- project root
+		else
+			path = "~" -- home
+		end
+	else
+		path = cwd:match("file://[^/]+(.*)") or "Pending..."
+	end
+	local config = tab:window():gui_window():effective_config()
+	local path_max_width = config.tab_max_width - reserved
+	local too_large = #path > path_max_width
+	if too_large then
+		while #path + 4 > path_max_width do
+			path = path:match("(.*)/")
+		end
+		path = path .. "/..."
+	end
+	return path
+end
 
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
 	local path
@@ -164,7 +152,7 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 			path = "~" -- home
 		end
 	else
-		path = cwd:match("file://[^/]+(.*)") or tab.active_pane.title
+		path = cwd:match("file://[^/]+(.*)") or "Pending..."
 	end
 	local is_first = tab.tab_index == 0
 	local is_last = tab.tab_index == #tabs - 1
@@ -193,7 +181,7 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 	if not tab.is_active then
 		for _, pane in ipairs(tab.panes) do
 			if pane.has_unseen_output then
-				output[1], output[2] = { Background = { Color = "Red" } }, output[1]
+				output[1], output[2] = { Foreground = { Color = "Yellow" } }, output[1]
 				break
 			end
 		end
@@ -202,329 +190,324 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 	return output
 end)
 
--- wezterm.on("format-window-title", function(tab, pane, tabs, panes, config)
--- 	local zoomed, active = "", "notk"
--- 	if tab.active_pane.is_zoomed then
--- 		zoomed = "[Z] "
--- 	end
--- 	if tab.is_active then
--- 		active = "* "
--- 	end
---
--- 	return zoomed .. active .. tab.active_pane.title
--- end)
+local c = wezterm.config_builder()
 
-return {
-	adjust_window_size_when_changing_font_size = false,
-	cell_width = 1.0,
-	-- color_scheme = "Gruvbox dark, medium (base16)",
-	cursor_blink_rate = 0,
-	cursor_thickness = 1,
-	font = wezterm.font("FantasqueSansMono Nerd font"),
-	font_size = 19,
-	hide_tab_bar_if_only_one_tab = true,
-	line_height = 1.2,
-	native_macos_fullscreen_mode = true,
-	pane_focus_follows_mouse = true,
-	show_new_tab_button_in_tab_bar = false,
-	show_update_window = true,
-	ssh_domains = ssh_domains,
-	status_update_interval = 20000,
-	switch_to_last_active_tab_when_closing_tab = true,
-	tab_bar_at_bottom = true,
-	tab_max_width = 32,
-	term = "wezterm",
-	underline_position = "-4pt",
-	use_fancy_tab_bar = false,
-	use_resize_increments = true,
-	window_decorations = "RESIZE",
-	window_padding = {
-		left = 0,
-		right = 0,
-		top = 0,
-		bottom = 0,
+c.adjust_window_size_when_changing_font_size = false
+c.cell_width = 1.0
+c.color_scheme = get_color_scheme()
+c.cursor_blink_rate = 0
+c.cursor_thickness = 1
+c.font = wezterm.font("FantasqueSansMono Nerd font")
+c.font_size = 19
+c.hide_tab_bar_if_only_one_tab = false
+c.enable_tab_bar = false
+c.show_tabs_in_tab_bar = false
+c.line_height = 1.2
+c.mouse_wheel_scrolls_tabs = false
+c.native_macos_fullscreen_mode = true
+-- c.pane_focus_follows_mouse = truec.show_new_tab_button_in_tab_bar = false
+c.show_update_window = false
+c.ssh_domains = ssh_domains
+-- c.status_update_interval = 20000c.switch_to_last_active_tab_when_closing_tab = true
+c.tab_bar_at_bottom = true
+c.tab_max_width = 32
+c.term = "wezterm"
+c.underline_position = "-4pt"
+c.use_fancy_tab_bar = false
+c.use_resize_increments = true
+c.window_decorations = "RESIZE"
+c.window_padding = {
+	left = 0,
+	right = 0,
+	top = 0,
+	bottom = 0,
+}
+c.hyperlink_rules = {
+	{
+		regex = "\\b\\w+://[\\w.-]+\\.[a-z]{2,15}\\S*\\b",
+		format = "$0",
 	},
-	hyperlink_rules = {
-		{
-			regex = "\\b\\w+://[\\w.-]+\\.[a-z]{2,15}\\S*\\b",
-			format = "$0",
-		},
 
-		-- Linkify things that look like URLs with numeric addresses as hosts.
-		-- E.g. http://127.0.0.1:8000 for a local development server,
-		-- or http://192.168.1.1 for the web interface of many routers.
-		{
-			regex = [[\b\w+://(?:[\d]{1,3}\.){3}[\d]{1,3}\S*\b]],
-			format = "$0",
-		},
-
-		-- file:// URI
-		-- Compiled-in default. Used if you don't specify any hyperlink_rules.
-		{
-			regex = [[[a-zA-Z0-9_\-/.]+\.[a-z]{2,4}\b]],
-			format = "$0",
-		},
+	-- Linkify things that look like URLs with numeric addresses as hosts.
+	-- E.g. http://127.0.0.1:8000 for a local development server,
+	-- or http://192.168.1.1 for the web interface of many routers.
+	{
+		regex = [[\b\w+://(?:[\d]{1,3}\.){3}[\d]{1,3}\S*\b]],
+		format = "$0",
 	},
-	keys = {
-		-- {
-		-- 	key = "u",
-		-- 	mods = "CTRL|SHIFT",
-		-- 	action = act.SwitchToWorkspace({
-		-- 		name = "monitoring",
-		-- 		spawn = {
-		-- 			args = { "top" },
-		-- 		},
-		-- 	}),
-		-- },
-		{
-			key = "u",
-			mods = "SUPER",
-			action = wezterm.action.AttachDomain("ai-dev-0"),
-		},
-		{
-			key = "a",
-			mods = "CTRL|SHIFT",
-			action = act.SwitchToWorkspace({
-				name = "remote",
-			}),
-		},
-		{
-			key = "y",
-			mods = "CTRL|SHIFT",
-			action = act.SwitchToWorkspace({
-				name = "default",
-			}),
-		},
-		{ key = "d", mods = "SUPER", action = act.DetachDomain("CurrentPaneDomain") },
-		{
-			key = "9",
-			mods = "ALT",
-			action = act({ ShowLauncherArgs = {
-				flags = "FUZZY|WORKSPACES",
-			} }),
-		},
-		{
-			key = "a",
-			mods = "SUPER",
-			-- action = act.ActivateLastTab,
-			action = wezterm.action_callback(function(win, pane)
-				-- act.SwitchToWorkspace({
-				-- 	name = "remote",
-				-- })
-				wezterm.mux.spawn_window({
-					workspace = "remote",--[[ , domain = { DomainName = "ai-dev-0" } ]]
-				})
-				local win_ = win:mux_window()
-				print(win_)
-				win_:set_workspace("remote")
-				-- wezterm.mux.set_active_workspace("remote")
-				-- local domain = mux.get_domain("ai-dev-0")
-				-- print(domain)
-				-- for _, mux_ in ipairs(mux.all_domains()) do
-				-- print(mux_:name())
-				-- end
-				-- print(mux.get_workspace_names())
-				-- print(domain:state())
-				-- print(domain:has_any_panes())
-				-- print(domain:is_spawnable())
-				-- if not domain:has_any_panes() then
-				-- act.AttachDomain("ai-dev-0")
-				-- print("no pane")
-				-- wezterm.mux.spawn_window({ domain = { DomainName = "ai-dev-0" } })
-				win:perform_action(act.AttachDomain("ai-dev-0"), pane)
-				-- win:perform_action(act.SwitchToWorkspace({ name = "remote" }), pane)
-				-- action = act.SwitchToWorkspace({
-				-- 	name = "remote",
-				-- 	spawn = {
-				-- 		domain = { DomainName = "ai-dev-0" },
-				-- 	},
-				-- }),
-				-- act.SwitchToWorkspace({
-				-- 				name = "monitoring",
-				-- 				spawn = {
-				-- 					args = { "top" },
-				-- 				},
-				-- 			}),
-				-- else
-				-- domain:attach()
-				-- print("has panes: ", domain:state())
-				-- end
-				wezterm.sleep_ms(2000)
-				print(domain:is_spawnable())
-				win:perform_action(act.SwitchToWorkspace({ name = "remote" }), pane)
-				-- win:perform_action(act.EmitEvent("update-status"), pane)
-			end),
-			-- action = act.AttachDomain("ai-dev-0"),
-		},
-		{
-			key = "c",
-			mods = "SUPER",
-			action = wezterm.action_callback(function(window, pane)
-				window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
 
-				window:perform_action(act.ClearSelection, pane)
-			end),
-		},
-		{
-			key = "|",
-			mods = "SUPER|SHIFT",
-			action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }),
-		},
-		{
-			key = "z",
-			mods = "SUPER",
-			action = act.TogglePaneZoomState,
-		},
-		{
-			key = "Enter",
-			mods = "SUPER",
-			action = act.ToggleFullScreen,
-		},
-		{
-			key = "_",
-			mods = "SUPER|SHIFT",
-			action = act.SplitVertical({ domain = "CurrentPaneDomain" }),
-		},
-		{
-			key = "e",
-			mods = "SUPER|SHIFT",
-			-- action = act.AttachDomain("ai-dev-0"),
-			action = act.SwitchToWorkspace({
-				name = "remote",
-				spawn = {
-					domain = { DomainName = "ai-dev-0" },
-				},
-			}),
-			-- action = wezterm.action_callback(function(window, pane)
-			-- 	-- window:perform_action(act.EmitEvent("update-status"), pane)
-			-- 	local dimensions = window:get_dimensions()
-			-- 	window:set_inner_size(dimensions.pixel_width + 1, dimensions.pixel_height + 1)
-			-- end),
-		},
+	-- file:// URI
+	-- Compiled-in default. Used if you don't specify any hyperlink_rules.
+	{
+		regex = file_regex,
+		format = "$1>$2",
+		highlight = 1,
 	},
-	-- tab_bar_style = {
-	-- 	active_tab_left = wezterm.format({
-	-- 		{ Background = { Color = "#0b0022" } },
-	-- 		{ Foreground = { Color = "#2b2042" } },
-	-- 		{ Text = SOLID_LEFT_ARROW },
-	-- 	}),
-	-- 	active_tab_right = wezterm.format({
-	-- 		{ Background = { Color = "#0b0022" } },
-	-- 		{ Foreground = { Color = "#2b2042" } },
-	-- 		{ Text = SOLID_RIGHT_ARROW },
-	-- 	}),
-	-- 	inactive_tab_left = wezterm.format({
-	-- 		{ Background = { Color = "#0b0022" } },
-	-- 		{ Foreground = { Color = "#1b1032" } },
-	-- 		{ Text = SOLID_LEFT_ARROW },
-	-- 	}),
-	-- 	inactive_tab_right = wezterm.format({
-	-- 		{ Background = { Color = "#0b0022" } },
-	-- 		{ Foreground = { Color = "#1b1032" } },
-	-- 		{ Text = SOLID_RIGHT_ARROW },
-	-- 	}),
-	-- },
-	colors = {
-		-- The default text color
-		foreground = "#24292f",
-		-- The default background color
-		background = "#f4f4f4",
-		-- the foreground color of selected text
-		cursor_bg = "#044289",
-		cursor_fg = "#f4f4f4",
-		selection_fg = "#24292f",
-		-- the background color of selected text
-		selection_bg = "#dbe9f9",
-		ansi = {
-			"#24292e",
-			"#d73a49",
-			"#28a745",
-			"#dbab09",
-			"#0366d6",
-			"#5a32a3",
-			"#0598bc",
-			"#6a737d",
-		},
-		brights = {
-			"#959da5",
-			"#cb2431",
-			"#22863a",
-			"#b08800",
-			"#005cc5",
-			"#5a32a3",
-			"#3192aa",
-			"#d1d5da",
-		},
-		tab_bar = {
-			-- The color of the strip that goes along the top of the window
-			-- (does not apply when fancy tab bar is in use)
-			background = "#413c37",
-
-			-- The active tab is the one that has focus in the window
-			active_tab = {
-				-- The color of the background area for the tab
-				bg_color = "#413c37",
-				-- The color of the text for the tab
-				fg_color = "#ffd787",
-
-				-- Specify whether you want "Half", "Normal" or "Bold" intensity for the
-				-- label shown for this tab.
-				-- The default is "Normal"
-				intensity = "Bold",
-
-				-- Specify whether you want "None", "Single" or "Double" underline for
-				-- label shown for this tab.
-				-- The default is "None"
-				underline = "None",
-
-				-- Specify whether you want the text to be italic (true) or not (false)
-				-- for this tab.  The default is false.
-				italic = false,
-
-				-- Specify whether you want the text to be rendered with strikethrough (true)
-				-- or not for this tab.  The default is false.
-				strikethrough = false,
-			},
-
-			-- Inactive tabs are the tabs that do not have focus
-			inactive_tab = {
-				bg_color = "#413c37",
-				fg_color = "#928374",
-
-				-- The same options that were listed under the `active_tab` section above
-				-- can also be used for `inactive_tab`.
-			},
-
-			-- You can configure some alternate styling when the mouse pointer
-			-- moves over inactive tabs
-			inactive_tab_hover = {
-				bg_color = "#3b3052",
-				fg_color = "#909090",
-				italic = true,
-
-				-- The same options that were listed under the `active_tab` section above
-				-- can also be used for `inactive_tab_hover`.
-			},
-
-			-- The new tab button that let you create new tabs
-			new_tab = {
-				bg_color = "#1b1032",
-				fg_color = "#808080",
-
-				-- The same options that were listed under the `active_tab` section above
-				-- can also be used for `new_tab`.
-			},
-
-			-- You can configure some alternate styling when the mouse pointer
-			-- moves over the new tab button
-			new_tab_hover = {
-				bg_color = "#3b3052",
-				fg_color = "#909090",
-				italic = true,
-
-				-- The same options that were listed under the `active_tab` section above
-				-- can also be used for `new_tab_hover`.
-			},
-		},
+	-- implicit mailto link
+	{
+		regex = "\\b\\w+@[\\w-]+(\\.[\\w-]+)+\\b",
+		format = "mailto:$0",
 	},
 }
+c.keys = {
+	{
+		key = "i",
+		mods = "SUPER",
+		action = wezterm.action_callback(function(win, pane, line) -- Briefly show tab bar
+			local overrides = { enable_tab_bar = true }
+			win:set_config_overrides(overrides)
+			overrides.enable_tab_bar = false
+			wezterm.sleep_ms(4000)
+			win:set_config_overrides(overrides)
+		end),
+	},
+	-- {
+	-- 	key = "E",
+	-- 	mods = "CTRL|SHIFT",
+	-- 	action = act.PromptInputLine({
+	-- 		description = "Enter new name for tab",
+	-- 		action = wezterm.action_callback(function(window, pane, line)
+	-- 			-- line will be `nil` if they hit escape without entering anything
+	-- 			-- An empty string if they just hit enter
+	-- 			-- Or the actual line of text they wrote
+	-- 			if line then
+	-- 				window:active_tab():set_title(line)
+	-- 			end
+	-- 		end),
+	-- 	}),
+	-- },
+	{
+		key = "a",
+		mods = "SUPER",
+		action = act.ActivateLastTab,
+	},
+	{
+		key = "s",
+		mods = "SUPER",
+		action = wezterm.action_callback(function(win, pane)
+			local mux_win = win:mux_window()
+
+			for _, tab in ipairs(mux_win:tabs()) do
+				tab:set_title(get_tab_title(tab))
+			end
+
+			win:perform_action(act.ShowTabNavigator, pane)
+		end),
+	},
+	{ key = "d", mods = "SUPER", action = act.DetachDomain("CurrentPaneDomain") },
+	{
+		key = "0",
+		mods = "CTRL|SHIFT",
+		action = act.SwitchToWorkspace({
+			name = "remote",
+			spawn = {
+				domain = { DomainName = "ai-dev-0" },
+			},
+		}),
+	},
+	{
+		key = "0",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(win, pane)
+			win:perform_action(
+				act.SwitchToWorkspace({
+					name = "remote",
+					spawn = { domain = { DomainName = "ai-dev-0" } },
+				}),
+				pane
+			)
+			local domain = mux.get_domain("ai-dev-0")
+			while domain:state() == "Detached" do
+				wezterm.sleep_ms(80)
+			end
+			print(domain:state())
+			wezterm.sleep_ms(80)
+			local wanted
+			local wins = mux.all_windows()
+			for _, mux_window in ipairs(wins) do
+				print(mux_window:tabs())
+				if mux_window:get_workspace() == "remote" then
+					wanted = mux_window
+					win = mux_window:gui_window()
+					break
+				end
+			end
+			--
+			local tabs = wanted:tabs()
+			print(tabs)
+			if #tabs > 1 then
+				win:perform_action(act.CloseCurrentTab({ confirm = false }), win:active_pane())
+			end
+			win:perform_action(act.ActivateTab(0), win:active_pane())
+		end),
+	},
+	{
+		key = "c",
+		mods = "SUPER",
+		action = wezterm.action_callback(function(window, pane)
+			window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+
+			window:perform_action(act.ClearSelection, pane)
+		end),
+	},
+	{
+		key = "|",
+		mods = "SUPER|SHIFT",
+		action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+	},
+	{
+		key = "z",
+		mods = "SUPER",
+		action = act.TogglePaneZoomState,
+	},
+	{
+		key = "Enter",
+		mods = "SUPER",
+		action = act.ToggleFullScreen,
+	},
+	{
+		key = "D",
+		mods = "SUPER|SHIFT",
+		action = act.ShowDebugOverlay,
+	},
+	{
+		key = "S",
+		mods = "SUPER|SHIFT",
+		action = act.QuickSelect,
+	},
+	{
+		key = "U",
+		mods = "SUPER|SHIFT",
+		action = act.CharSelect,
+	},
+	{
+		key = "_",
+		mods = "SUPER|SHIFT",
+		action = act.SplitVertical({ domain = "CurrentPaneDomain" }),
+	},
+	{
+		key = "t",
+		mods = "SUPER",
+		action = act.SpawnCommandInNewTab({
+			cwd = wezterm.home_dir,
+		}),
+	},
+	{
+		key = "k",
+		mods = "SUPER",
+		action = act.Multiple({
+			act.ClearScrollback("ScrollbackAndViewport"),
+			act.SendKey({ key = "L", mods = "CTRL" }),
+		}),
+	},
+	{
+		key = "LeftArrow",
+		mods = "CTRL | SHIFT",
+		action = act.DisableDefaultAssignment,
+	},
+	{
+		key = "RightArrow",
+		mods = "CTRL | SHIFT",
+		action = act.DisableDefaultAssignment,
+	},
+	{
+		key = "UpArrow",
+		mods = "CTRL | SHIFT",
+		action = act.DisableDefaultAssignment,
+	},
+	{
+		key = "DownArrow",
+		mods = "CTRL | SHIFT",
+		action = act.DisableDefaultAssignment,
+	},
+	{
+		key = "LeftArrow",
+		mods = "CTRL | SHIFT | META",
+		action = act.DisableDefaultAssignment,
+	},
+	{
+		key = "RightArrow",
+		mods = "CTRL | SHIFT | META",
+		action = act.DisableDefaultAssignment,
+	},
+	{
+		key = "UpArrow",
+		mods = "CTRL | SHIFT | META",
+		action = act.DisableDefaultAssignment,
+	},
+	{
+		key = "DownArrow",
+		mods = "CTRL | SHIFT | META",
+		action = act.DisableDefaultAssignment,
+	},
+	{
+		key = "LeftArrow",
+		mods = "SUPER",
+		action = act.ActivatePaneDirection("Left"),
+	},
+	{
+		key = "RightArrow",
+		mods = "SUPER",
+		action = act.ActivatePaneDirection("Right"),
+	},
+	{
+		key = "UpArrow",
+		mods = "SUPER",
+		action = act.ActivatePaneDirection("Up"),
+	},
+	{
+		key = "DownArrow",
+		mods = "SUPER",
+		action = act.ActivatePaneDirection("Down"),
+	},
+	{
+		key = "LeftArrow",
+		mods = "SUPER|CTRL",
+		action = act.AdjustPaneSize({ "Left", 2 }),
+	},
+	{
+		key = "RightArrow",
+		mods = "SUPER|CTRL",
+		action = act.AdjustPaneSize({ "Right", 2 }),
+	},
+	{
+		key = "UpArrow",
+		mods = "SUPER|CTRL",
+		action = act.AdjustPaneSize({ "Up", 2 }),
+	},
+	{
+		key = "DownArrow",
+		mods = "SUPER|CTRL",
+		action = act.AdjustPaneSize({ "Down", 2 }),
+	},
+	{
+		key = "LeftArrow",
+		mods = "SUPER|META",
+		action = act.PaneSelect({
+			mode = "SwapWithActive",
+		}),
+	},
+	{
+		key = "RightArrow",
+		mods = "SUPER|META",
+		action = act.PaneSelect({
+			mode = "SwapWithActive",
+		}),
+	},
+	{
+		key = "UpArrow",
+		mods = "SUPER|META",
+		action = act.PaneSelect({
+			mode = "SwapWithActive",
+		}),
+	},
+	{
+		key = "DownArrow",
+		mods = "SUPER|META",
+		action = act.PaneSelect({
+			mode = "SwapWithActive",
+		}),
+	},
+}
+
+return c
