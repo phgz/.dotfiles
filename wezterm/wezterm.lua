@@ -206,10 +206,12 @@ c.show_tabs_in_tab_bar = false
 c.line_height = 1.2
 c.mouse_wheel_scrolls_tabs = false
 c.native_macos_fullscreen_mode = true
--- c.pane_focus_follows_mouse = truec.show_new_tab_button_in_tab_bar = false
+-- c.pane_focus_follows_mouse = true
+c.show_new_tab_button_in_tab_bar = false
 c.show_update_window = false
-c.ssh_domains = ssh_domains
--- c.status_update_interval = 20000c.switch_to_last_active_tab_when_closing_tab = true
+c.ssh_domains = ssh_domains --
+-- c.status_update_interval = 20000
+c.switch_to_last_active_tab_when_closing_tab = true
 c.tab_bar_at_bottom = true
 c.tab_max_width = 32
 c.term = "wezterm"
