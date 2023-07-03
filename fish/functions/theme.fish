@@ -51,13 +51,13 @@ function theme
         set cycle night
     end
 
-    echo current $current >>/Users/philip/theme-status.txt
-    echo sunrise $sunrise >>/Users/philip/theme-status.txt
-    echo sunset $sunset >>/Users/philip/theme-status.txt
-    echo midnight $midnight >>/Users/philip/theme-status.txt
-    echo seeking $seeking >>/Users/philip/theme-status.txt
-    echo cycle $cycle >>/Users/philip/theme-status.txt
-    echo --- >>/Users/philip/theme-status.txt
+    # echo current $current >>/Users/philip/theme-status.txt
+    # echo sunrise $sunrise >>/Users/philip/theme-status.txt
+    # echo sunset $sunset >>/Users/philip/theme-status.txt
+    # echo midnight $midnight >>/Users/philip/theme-status.txt
+    # echo seeking $seeking >>/Users/philip/theme-status.txt
+    # echo cycle $cycle >>/Users/philip/theme-status.txt
+    # echo --- >>/Users/philip/theme-status.txt
 
     if test "$seeking" != "$cycle"
         and test $seeking != midnight
@@ -67,9 +67,9 @@ function theme
         set cycle transition
     end
 
-    echo $seeking >>/Users/philip/theme-status.txt
-    echo $diff >>/Users/philip/theme-status.txt
-    echo $cycle >>/Users/philip/theme-status.txt
+    # echo $seeking >>/Users/philip/theme-status.txt
+    # echo $diff >>/Users/philip/theme-status.txt
+    # echo $cycle >>/Users/philip/theme-status.txt
 
     if begin
             test "$seeking" = $cycle
