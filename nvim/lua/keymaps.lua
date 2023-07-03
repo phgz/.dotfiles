@@ -3,6 +3,7 @@ local move = require("utils").move
 local goto_block_extremity = require("utils").goto_block_extremity
 local goto_after_sep = require("utils").goto_after_sep
 local apply_to_next_motion = require("utils").apply_to_next_motion
+local new_lines = require("utils").new_lines
 
 local set = vim.keymap.set
 local api = vim.api
@@ -124,6 +125,20 @@ set("n", "Q", function() -- Quit no write buffer
 end)
 set("n", "U", function() -- Redo
 	vim.cmd("redo")
+end)
+set("n", "o", function()
+	local count = vim.v.count1
+	if count > 1 then
+		new_lines(true, count - 1)
+	end
+	vim.api.nvim_feedkeys("o", "n", false)
+end)
+set("n", "O", function()
+	local count = vim.v.count1
+	if count > 1 then
+		new_lines(false, count - 1)
+	end
+	vim.api.nvim_feedkeys("O", "n", false)
 end)
 set("n", "cq", "ct_") -- Change until _
 set("n", "yq", "yt_") -- Yank until _
@@ -250,15 +265,11 @@ set("n", "<M-b>", function() -- Paste below
 end)
 
 set("n", "<M-o>", function() -- New line down
-	local row = api.nvim_win_get_cursor(0)[1]
-	api.nvim_buf_set_lines(0, row, row, true, { "" })
-	api.nvim_win_set_cursor(0, { row + 1, 0 })
+	new_lines(true, vim.v.count1)
 end)
 
 set("n", "<M-S-o>", function() -- New line up
-	local row = api.nvim_win_get_cursor(0)[1]
-	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
-	api.nvim_win_set_cursor(0, { row, 0 })
+	new_lines(false, vim.v.count1)
 end)
 
 set("i", "<C-f>", function() -- Go one character right

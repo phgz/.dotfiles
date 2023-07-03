@@ -258,6 +258,18 @@ M.apply_to_next_motion = function(motion)
 	end
 end
 
+function M.new_lines(forward, count)
+	local row = api.nvim_win_get_cursor(0)[1]
+	local lines_list = {}
+	for _ = 1, count do
+		table.insert(lines_list, "")
+	end
+	local row_offset = forward and 0 or -1
+	local cursor_offset = forward and count or 0
+	api.nvim_buf_set_lines(0, row + row_offset, row + row_offset, true, lines_list)
+	api.nvim_win_set_cursor(0, { row + cursor_offset, 0 })
+end
+
 function M.mk_repeatable(fn)
 	return function(...)
 		local args = { ... }

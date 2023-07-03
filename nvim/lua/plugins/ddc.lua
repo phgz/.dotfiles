@@ -102,13 +102,13 @@ return {
 				if vim.endswith(prev_input, suggestion) then
 					insert_snippet_or_tab()
 				else
-					vim.v.completed_item = item
 					call("ddc#_notify", { "hide", { "CompleteDone" } })
+					vim.v.completed_item = item
 					if type(item.user_data) == "table" then
 						call("denops#request", { "ddc", "onCompleteDone", { item.__sourceName, item.user_data } })
 					end
 					-- Is this nvim_create_autocmd necessary?
-					-- api.nvim_cmd("TextChangedI", {
+					-- api.nvim_create_autocmd("TextChangedI", {
 					-- 	once = true,
 					-- 	group = "ddc",
 					-- 	callback = function()
