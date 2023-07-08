@@ -90,8 +90,42 @@ return {
 		end,
 	},
 	{
+		"HiPhish/rainbow-delimiters.nvim", -- "Enclosers" coloring
+		event = "FileType",
+		config = function()
+			local strategy = function()
+				if vim.api.nvim_call_function("line", { "$" }) > 10000 then
+					return require("rainbow-delimiters").strategy["local"]
+				else
+					return require("rainbow-delimiters").strategy["global"]
+				end
+			end
+
+			vim.g.rainbow_delimiters = {
+				strategy = vim.iter(require("nvim-treesitter.parsers")["available_parsers"]())
+					:fold({}, function(t, lang)
+						t[lang] = strategy
+						return t
+					end),
+				query = {
+					[""] = "rainbow-delimiters",
+					lua = "rainbow-blocks",
+				},
+				highlight = {
+					"RainbowDelimiterRed",
+					"RainbowDelimiterYellow",
+					"RainbowDelimiterBlue",
+					"RainbowDelimiterOrange",
+					"RainbowDelimiterGreen",
+					"RainbowDelimiterViolet",
+					"RainbowDelimiterCyan",
+				},
+			}
+		end,
+	},
+	{
 		"RRethy/vim-illuminate",
-		event = "BufReadPost",
+		event = "CursorMoved",
 		config = function()
 			-- default configuration
 			require("illuminate").configure({
@@ -196,7 +230,6 @@ return {
 		keys = "<leader>a",
 		config = function()
 			require("neogen").setup({
-				enabled = true,
 				input_after_comment = true,
 				languages = {
 					python = {
@@ -324,6 +357,7 @@ return {
 	{
 		"ggandor/leap.nvim", -- Label based motions
 		dependencies = { "ggandor/leap-ast.nvim" },
+		keys = { "<M-f>", "M-S-f", "<leader>z" },
 		config = function()
 			vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
 			vim.api.nvim_set_hl(0, "LeapLabelPrimary", { link = "IncSearch" })

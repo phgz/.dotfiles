@@ -96,7 +96,7 @@ return {
 
 			if not vim.tbl_isempty(items) and complete_pos >= 0 then
 				local item = items[1]
-				local prev_input = api.nvim_get_current_line()
+				local prev_input = api.nvim_get_current_line():sub(1, api.nvim_win_get_cursor(0)[2])
 				local suggestion = item["word"]
 
 				if vim.endswith(prev_input, suggestion) then
@@ -104,6 +104,10 @@ return {
 				else
 					call("ddc#_notify", { "hide", { "CompleteDone" } })
 					vim.v.completed_item = item
+					vim.g["ddc#_skip_next_complete"] = true
+					-- if vim.api.nvim_get_autocmds({ event = "User", pattern = "PumCompleteDonePre" }) ~= {} then
+					-- 	api.nvim_exec_autocmds("User", { pattern = "PumCompleteDonePre" })
+					-- end
 					if type(item.user_data) == "table" then
 						call("denops#request", { "ddc", "onCompleteDone", { item.__sourceName, item.user_data } })
 					end

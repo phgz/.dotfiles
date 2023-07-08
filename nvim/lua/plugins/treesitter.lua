@@ -1,20 +1,14 @@
 return {
 	{
-		"nvim-treesitter/playground", -- See parsed tree
-		keys = "<localleader>t",
-		config = function()
-			vim.keymap.set("n", "<localleader>t", "<cmd>TSHighlightCapturesUnderCursor<cr>")
-		end,
-	},
-	{
-		"andymass/vim-matchup",
-	},
-	"nvim-treesitter/nvim-treesitter-textobjects", -- More text motions
-	"nvim-treesitter/nvim-treesitter-refactor", -- Highlight definitions, Rename
-	"HiPhish/nvim-ts-rainbow2", -- "Enclosers" coloring
-	"RRethy/nvim-treesitter-endwise", -- Add Delimiters for Pascal-like languages
-	{
 		"nvim-treesitter/nvim-treesitter",
+		event = { "BufReadPost", "BufNewFile" },
+		dependencies = {
+			"andymass/vim-matchup",
+			"RRethy/nvim-treesitter-endwise", -- Add Delimiters for Pascal-like languages
+			"nvim-treesitter/nvim-treesitter-textobjects", -- More text motions
+			"nvim-treesitter/nvim-treesitter-refactor", -- Highlight definitions, Rename
+			"nvim-treesitter/playground", -- See parsed tree
+		},
 		build = function()
 			vim.cmd("TSUpdate")
 			vim.cmd("TSInstall all")
@@ -36,19 +30,6 @@ return {
 				indent = {
 					enable = true,
 					-- disable = { "python" },
-				},
-				rainbow = {
-					enable = true,
-					query = "rainbow-parens",
-					strategy = {
-						function()
-							if call("line", { "$" }) > 10000 then
-								return nil
-							else
-								return require("ts-rainbow").strategy.global
-							end
-						end,
-					},
 				},
 				incremental_selection = {
 					enable = true,
@@ -364,6 +345,7 @@ return {
 				{ silent = true }
 			)
 
+			vim.keymap.set("n", "<localleader>t", "<cmd>TSHighlightCapturesUnderCursor<cr>")
 			vim.keymap.set("n", "<leader>i", function()
 				local func = require("nvim-treesitter.textobjects.lsp_interop").peek_definition_code
 				local captures = vim.treesitter.get_captures_at_cursor()
