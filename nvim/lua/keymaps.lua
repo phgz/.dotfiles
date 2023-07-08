@@ -4,6 +4,7 @@ local goto_block_extremity = require("utils").goto_block_extremity
 local goto_after_sep = require("utils").goto_after_sep
 local apply_to_next_motion = require("utils").apply_to_next_motion
 local new_lines = require("utils").new_lines
+local get_modes = require("utils").get_modes
 
 local set = vim.keymap.set
 local api = vim.api
@@ -103,6 +104,12 @@ set("n", "<right>", "<nop>")
 set("n", "<up>", "<nop>")
 set("n", "<down>", "<nop>")
 set("n", "<C-r>", "R") -- R is rare, so change it to <C-r>
+set("n", "<cr>", function() -- Pad with newlines
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
+	api.nvim_buf_set_lines(0, row, row, true, { "" })
+	api.nvim_win_set_cursor(0, { row + 1, col })
+end)
 set("o", "r", function() -- select line from first char to end
 	vim.cmd.normal({ "vg_o^", bang = true })
 end)
@@ -151,8 +158,10 @@ set("", "0", function() -- Go to beggining of file
 end)
 set("", "-", function() -- Go to end of file
 	local count = vim.v.count
-	vim.cmd.normal({ (count == 0 and "" or count) .. "G", bang = true })
-	if count == 0 then
+	local op_pending = get_modes().operator_pending
+	local has_count = count ~= 0
+	vim.api.nvim_feedkeys((has_count and count or "") .. (op_pending and vim.v.operator or "") .. "G", "n", false)
+	if not (has_count or op_pending) then
 		vim.cmd.call("cursor(line('$'),1)")
 	end
 end)
@@ -226,6 +235,12 @@ set("i", "<C-space>", function() -- Pad with space
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { "  " })
 	api.nvim_win_set_cursor(0, { row, col + 1 })
+end)
+set("i", "<C-cr>", function() -- Pad with newlines
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
+	api.nvim_buf_set_lines(0, row, row, true, { "" })
+	api.nvim_win_set_cursor(0, { row + 1, col })
 end)
 
 set("n", "<M-S-j>", function() -- Join at end of below
