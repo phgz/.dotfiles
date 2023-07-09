@@ -213,6 +213,7 @@ function M.goto_pos_multiline(opts)
 	searchpos_opts = opts.forward and searchpos_opts or searchpos_opts .. "b"
 	local count = vim.v.count == 0 and opts.count or vim.v.count
 	local orig_row, orig_col = unpack(api.nvim_win_get_cursor(0))
+	vim.cmd.normal({ "m'", bang = true })
 	local new_row, new_col
 
 	if opts.repeat_motion and opts.exclusive then
@@ -233,7 +234,6 @@ function M.goto_pos_multiline(opts)
 
 	new_col = new_col + offset
 	api.nvim_win_set_cursor(0, { new_row, new_col })
-	api.nvim_buf_set_mark(0, "'", orig_row, orig_col, {})
 
 	return { orig_row, orig_col, new_row, new_col }
 end
