@@ -104,7 +104,7 @@ return {
 				else
 					call("ddc#_notify", { "hide", { "CompleteDone" } })
 					vim.v.completed_item = item
-					vim.g["ddc#_skip_next_complete"] = true
+					vim.g["ddc#_skip_next_complete"] = vim.g["ddc#_skip_next_complete"] + 1
 					-- if vim.api.nvim_get_autocmds({ event = "User", pattern = "PumCompleteDonePre" }) ~= {} then
 					-- 	api.nvim_exec_autocmds("User", { pattern = "PumCompleteDonePre" })
 					-- end
