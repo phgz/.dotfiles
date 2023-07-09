@@ -110,7 +110,7 @@ set("n", "<cr>", function() -- Pad with newlines
 	api.nvim_buf_set_lines(0, row, row, true, { "" })
 	api.nvim_win_set_cursor(0, { row + 1, col })
 end)
-set("o", "r", function() -- select line from first char to end
+set("o", "R", function() -- select line from first char to end
 	vim.cmd.normal({ "vg_o^", bang = true })
 end)
 set("o", "?", function() -- select a diagnostic

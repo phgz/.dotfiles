@@ -184,11 +184,24 @@ function M.diagnostic(lookForwL)
 end
 
 function M.replace()
-	local quote_reg = call("getreg", { '"' })
+	local quote_reg = call("getreg", { '"' }):gsub("\n$", "")
 	local start_row, start_col = unpack(api.nvim_buf_get_mark(0, "["))
 	local end_row, end_col = unpack(api.nvim_buf_get_mark(0, "]"))
 	local to_insert = vim.split(quote_reg, "\n")
 
+	if #to_insert > 1 then
+		vim.print(to_insert)
+		local old_indent = quote_reg:match("^%s*")
+		local new_indent = api.nvim_get_current_line():match("^%s*")
+		to_insert = vim.iter.map(function(str)
+			local formatted = str:gsub("^" .. old_indent, new_indent)
+			return formatted
+		end, to_insert)
+		vim.print(to_insert)
+		print(old_indent .. "-" .. new_indent)
+	end
+
+	to_insert[1] = to_insert[1]:gsub("^%s*", "")
 	api.nvim_buf_set_text(0, start_row - 1, start_col, end_row - 1, end_col + 1, to_insert)
 end
 
