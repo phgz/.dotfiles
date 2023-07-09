@@ -21,8 +21,11 @@ api.nvim_create_autocmd("VimEnter", {
 				return api.nvim_win_get_config(win).relative ~= ""
 			end
 			vim.iter(api.nvim_list_wins()):filter(relative):each(function(win)
-				api.nvim_win_close(win, false)
+				if api.nvim_win_is_valid(win) then
+					api.nvim_win_close(win, true)
+				end
 			end)
+			api.nvim_feedkeys(vim.keycode("<esc>"), "n", false)
 		end)
 	end,
 })
