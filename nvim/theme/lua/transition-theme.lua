@@ -38,6 +38,7 @@ local custom_config = {
 			PopupPreviewDocument = { fg = colors.black, bg = colors.lgrey1 },
 			PopupPreviewBorder = { fg = colors.black, bg = colors.lgrey1 },
 
+			YellowStatusLine = { fg = colors.yellow, bg = colors.lgrey1 },
 			RedStatusLine = { fg = colors.red, bg = colors.lgrey1 },
 			GreenStatusLine = { fg = colors.green, bg = colors.lgrey1 },
 			BlueStatusLine = { fg = colors.blue, bg = colors.lgrey1 },
@@ -48,6 +49,10 @@ local custom_config = {
 			IlluminatedWordWrite = { italic = true },
 
 			IndentBlanklineChar = { fg = lbackground },
+
+			NoiceCursor = { bg = "#000000" },
+			NoiceCmdlineIcon = { link = "StatusLine" },
+			NoiceCmdline = { link = "StatusLine" },
 		}
 	end,
 }

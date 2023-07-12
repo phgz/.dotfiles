@@ -65,6 +65,7 @@ local config = {
 		PopupPreviewDocument = { fg = colors.foreground, bg = colors.background_light },
 		PopupPreviewBorder = { fg = colors.foreground, bg = colors.background_light },
 
+		YellowStatusLine = { fg = colors.soft_yellow, bg = "#413c37" },
 		RedStatusLine = { fg = colors.red, bg = "#413c37" },
 		GreenStatusLine = { fg = colors.forest_green, bg = "#413c37" },
 		BlueStatusLine = { fg = colors.soft_yellow, bg = "#413c37" },
@@ -89,6 +90,10 @@ local config = {
 		IlluminatedWordText = { style = "bold" },
 		IlluminatedWordRead = { style = "bold" },
 		IlluminatedWordWrite = { style = "bold" },
+
+		NoiceCursor = { bg = "#928374" },
+		NoiceCmdlineIcon = { link = "StatusLine" },
+		NoiceCmdline = { link = "StatusLine" },
 	},
 }
 

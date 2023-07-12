@@ -28,6 +28,7 @@ local user_config = {
 			DiagnosticLineNrInfo = { fg = c.info, style = "bold" },
 			DiagnosticLineNrHint = { fg = c.green, style = "bold" },
 			DiagnosticUnderlineHint = { style = "undercurl", sp = c.green },
+			YellowStatusLine = { fg = c.warning, bg = "#babbbd" },
 			RedStatusLine = { fg = "#fb4934", bg = "#babbbd" },
 			GreenStatusLine = { fg = c.bright_green, bg = "#babbbd" },
 			BlueStatusLine = { fg = c.bright_blue, bg = "#babbbd" },
@@ -48,6 +49,9 @@ local user_config = {
 			IlluminatedWordText = { style = "bold" },
 			IlluminatedWordRead = { style = "bold" },
 			IlluminatedWordWrite = { style = "bold" },
+			NoiceCursor = { bg = "#044289" },
+			NoiceCmdlineIcon = { link = "StatusLine" },
+			NoiceCmdline = { link = "StatusLine" },
 			--     -- this will remove the highlight groups
 			--     TSField = {},
 		}

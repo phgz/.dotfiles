@@ -34,6 +34,7 @@ vim.cmd([[
 	highlight! DiagnosticInfo guibg=None guifg=#36A3D9
 	highlight! DiagnosticError guibg=None guifg=#FF3333
 
+	highlight! YellowStatusLine guifg=#FFC300 guibg=#14191F
 	highlight! RedStatusLine guifg=#FF3333 guibg=#14191F
 	highlight! GreenStatusLine guifg=#B8CC52 guibg=#14191F
 	highlight! BlueStatusLine guifg=#36A3D9 guibg=#14191F
@@ -41,4 +42,8 @@ vim.cmd([[
 
 	highlight! LazyDimmed guifg=grey 
 	highlight! LazyProp guifg=grey 
+
+	highlight! link NoiceCmdlineIcon StatusLine
+	highlight! link NoiceCmdline StatusLine
+	highlight! NoiceCursor guibg=#F29718
 ]])
