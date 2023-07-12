@@ -54,22 +54,23 @@ return {
 				callback = function()
 					local is_modifiable = vim.fn.getbufvar(vim.fn.bufnr("#"), "&modifiable") == 1
 					local is_modified = vim.fn.getbufvar(vim.fn.bufnr("#"), "&modified") == 1
+					local is_read_only = vim.fn.getbufvar(vim.fn.bufnr("#"), "&readonly") == 1
 					local modified = is_modifiable and (is_modified and "[+]" or "") or "[-]"
-					local read_only = vim.fn.getbufvar(vim.fn.bufnr("#"), "&readonly") == 1 and "[RO]" or ""
+					local read_only = is_read_only and "[RO]" or ""
 					local help = vim.fn.getbufvar(vim.fn.bufnr("#"), "&buftype") == "help" and "[Help]" or ""
 					local git_status = vim.fn.getbufvar(vim.fn.bufnr("#"), "gitsigns_status")
 					if git_status ~= "" then
-						git_status = " " .. git_status
+						git_status = "  " .. git_status
 					end
-					vim.wo.statusline = git_status
-						.. [[%#GreyStatusLine#%=]]
+					vim.wo.statusline = [[%{%expand('#:~')%}]]
+						.. git_status
+						.. [[%#GreenStatusLin#]]
+						.. ((is_modified or is_read_only) and " " or "")
 						.. help
+						.. [[%#YellowStatusLine#]]
+						.. read_only
 						.. [[%#RedStatusLine#]]
 						.. modified
-						.. [[%#BlueStatusLine#]]
-						.. read_only
-						.. [[%#StatusLine#]]
-						.. [[ %{%expand('#:~')%}]]
 				end,
 			})
 
