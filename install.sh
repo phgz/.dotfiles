@@ -38,8 +38,10 @@ if [ "$platform" == "Darwin" ]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    $brew install kitty fish node tmux fontconfig wget python"$PYTHON_VERSION" wezterm
+    $brew install kitty fish node tmux fontconfig wget python"$PYTHON_VERSION" wezterm helix nushell brave-browser dbeaver-community discord firefox opera postman rectangle slack subler transmission vlc zoom
     $brew install --HEAD neovim
+    $brew tap finestructure/Hummingbird
+    $brew install finestructure/hummingbird/hummingbird
 
 #------------------------------------------------------------------------------#
 #                               Linux (no root)                                #
