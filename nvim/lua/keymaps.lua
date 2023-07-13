@@ -22,6 +22,7 @@ set("n", "<leader>h", function() -- Split horizontal
 end)
 
 set("n", "<leader>d", function() -- delete buffer and set alternate file
+	print("about to delete", call("expand", { "%:p" }))
 	vim.cmd("bdelete")
 	local new_current_file = call("expand", { "%:p" })
 	local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
@@ -32,7 +33,7 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 	local possible_alternatives = vim.iter.filter(function(name)
 		return name ~= new_current_file
 	end, still_listed)
-	print(vim.inspect(still_listed))
+	print("still_listed:", vim.inspect(still_listed))
 
 	if #still_listed == 0 then
 		return
@@ -49,10 +50,10 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 			break
 		end
 	end
-	print("jumps_current_file_index: ", jumps[jumps_current_file_index]["f"])
+	print("jumps_current_file_index:", jumps[jumps_current_file_index]["f"])
 
 	local jumps_alternate_file_index = jumps_current_file_index - 4
-	print("first jumps_alternate_file_index: ", jumps[jumps_alternate_file_index]["f"])
+	print("first jumps_alternate_file_index:", jumps[jumps_alternate_file_index]["f"])
 
 	for i = jumps_alternate_file_index, 1, -4 do
 		if vim.list_contains(possible_alternatives, jumps[i]["f"]) then
@@ -60,7 +61,7 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 			break
 		end
 	end
-	print("found jumps_alternate_file_index", jumps[jumps_alternate_file_index]["f"])
+	print("found jumps_alternate_file_index:", jumps[jumps_alternate_file_index]["f"])
 	call("setreg", { "#", jumps[jumps_alternate_file_index]["f"] })
 end)
 
@@ -104,7 +105,7 @@ set("n", "<right>", "<nop>")
 set("n", "<up>", "<nop>")
 set("n", "<down>", "<nop>")
 set("n", "<C-r>", "R") -- R is rare, so change it to <C-r>
-set("n", "<cr>", function() -- Pad with newlines
+set("n", "<S-cr>", function() -- Pad with newlines
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
 	api.nvim_buf_set_lines(0, row, row, true, { "" })

@@ -23,8 +23,9 @@ return {
 						"dockerls",
 						"jsonls",
 						"lua_ls",
-						-- "pyright",
-						"pylyzer",
+						"pyright",
+						-- "pylyzer",
+						-- "ruff_lsp",
 						"taplo",
 						"vimls",
 						"yamlls",
@@ -131,46 +132,29 @@ return {
 				function(server_name) -- default handler
 					require("lspconfig")[server_name].setup({ on_attach = on_attach, capabilities = capabilities() })
 				end,
-
-				["pylyzer"] = function()
-					require("lspconfig").pylyzer.setup({
+				["pyright"] = function()
+					require("lspconfig").pyright.setup({
 						on_attach = on_attach,
 						capabilities = capabilities(),
-						-- root_dir = function(fname)
-						-- 	local root_files = {
-						-- 		"setup.py",
-						-- 		"tox.ini",
-						-- 		"requirements.txt",
-						-- 		"Pipfile",
-						-- 		"pyproject.toml",
-						-- 	}
-						-- 	return require("lspconfig").util.root_pattern(unpack(root_files))(fname)
-						-- end,
+						before_init = function(_, config)
+							local venv = vim.env.VIRTUAL_ENV
+
+							if not venv then
+								local is_poetry = vim.fs.find(
+									{ "poetry.lock" },
+									{ upward = true, path = config.root_dir }
+								)[1] ~= nil
+
+								if is_poetry then
+									local venv_path = get_poetry_venv(config.root_dir)
+									vim.env.VIRTUAL_ENV = venv_path
+									config.settings.python.pythonPath =
+										require("lspconfig.util").path.join(vim.env.VIRTUAL_ENV, "bin", "python3")
+								end
+							end
+						end,
 					})
 				end,
-				-- ["pyright"] = function()
-				-- 	require("lspconfig").pyright.setup({
-				-- 		on_attach = on_attach,
-				-- 		capabilities = capabilities(),
-				-- 		before_init = function(_, config)
-				-- 			local venv = vim.env.VIRTUAL_ENV
-				--
-				-- 			if not venv then
-				-- 				local is_poetry = vim.fs.find(
-				-- 					{ "poetry.lock" },
-				-- 					{ upward = true, path = config.root_dir }
-				-- 				)[1] ~= nil
-				--
-				-- 				if is_poetry then
-				-- 					local venv_path = get_poetry_venv(config.root_dir)
-				-- 					vim.env.VIRTUAL_ENV = venv_path
-				-- 					config.settings.python.pythonPath =
-				-- 						require("lspconfig.util").path.join(vim.env.VIRTUAL_ENV, "bin", "python3")
-				-- 				end
-				-- 			end
-				-- 		end,
-				-- 	})
-				-- end,
 
 				["lua_ls"] = function()
 					require("lspconfig").lua_ls.setup({
