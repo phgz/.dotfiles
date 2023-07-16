@@ -1,5 +1,5 @@
-import { BaseConfig } from "https://deno.land/x/ddc_vim@v3.5.1/types.ts";
-import { ConfigArguments } from "https://deno.land/x/ddc_vim@v3.5.1/base/config.ts";
+import { BaseConfig } from "https://deno.land/x/ddc_vim@v3.9.0/types.ts";
+import { ConfigArguments } from "https://deno.land/x/ddc_vim@v3.9.0/base/config.ts";
 
 export class Config extends BaseConfig {
   override config(args: ConfigArguments): Promise<void> {
@@ -40,6 +40,7 @@ export class Config extends BaseConfig {
       },
       sourceParams: {
         "nvim-lsp": {
+          snippetEngine: "{ body -> vsnip#anonymous(body) }",
           enableResolveItem: true,
           enableAdditionalTextEdit: true,
         },

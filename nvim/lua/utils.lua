@@ -148,7 +148,7 @@ end
 
 function M.diagnostic(lookForwL)
 	-- INFO for whatever reason, diagnostic line numbers and the end column (but
-	-- not the start column) are all off-by-one¿
+	-- not the start column) are all off-by-one
 
 	-- HACK if cursor is standing on a diagnostic, get_prev() will return that
 	-- diagnostic *BUT* only if the cursor is not on the first character of the

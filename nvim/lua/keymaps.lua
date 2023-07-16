@@ -126,7 +126,7 @@ set("n", "R", function() -- Replace motion with " register
 end, { expr = false })
 set("n", "Z", function() -- Write buffer
 	vim.cmd("silent write")
-	print("buffer written")
+	vim.notify("buffer written")
 end)
 set("n", "Q", function() -- Quit no write buffer
 	vim.cmd("quit!")
@@ -252,8 +252,8 @@ set("n", "<C-g>", function() -- Show file stats
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	local line_count = api.nvim_buf_line_count(0)
 	local relative = math.floor(row / line_count * 100 + 0.5)
-	vim.notify(row .. ":" .. col + 1 .. "; " .. line_count .. " lines --" .. relative .. "%--")
 	vim.wo.statusline = vim.wo.statusline
+	vim.notify(row .. ":" .. col + 1 .. "; " .. line_count .. " lines --" .. relative .. "%--")
 end)
 
 set("n", "<M-S-d>", function() -- Duplicate line

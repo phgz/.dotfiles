@@ -108,9 +108,6 @@ return {
 					-- if vim.api.nvim_get_autocmds({ event = "User", pattern = "PumCompleteDonePre" }) ~= {} then
 					-- 	api.nvim_exec_autocmds("User", { pattern = "PumCompleteDonePre" })
 					-- end
-					if type(item.user_data) == "table" then
-						call("denops#request", { "ddc", "onCompleteDone", { item.__sourceName, item.user_data } })
-					end
 					-- Is this nvim_create_autocmd necessary?
 					-- api.nvim_create_autocmd("TextChangedI", {
 					-- 	once = true,
@@ -123,6 +120,7 @@ return {
 					-- 	end,
 					-- })
 					insert_suggestion(suggestion)
+					call("ddc#complete#_on_complete_done", { item })
 				end
 			else
 				feed_special("<tab>")
@@ -143,7 +141,7 @@ return {
 
 		vim.keymap.set("i", "<Tab>", function()
 			if call("pumvisible", {}) == 1 then
-				feed_special("<C-n>")
+				feed_special("<Down>")
 			else
 				wise_tab()
 			end
@@ -151,7 +149,7 @@ return {
 
 		vim.keymap.set("i", "<S-Tab>", function()
 			if call("pumvisible", {}) == 1 then
-				feed_special("<C-p>")
+				feed_special("<Up>")
 			else
 				manual_complete({ sources = { "nvim-lsp" }, ui = "native" })
 			end
