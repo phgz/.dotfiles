@@ -6,4 +6,4 @@
     helper = store
 
 [filter "currentThemeFilter"]
-    clean = sed "s/^night$/day/"
+    clean = sed "s/^(night|midnight|transition)$/day/"
