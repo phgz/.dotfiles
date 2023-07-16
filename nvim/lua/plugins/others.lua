@@ -492,7 +492,11 @@ return {
 				},
 			},
 			presets = {
+				bottom_search = true,
 				lsp_doc_border = false,
+			},
+			cmdline = {
+				view = "cmdline",
 			},
 			views = {
 				messages = {
