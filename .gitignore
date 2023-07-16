@@ -1,5 +1,4 @@
 *.bak
-nvim/lua/config/current-theme.lua
-tmux/current-theme.conf
-kitty/current-theme.conf
 fish/fish_variables
+lazy-lock.json
+/theme/current
