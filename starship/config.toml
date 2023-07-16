@@ -68,7 +68,7 @@ $status\
 $character"""
 
 [sudo]
-format = "[ ]($style)"
+format = "[󰈷 ]($style)"
 disabled = false
 
 [aws]
@@ -82,7 +82,7 @@ format = "[$symbol$environment]($style) "
 symbol = " "
 
 [directory]
-read_only = " "
+read_only = " 󰌾"
 format = "[ $path]($style)[$read_only]($read_only_style) "
 home_symbol = " ~"
 
@@ -118,19 +118,19 @@ symbol = " "
 symbol = " "
 
 [memory_usage]
-symbol = " "
+symbol = "󰍛 "
 
 [lua]
 symbol = " "
 
 [nim]
-symbol = " "
+symbol = "󰆥 "
 
 [nix_shell]
 symbol = " "
 
 [package]
-symbol = " "
+symbol = "󰏗 "
 format = "[$symbol$version ]($style)"
 
 [perl]
@@ -153,11 +153,11 @@ symbol = " "
 symbol = " "
 
 [swift]
-symbol = "ﯣ "
+symbol = "󰛥 "
 
 [character]
-success_symbol = "[  ](bright-black)"
-error_symbol = "[ ](bright-black)"
+success_symbol = "[ 󰈺 ](bright-black)"
+error_symbol = "[󰈺 ](bright-black)"
 
 [line_break]
 # disabled = true
@@ -195,4 +195,4 @@ format = " \\([$duration](white)\\)"
 # modified 	 "!" 	
 # staged 	 "+" 	
 # renamed 	 "»" 	
-# deleted 	 "✘"
+# deleted 	 "X"

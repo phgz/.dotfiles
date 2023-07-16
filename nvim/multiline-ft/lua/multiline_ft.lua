@@ -159,11 +159,10 @@ local function operate_func(pos)
 		yank(start_row, start_col, end_row, end_col, modes.visual, opts.register, true)
 	elseif operator == "repeat-change" then
 		local dot_reg = call("getreg", { "." })
-		local to_replace = string.gsub(dot_reg, "€kb", "€")
-		local chars = vim.iter(to_replace:gmatch("."))
+		local chars = vim.iter(dot_reg:gmatch("."))
 
 		local acc = chars:fold({ stack = {}, bs_shift = 0 }, function(t, c)
-			if c == "€" then
+			if c == vim.keycode("<BS>") then
 				if vim.tbl_isempty(t.stack) then
 					t.bs_shift = t.bs_shift + 1
 				else

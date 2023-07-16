@@ -52,31 +52,31 @@ elif [ "$platform" == "Linux" ]; then
     #                                 Dependencies                                 #
     #------------------------------------------------------------------------------#
     curl -JLO http://ftp.gnu.org/gnu/bison/bison-"$BISON_VERSION".tar.gz
-    tar xfz bison-"$BISON_VERSION".tar.gz && rm -rf bison-"$BISON_VERSION".tar.gz
+    tar -xf bison-"$BISON_VERSION".tar.gz && rm -rf bison-"$BISON_VERSION".tar.gz
     pushd bison-"$BISON_VERSION"/ || exit
     ./configure --prefix="$HOME"/.local
     make && make install && popd || exit
 
     curl -JLO https://pkg-config.freedesktop.org/releases/pkg-config-"$PKG_CONFIG_VERSION".tar.gz
-    tar xfz pkg-config-"$PKG_CONFIG_VERSION".tar.gz && rm -rf pkg-config-"$PKG_CONFIG_VERSION".tar.gz
+    tar -xf pkg-config-"$PKG_CONFIG_VERSION".tar.gz && rm -rf pkg-config-"$PKG_CONFIG_VERSION".tar.gz
     pushd pkg-config-"$PKG_CONFIG_VERSION"/ || exit
     ./configure --prefix="$HOME"/.local --with-internal-glib
     make && make install && popd || exit
 
     curl -LJO https://github.com/libevent/libevent/releases/download/release-"$LIBEVENT_VERSION"-stable/libevent-"$LIBEVENT_VERSION"-stable.tar.gz
-    tar -zxf libevent-*.tar.gz && rm libevent-"$LIBEVENT_VERSION"-stable.tar.gz
+    tar -xf libevent-*.tar.gz && rm libevent-"$LIBEVENT_VERSION"-stable.tar.gz
     pushd libevent-*/ || exit
     ./configure --prefix="$HOME"/.local --enable-shared --disable-openssl
     make && make install && popd || exit
 
     curl -LJO https://invisible-mirror.net/archives/ncurses/ncurses-"$NCURSES_VERSION".tar.gz
-    tar -zxf ncurses-"$NCURSES_VERSION".tar.gz && rm ncurses-"$NCURSES_VERSION".tar.gz
+    tar -xf ncurses-"$NCURSES_VERSION".tar.gz && rm ncurses-"$NCURSES_VERSION".tar.gz
     pushd ncurses-*/ || exit
     ./configure --prefix="$HOME"/.local --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir="$HOME"/.local/lib/pkgconfig
     make && make install && popd || exit
 
     curl -LJO https://github.com/Kitware/CMake/releases/download/v"$CMAKE_VERSION"/cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz
-    tar xvzf cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz && rm cmake-"$CMAKE_VERSION"-linux-x86_64.tar.gz || exit
+    tar -xf cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz && rm cmake-"$CMAKE_VERSION"-linux-x86_64.tar.gz || exit
 
     #------------------------------------------------------------------------------#
     #                                    Kitty                                     #
@@ -88,7 +88,7 @@ elif [ "$platform" == "Linux" ]; then
     #                                     Fish                                     #
     #------------------------------------------------------------------------------#
     curl -LJO https://github.com/fish-shell/fish-shell/releases/download/"$FISH_SHELL_VERSION"/fish-"$FISH_SHELL_VERSION".tar.xz
-    tar xf fish-"$FISH_SHELL_VERSION".tar.xz && rm fish-"$FISH_SHELL_VERSION".tar.xz
+    tar -xf fish-"$FISH_SHELL_VERSION".tar.xz && rm fish-"$FISH_SHELL_VERSION".tar.xz
     pushd fish-"$FISH_SHELL_VERSION" || exit
     mkdir build
     pushd build || exit
@@ -105,7 +105,7 @@ elif [ "$platform" == "Linux" ]; then
     #                                     TMUX                                     #
     #------------------------------------------------------------------------------#
     curl -LJO https://github.com/tmux/tmux/releases/download/"$TMUX_VERSION"/tmux-"$TMUX_VERSION".tar.gz
-    tar -zxf tmux-*.tar.gz && rm tmux-"$TMUX_VERSION".tar.gz
+    tar -xf tmux-*.tar.gz && rm tmux-"$TMUX_VERSION".tar.gz
     pushd tmux-*/ || exit
     PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix="$HOME"/.local --enable-static
     make && make install && popd || exit
@@ -219,8 +219,9 @@ fi
 #------------------------------------------------------------------------------#
 
 # https://github.com/be5invis/Iosevka # To try
-curl -JLO https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FantasqueSansMono.zip
-unzip FantasqueSansMono.zip -d FantasqueSansMono
+mkdir FantasqueSansMono
+curl -JLO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FantasqueSansMono.tar.xz
+tar --directory FantasqueSansMono -xf FantasqueSansMono.tar.xz && rm -rf FantasqueSansMono.tar.gz
 
 if [ "$platform" == "Darwin" ]; then
     mkdir -p "$HOME"/Library/Fonts
@@ -231,10 +232,9 @@ elif [ "$platform" == "Linux" ]; then
     font_dest=$HOME/.local/share/fonts
 fi
 
-cp FantasqueSansMono/Fantasque\ Sans\ Mono\ *\ Font\ Complete.ttf "$font_dest"
+cp FantasqueSansMono/FantasqueSansMNerdFont-*.ttf "$font_dest"
 fc-cache -f -v
-rm FantasqueSansMono.zip && rm -rf FantasqueSansMono
-
+rm -rf FantasqueSansMono
 #------------------------------------------------------------------------------#
 #                                   Git stuff                                  #
 #------------------------------------------------------------------------------#
