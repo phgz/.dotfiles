@@ -34,6 +34,7 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 		return name ~= new_current_file
 	end, still_listed)
 	print("still_listed:", vim.inspect(still_listed))
+	print("possible_alternatives:", vim.inspect(possible_alternatives))
 
 	if #still_listed == 0 then
 		return
@@ -53,16 +54,23 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 	print("jumps_current_file_index:", jumps[jumps_current_file_index]["f"])
 
 	local jumps_alternate_file_index = jumps_current_file_index - 4
+	local found = false
 	print("first jumps_alternate_file_index:", jumps[jumps_alternate_file_index]["f"])
 
 	for i = jumps_alternate_file_index, 1, -4 do
 		if vim.list_contains(possible_alternatives, jumps[i]["f"]) then
+			found = true
 			jumps_alternate_file_index = i
 			break
 		end
 	end
-	print("found jumps_alternate_file_index:", jumps[jumps_alternate_file_index]["f"])
-	call("setreg", { "#", jumps[jumps_alternate_file_index]["f"] })
+	if found then
+		print("found jumps_alternate_file_index:", jumps[jumps_alternate_file_index]["f"])
+		call("setreg", { "#", jumps[jumps_alternate_file_index]["f"] })
+	else
+		print("Alternate file not found in jumplist! Picking last in possible_alternatives")
+		call("setreg", { "#", possible_alternatives[#possible_alternatives] })
+	end
 end)
 
 set("v", "<leader>s", function() -- Sort selection
