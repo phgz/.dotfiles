@@ -38,6 +38,7 @@ local config = {
 
 		DiagnosticDeprecated = { bg = "None", fg = colors.orange },
 		-- DiagnosticUnnecessary = { bg = "None", fg = colors.pink },
+		LspInlayHint = { fg = "teal" },
 
 		LspSignatureActiveParameter = { style = "italic", fg = colors.soft_green },
 
@@ -94,6 +95,7 @@ local config = {
 		NoiceCursor = { bg = "#928374" },
 		NoiceCmdlineIcon = { link = "StatusLine" },
 		NoiceCmdline = { link = "StatusLine" },
+		FlashPrompt = { link = "StatusLine" },
 	},
 }
 

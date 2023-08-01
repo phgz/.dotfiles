@@ -3,6 +3,7 @@ vim.cmd([[
 
 	highlight! Substitute guifg=#0F1419 guibg=#36A3D9
 	highlight! link IncSearch Substitute
+	highlight! Search guibg=grey
 
 	highlight! link Folded Comment
 	highlight! clear SignColumn
@@ -21,6 +22,7 @@ vim.cmd([[
 	highlight! DiagnosticUnderlineWarn gui=undercurl guibg=None guisp=#FFC300
 	highlight! DiagnosticUnderlineInfo gui=undercurl guibg=None guisp=#36A3D9
 	highlight! DiagnosticUnderlineError gui=undercurl guibg=None guisp=#FF3333
+	highlight! LspInlayHint  guifg=teal
 
 	highlight! DiagnosticLineNrOk gui=bold guibg=None guifg=magenta
 	highlight! DiagnosticLineNrHint gui=bold guibg=None guifg=#B8CC52
@@ -46,4 +48,6 @@ vim.cmd([[
 	highlight! link NoiceCmdlineIcon StatusLine
 	highlight! link NoiceCmdline StatusLine
 	highlight! NoiceCursor guibg=#F29718
+
+	highlight! link FlashPrompt StatusLine 
 ]])

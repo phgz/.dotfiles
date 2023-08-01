@@ -14,6 +14,7 @@ local custom_config = {
 			DiagnosticLineNrWarn = { bg = "None", fg = colors.yellow, bold = true },
 			DiagnosticLineNrInfo = { bg = "None", fg = colors.blue, bold = true },
 			DiagnosticLineNrError = { bg = "None", fg = colors.red, bold = true },
+			LspInlayHint = { fg = "teal" },
 
 			LspSignatureActiveParameter = { fg = colors.green, italic = true },
 
@@ -25,10 +26,11 @@ local custom_config = {
 
 			EndOfBuffer = { fg = lbackground },
 
-			MatchParen = { bg = colors.lgrey2 },
+			MatchParen = { bg = colors.lgrey1 },
 			MatchWord = { italic = true },
 
-			IncSearch = { bg = colors.lgrey1 },
+			Search = { bg = colors.lgrey1 },
+			IncSearch = { bg = colors.lgrey2 },
 			Substitute = { fg = background, bg = colors.black },
 
 			StatusLineNC = { fg = colors.black, bg = colors.none },
@@ -53,6 +55,9 @@ local custom_config = {
 			NoiceCursor = { bg = "#000000" },
 			NoiceCmdlineIcon = { link = "StatusLine" },
 			NoiceCmdline = { link = "StatusLine" },
+
+			FlashLabel = { link = "IncSearch" },
+			FlashPrompt = { link = "StatusLine" },
 		}
 	end,
 }

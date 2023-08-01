@@ -28,6 +28,7 @@ local user_config = {
 			DiagnosticLineNrInfo = { fg = c.info, style = "bold" },
 			DiagnosticLineNrHint = { fg = c.green, style = "bold" },
 			DiagnosticUnderlineHint = { style = "undercurl", sp = c.green },
+			LspInlayHint = { fg = "teal" },
 			YellowStatusLine = { fg = c.warning, bg = "#babbbd" },
 			RedStatusLine = { fg = "#fb4934", bg = "#babbbd" },
 			GreenStatusLine = { fg = c.bright_green, bg = "#babbbd" },
@@ -52,6 +53,9 @@ local user_config = {
 			NoiceCursor = { bg = "#044289" },
 			NoiceCmdlineIcon = { link = "StatusLine" },
 			NoiceCmdline = { link = "StatusLine" },
+			Search = { bg = c.bright_white },
+			FlashLabel = { link = "PmenuSel" },
+			FlashPrompt = { link = "StatusLine" },
 			--     -- this will remove the highlight groups
 			--     TSField = {},
 		}
