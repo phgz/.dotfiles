@@ -203,7 +203,7 @@ c.font_size = 19
 c.hide_tab_bar_if_only_one_tab = false
 c.enable_tab_bar = false
 c.show_tabs_in_tab_bar = false
-c.line_height = 1.2
+c.line_height = 1.15
 c.mouse_wheel_scrolls_tabs = false
 c.native_macos_fullscreen_mode = true
 -- c.pane_focus_follows_mouse = true
@@ -365,8 +365,8 @@ c.keys = {
 	},
 	{
 		key = "Enter",
-		mods = "SUPER",
-		action = act.ToggleFullScreen,
+		mods = "META",
+		action = act.DisableDefaultAssignment,
 	},
 	{
 		key = "D",
