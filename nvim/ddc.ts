@@ -23,7 +23,7 @@ export class Config extends BaseConfig {
         },
         around: {
           mark: "A",
-          enabledIf: "luaeval('vim.tbl_count(vim.lsp.get_active_clients()) == 0')",
+          enabledIf: "luaeval('vim.tbl_count(vim.lsp.get_clients()) == 0')",
         },
         file: {
           mark: "F",
@@ -32,6 +32,7 @@ export class Config extends BaseConfig {
         "nvim-lsp": {
           mark: "LSP",
           forceCompletionPattern: "\\.\\w*|::\\w*|->\\w*",
+          sorters: ["sorter_lsp-kind"],
           dup: "force",
         },
         ultisnips: {
