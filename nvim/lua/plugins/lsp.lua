@@ -87,7 +87,10 @@ return {
 				vim.keymap.set("n", "<leader>j", function()
 					vim.lsp.buf.definition({ on_list = on_list })
 				end, opts)
-				vim.keymap.set("n", "h", function()
+				vim.keymap.set("n", "<localleader>h", function()
+					vim.lsp.inlay_hint(bufnr)
+				end, opts)
+				vim.keymap.set("n", "H", function()
 					local captures = vim.treesitter.get_captures_at_cursor()
 					if vim.list_contains(captures, "function.call") or vim.list_contains(captures, "method.call") then
 						vim.lsp.buf.hover()
@@ -123,7 +126,7 @@ return {
 				},
 			}
 
-			vim.keymap.set("n", "l", vim.diagnostic.open_float, { silent = true })
+			vim.keymap.set("n", "L", vim.diagnostic.open_float, { silent = true })
 			vim.diagnostic.config(lsp_config.diagnostic)
 
 			-- local capabilities = vim.lsp.protocol.make_client_capabilities
