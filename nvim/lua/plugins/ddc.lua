@@ -21,6 +21,8 @@ return {
 		"Shougo/ddc-source-around",
 		"Shougo/ddc-ui-inline",
 		"Shougo/ddc-ui-native",
+		"Shougo/ddc-ui-pum",
+		"Shougo/pum.vim",
 		"tani/ddc-fuzzy",
 		"tani/ddc-path",
 		"SirVer/ultisnips",
@@ -43,22 +45,13 @@ return {
 	config = function()
 		local api = vim.api
 		local call = api.nvim_call_function
-
-		local _denops_running = function()
-			return vim.g.loaded_denops
-				and call("denops#server#status", {}) == "running"
-				and call("denops#plugin#is_loaded", { "ddc" }) == 1
-		end
-
-		local feed_special = function(action)
-			api.nvim_feedkeys(api.nvim_replace_termcodes(action, true, false, true), "n", false)
-		end
+		local npairs = require("nvim-autopairs")
 
 		local insert_snippet_or_tab = function()
 			if call("UltiSnips#CanExpandSnippet", {}) == 1 then
 				call("UltiSnips#ExpandSnippet", {})
 			else
-				feed_special("<tab>")
+				api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
 			end
 		end
 
@@ -84,8 +77,7 @@ return {
 			print(is_punctuation, col)
 			print(word_under_cursor_start_col)
 			api.nvim_win_set_cursor(0, { row, col })
-			local bs_seq = api.nvim_replace_termcodes("<BS>", true, true, true)
-			local construct = string.rep(bs_seq, col - word_under_cursor_start_col)
+			local construct = string.rep(vim.keycode("<BS>"), col - word_under_cursor_start_col)
 
 			api.nvim_feedkeys(construct .. suggestion, "n", false)
 		end
@@ -123,17 +115,8 @@ return {
 					call("ddc#complete#_on_complete_done", { item })
 				end
 			else
-				feed_special("<tab>")
+				api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
 			end
-		end
-
-		local manual_complete = function(opts)
-			if not _denops_running() then
-				call("ddc#enable", {})
-				call("denops#plugin#wait", { "ddc" })
-			end
-
-			call("denops#notify", { "ddc", "manualComplete", { opts } })
 		end
 
 		local opts = { silent = true, noremap = true }
@@ -141,7 +124,7 @@ return {
 
 		vim.keymap.set("i", "<Tab>", function()
 			if call("pumvisible", {}) == 1 then
-				feed_special("<Down>")
+				api.nvim_feedkeys(vim.keycode("<Down>"), "n", false)
 			else
 				wise_tab()
 			end
@@ -149,12 +132,12 @@ return {
 
 		vim.keymap.set("i", "<S-Tab>", function()
 			if call("pumvisible", {}) == 1 then
-				feed_special("<Up>")
+				api.nvim_feedkeys(vim.keycode("<Up>"), "n", false)
 			else
-				manual_complete({ sources = { "nvim-lsp" }, ui = "native" })
+				vim.fn["ddc#map#manual_complete"]({ sources = { "nvim-lsp" }, ui = "native" })
 			end
-		end, opts)
-		local npairs = require("nvim-autopairs")
+		end, opts_expr)
+
 		vim.keymap.set("i", "<CR>", function()
 			return call("pumvisible", {}) == 1 and "<C-y>" or npairs.autopairs_cr()
 		end, opts_expr)

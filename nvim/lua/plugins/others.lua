@@ -91,36 +91,35 @@ return {
 	},
 	{
 		"HiPhish/rainbow-delimiters.nvim", -- "Enclosers" coloring
-		event = "FileType",
 		config = function()
-			local strategy = function()
-				if vim.api.nvim_call_function("line", { "$" }) > 10000 then
-					return require("rainbow-delimiters").strategy["local"]
-				else
-					return require("rainbow-delimiters").strategy["global"]
-				end
-			end
+			-- local strategy = function()
+			-- 	if vim.api.nvim_call_function("line", { "$" }) > 10000 then
+			-- 		return require("rainbow-delimiters").strategy["local"]
+			-- 	else
+			-- 		return require("rainbow-delimiters").strategy["global"]
+			-- 	end
+			-- end
 
-			vim.g.rainbow_delimiters = {
-				strategy = vim.iter(require("nvim-treesitter.parsers")["available_parsers"]())
-					:fold({}, function(t, lang)
-						t[lang] = strategy
-						return t
-					end),
-				query = {
-					[""] = "rainbow-delimiters",
-					lua = "rainbow-blocks",
-				},
-				highlight = {
-					"RainbowDelimiterRed",
-					"RainbowDelimiterYellow",
-					"RainbowDelimiterBlue",
-					"RainbowDelimiterOrange",
-					"RainbowDelimiterGreen",
-					"RainbowDelimiterViolet",
-					"RainbowDelimiterCyan",
-				},
-			}
+			-- vim.g.rainbow_delimiters = {
+			-- 	strategy = vim.iter(require("nvim-treesitter.parsers")["available_parsers"]())
+			-- 		:fold({}, function(t, lang)
+			-- 			t[lang] = strategy
+			-- 			return t
+			-- 		end),
+			-- 	query = {
+			-- 		[""] = "rainbow-delimiters",
+			-- 		lua = "rainbow-blocks",
+			-- 	},
+			-- 	highlight = {
+			-- 		"RainbowDelimiterRed",
+			-- 		"RainbowDelimiterYellow",
+			-- 		"RainbowDelimiterBlue",
+			-- 		"RainbowDelimiterOrange",
+			-- 		"RainbowDelimiterGreen",
+			-- 		"RainbowDelimiterViolet",
+			-- 		"RainbowDelimiterCyan",
+			-- 	},
+			-- }
 		end,
 	},
 	{
@@ -342,106 +341,149 @@ return {
 		end,
 	},
 	{
-		"https://github.com/karb94/neoscroll.nvim", -- Smooth scrolling
-		config = function()
-			require("neoscroll").setup()
-
-			vim.keymap.set({ "n", "x" }, "k", function()
-				require("neoscroll").scroll(0.33, false, 200)
-			end, { silent = true })
-			vim.keymap.set({ "n", "x" }, "j", function()
-				require("neoscroll").scroll(-0.33, false, 200)
-			end, { silent = true })
-		end,
-	},
-	{
-		"ggandor/leap.nvim", -- Label based motions
-		dependencies = { "ggandor/leap-ast.nvim" },
-		keys = { "<M-f>", "M-S-f", "<leader>z" },
-		config = function()
-			vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
-			vim.api.nvim_set_hl(0, "LeapLabelPrimary", { link = "IncSearch" })
-			vim.api.nvim_set_hl(0, "LeapMatch", { link = "DiagnosticLineNrWarn" })
-			require("leap").opts.highlight_unlabeled_phase_one_targets = true
-			vim.keymap.set("", "<M-f>", function()
-				require("leap").leap({ backward = false })
-			end)
-			vim.keymap.set("", "<M-S-f>", function()
-				require("leap").leap({ backward = true })
-			end)
-			vim.keymap.set({ "" }, "<leader>z", require("leap-ast").leap)
-		end,
-	},
-	{
-		"Weissle/easy-action", -- Remote actions
-		keys = { "<leader>k", "\\" },
-		dependencies = {
-			{
-				"kevinhwang91/promise-async",
-				"ggandor/leap.nvim",
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		opts = {
+			modes = {
+				search = {
+					enabled = false,
+				},
+				char = {
+					jump_labels = true,
+					keys = { "f", "F", "t", "T", ";", "," },
+				},
 			},
 		},
-		config = function()
-			require("easy-action").setup({
-				-- These chars can show up any times in your action input.
-				free_chars = "0123456789",
-				-- These chars can show up no more than twice in action input.
-				limited_chars = "iafFtT",
-				-- Cancel action.
-				terminate_char = "<ESC>",
-				-- all action contains `key` will be replaced by `value`. For example yib -> yi(
-				remap = {
-					ib = "i(",
-					ab = "a(",
-				},
-				-- Default jump provider
-				jump_provider = "leap",
-				jump_provider_config = {
-					leap = {
-						action_select = {
-							default = function()
-								require("leap").leap({
-									target_windows = { vim.api.nvim_call_function("win_getid", {}) },
-								})
+		keys = {
+			{
+				"r",
+				mode = "o",
+				function()
+					require("flash").remote({ motion = true, restore = true })
+				end,
+				desc = "Remote Flash",
+			},
+			{
+				"\\",
+				mode = "n",
+				function()
+					local char = vim.fn.escape(vim.fn.getcharstr(), "^$.*~")
+					if char ~= "i" and char ~= "a" then
+						-- escape
+						return
+					else
+						local pos = vim.api.nvim_win_get_cursor(0)
+						local is_i_ctrl_o = vim.fn.mode(1) == "niI"
+						if is_i_ctrl_o then
+							vim.api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
+						end
+						require("flash").jump()
+						if vim.deep_equal(vim.api.nvim_win_get_cursor(0), pos) then
+							return
+						end
+						vim.api.nvim_create_autocmd("InsertLeave", {
+							once = true,
+							callback = function()
+								vim.api.nvim_win_set_cursor(0, pos)
+								if is_i_ctrl_o then
+									vim.api.nvim_feedkeys("i", "n", false)
+								end
 							end,
-						},
-					},
-					hop = {
-						action_select = {
-							char1 = {
-								-- action ends with any char of options will use HopChar1MW command.
-								options = "(){}[]<>`'\"",
-								cmd = "HopChar1",
-								feed = function(action)
-									return string.sub(action, #action)
-								end,
-							},
-							line = {
-								-- action ends with any char of options will use HopLineMW command.
-								options = "yd",
-								cmd = "HopLine",
-							},
-							-- Default command.
-							default = "HopWord",
-						},
-					},
-				},
-				-- Just make sure they are greater than 0. Usually 1 is all right.
-				jump_back_delay_ms = 1,
-				feed_delay_ms = 1,
-			})
-
-			-- trigger easy-action.
-			vim.keymap.set("n", "\\", function()
-				require("easy-action").base_easy_action(nil, nil, nil)
-			end, { silent = true })
-
-			-- To insert something and jump back after you leave the insert mode
-			vim.keymap.set("n", "<leader>k", function()
-				require("easy-action").base_easy_action("i", nil, "InsertLeave")
-			end)
-		end,
+						})
+						vim.api.nvim_feedkeys(char, "n", false)
+					end
+				end,
+			},
+		},
 	},
+	-- {
+	-- 	"ggandor/leap.nvim", -- Label based motions
+	-- 	dependencies = { "ggandor/leap-ast.nvim" },
+	-- 	keys = { "<M-f>", "M-S-f", "<leader>z" },
+	-- 	config = function()
+	-- 		vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
+	-- 		vim.api.nvim_set_hl(0, "LeapLabelPrimary", { link = "IncSearch" })
+	-- 		vim.api.nvim_set_hl(0, "LeapMatch", { link = "DiagnosticLineNrWarn" })
+	-- 		require("leap").opts.highlight_unlabeled_phase_one_targets = true
+	-- 		vim.keymap.set("", "<M-f>", function()
+	-- 			require("leap").leap({ backward = false })
+	-- 		end)
+	-- 		vim.keymap.set("", "<M-S-f>", function()
+	-- 			require("leap").leap({ backward = true })
+	-- 		end)
+	-- 		vim.keymap.set({ "" }, "<leader>z", require("leap-ast").leap)
+	-- 	end,
+	-- },
+	-- {
+	-- 	"Weissle/easy-action", -- Remote actions
+	-- 	keys = { "<leader>k", "\\" },
+	-- 	dependencies = {
+	-- 		{
+	-- 			"kevinhwang91/promise-async",
+	-- 			"ggandor/leap.nvim",
+	-- 		},
+	-- 	},
+	-- 	config = function()
+	-- 		require("easy-action").setup({
+	-- 			-- These chars can show up any times in your action input.
+	-- 			free_chars = "0123456789",
+	-- 			-- These chars can show up no more than twice in action input.
+	-- 			limited_chars = "iafFtT",
+	-- 			-- Cancel action.
+	-- 			terminate_char = "<ESC>",
+	-- 			-- all action contains `key` will be replaced by `value`. For example yib -> yi(
+	-- 			remap = {
+	-- 				ib = "i(",
+	-- 				ab = "a(",
+	-- 			},
+	-- 			-- Default jump provider
+	-- 			jump_provider = "leap",
+	-- 			jump_provider_config = {
+	-- 				leap = {
+	-- 					action_select = {
+	-- 						default = function()
+	-- 							require("leap").leap({
+	-- 								target_windows = { vim.api.nvim_call_function("win_getid", {}) },
+	-- 							})
+	-- 						end,
+	-- 					},
+	-- 				},
+	-- 				hop = {
+	-- 					action_select = {
+	-- 						char1 = {
+	-- 							-- action ends with any char of options will use HopChar1MW command.
+	-- 							options = "(){}[]<>`'\"",
+	-- 							cmd = "HopChar1",
+	-- 							feed = function(action)
+	-- 								return string.sub(action, #action)
+	-- 							end,
+	-- 						},
+	-- 						line = {
+	-- 							-- action ends with any char of options will use HopLineMW command.
+	-- 							options = "yd",
+	-- 							cmd = "HopLine",
+	-- 						},
+	-- 						-- Default command.
+	-- 						default = "HopWord",
+	-- 					},
+	-- 				},
+	-- 			},
+	-- 			-- Just make sure they are greater than 0. Usually 1 is all right.
+	-- 			jump_back_delay_ms = 1,
+	-- 			feed_delay_ms = 1,
+	-- 		})
+	--
+	-- 		-- trigger easy-action.
+	-- 		vim.keymap.set("n", "\\", function()
+	-- 			require("easy-action").base_easy_action(nil, nil, nil)
+	-- 		end, { silent = true })
+	--
+	-- 		-- To insert something and jump back after you leave the insert mode
+	-- 		vim.keymap.set("n", "<leader>k", function()
+	-- 			require("easy-action").base_easy_action("i", nil, "InsertLeave")
+	-- 		end)
+	-- 	end,
+	-- },
 	{
 		"ckolkey/ts-node-action", -- Treesitter based node transformer (quote, bool, etc.)
 		dependencies = { "nvim-treesitter" },
