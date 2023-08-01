@@ -47,7 +47,14 @@ return {
 			require("telescope").load_extension("noice")
 			require("telescope").load_extension("ui-select")
 
-			vim.api.nvim_create_autocmd("User TelescopePreviewerLoaded", { command = "setlocal wrap" })
+			-- vim.api.nvim_create_autocmd("User TelescopePreviewerLoaded", { command = "setlocal wrap" })
+			vim.api.nvim_create_autocmd("User TelescopePreviewerLoaded", {
+				callback = function()
+					if api.nvim_win_get_config(0).relative ~= "" then
+						vim.wo.wrap = true
+					end
+				end,
+			})
 
 			vim.api.nvim_create_autocmd("FileType", {
 				pattern = "TelescopePrompt",
