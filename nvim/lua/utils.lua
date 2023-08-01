@@ -297,4 +297,22 @@ function M.mk_repeatable(fn)
 	end
 end
 
+function M.status_column()
+	if vim.v.virtnum > 0 then
+		return ""
+	else
+		local text_height = vim.api.nvim_win_text_height(
+			0,
+			{ start_row = call("line", { "w0" }) - 1, end_row = call("line", { "w$" }) - 1 }
+		)
+		local middle = math.ceil(text_height.all / 2)
+		local screenpos = call("screenpos", { 0, vim.v.lnum, 1 }).row
+		if screenpos ~= middle then
+			return (screenpos < middle and "h" or "l") .. string.char(math.abs(middle - screenpos) % 30 + 96)
+		else
+			return " M"
+		end
+	end
+end
+
 return M
