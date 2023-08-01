@@ -240,7 +240,7 @@ end
 M.goto_after_sep = function(fwd)
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	local prev_char = api.nvim_get_current_line():sub(col, col)
-	local back_on_edge = not fwd and prev_char == "_"
+	local back_on_edge = not fwd and prev_char:find("[%u_]")
 	local opts = "Wn"
 	opts = fwd and opts or opts .. "b"
 
@@ -248,7 +248,7 @@ M.goto_after_sep = function(fwd)
 		api.nvim_win_set_cursor(0, { row, col - 1 })
 	end
 
-	local new_row, new_col = unpack(call("searchpos", { "_", opts }))
+	local new_row, new_col = unpack(call("searchpos", { "\\u\\|_", opts }))
 
 	if new_row == 0 then
 		if back_on_edge then

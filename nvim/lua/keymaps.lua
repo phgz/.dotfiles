@@ -113,6 +113,26 @@ set("n", "<right>", "<nop>")
 set("n", "<up>", "<nop>")
 set("n", "<down>", "<nop>")
 set("n", "<C-r>", "R") -- R is rare, so change it to <C-r>
+set({ "n", "x" }, "k", function()
+	local line = vim.fn.line(".")
+	local bound = call("line", { "w0" })
+	local increment = math.floor(api.nvim_win_get_height(0) / 3)
+
+	api.nvim_feedkeys(increment .. vim.keycode("<C-e>"), "n", false)
+	if line - increment < bound then
+		api.nvim_feedkeys("M", "n", false)
+	end
+end, { silent = true })
+set({ "n", "x" }, "j", function()
+	local line = vim.fn.line(".")
+	local bound = call("line", { "w$" })
+	local increment = math.floor(api.nvim_win_get_height(0) / 3)
+
+	api.nvim_feedkeys(increment .. vim.keycode("<C-y>"), "n", false)
+	if line + increment > bound then
+		api.nvim_feedkeys("M", "n", false)
+	end
+end, { silent = true })
 set("n", "<S-cr>", function() -- Pad with newlines
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
@@ -156,9 +176,18 @@ set("n", "O", function()
 	end
 	vim.api.nvim_feedkeys("O", "n", false)
 end)
-set("n", "cq", "ct_") -- Change until _
-set("n", "yq", "yt_") -- Yank until _
-set("n", "dq", "df_") -- Delete find _
+set("o", "q", function()
+	local pattern = "_"
+	local word_under_cursor = call("expand", { "<cword>" })
+	if word_under_cursor:find("_") == nil then
+		pattern = "\\u"
+	end
+	local row, col = unpack(call("searchpos", { pattern, "Wn" }))
+	if not (vim.v.operator == "d" and pattern == "_") then
+		col = col - 1
+	end
+	api.nvim_win_set_cursor(0, { row, col })
+end)
 set("", "<M-j>", "^") -- Go to first nonblank char
 set("", "<M-k>", "$") -- Go to last char
 set("", "0", function() -- Go to beggining of file
@@ -340,6 +369,43 @@ set("", "<M-x>", function() -- Delete character after cursor
 	call("setreg", { '"', content:sub(col + 2, col + 2) })
 
 	api.nvim_set_current_line(content:sub(1, col + 1) .. content:sub(col + 3))
+end)
+
+set("", "h", function() -- Goto line
+	local char = call("getchar", {})
+	if char == 27 then
+		-- escape
+		return
+	end
+	vim.cmd.normal({ "m'", bang = true })
+	local text_height = vim.api.nvim_win_text_height(
+		0,
+		{ start_row = call("line", { "w0" }) - 1, end_row = call("line", { "w$" }) - 1 }
+	)
+	local middle = math.ceil(text_height.all / 2)
+	local curpos = call("winline", {})
+	local wanted = middle - (char - 96)
+	local dist = math.abs(wanted - curpos)
+
+	vim.cmd.normal({ dist .. "g" .. (wanted > curpos and "j" or "k"), bang = true })
+end)
+set("", "l", function() -- Goto line
+	local char = call("getchar", {})
+	if char == 27 then
+		-- escape
+		return
+	end
+	vim.cmd.normal({ "m'", bang = true })
+	local text_height = vim.api.nvim_win_text_height(
+		0,
+		{ start_row = call("line", { "w0" }) - 1, end_row = call("line", { "w$" }) - 1 }
+	)
+	local middle = math.ceil(text_height.all / 2)
+	local curpos = call("winline", {})
+	local wanted = middle + (char - 96)
+	local dist = math.abs(wanted - curpos)
+
+	vim.cmd.normal({ dist .. "g" .. (wanted > curpos and "j" or "k"), bang = true })
 end)
 
 set("n", "q", function() -- Go to after next _
