@@ -10,9 +10,6 @@ export class Config extends BaseConfig {
         "InsertEnter",
         "TextChangedI",
         "TextChangedP",
-        "CmdlineEnter",
-        "CmdlineChanged",
-        "TextChangedT",
       ],
       sourceOptions: {
         _: {

@@ -97,20 +97,6 @@ return {
 					call("ddc#_notify", { "hide", { "CompleteDone" } })
 					vim.v.completed_item = item
 					vim.g["ddc#_skip_next_complete"] = vim.g["ddc#_skip_next_complete"] + 1
-					-- if vim.api.nvim_get_autocmds({ event = "User", pattern = "PumCompleteDonePre" }) ~= {} then
-					-- 	api.nvim_exec_autocmds("User", { pattern = "PumCompleteDonePre" })
-					-- end
-					-- Is this nvim_create_autocmd necessary?
-					-- api.nvim_create_autocmd("TextChangedI", {
-					-- 	once = true,
-					-- 	group = "ddc",
-					-- 	callback = function()
-					-- 		vim.v.completed_item = item
-					-- 		api.nvim_exec_autocmds("CompleteDone", {
-					-- 			modeline = false,
-					-- 		})
-					-- 	end,
-					-- })
 					insert_suggestion(suggestion)
 					call("ddc#complete#_on_complete_done", { item })
 				end
@@ -143,7 +129,12 @@ return {
 		end, opts_expr)
 
 		vim.keymap.set("i", "<ESC>", function()
-			return call("pumvisible", {}) == 1 and "<C-e>" or "<ESC>"
+			if call("pumvisible", {}) == 1 then
+				call("ddc#_notify", { "hide", { "CompleteDone" } })
+				return "<C-e>"
+			else
+				return "<ESC>"
+			end
 		end, opts_expr)
 
 		vim.cmd([[
