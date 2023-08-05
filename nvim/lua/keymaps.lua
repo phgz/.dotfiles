@@ -81,7 +81,7 @@ set("v", "<leader>s", function() -- Sort selection
 	api.nvim_feedkeys(api.nvim_replace_termcodes("<esc>", true, false, true), "x", true)
 end)
 
-set("n", "<leader>m", function() -- Add input to beginning of file
+set("n", "<leader>o", function() -- Add input to beginning of file
 	local input = call("input", { "Add before first line: " })
 	if input == "" then
 		return
