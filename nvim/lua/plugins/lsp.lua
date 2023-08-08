@@ -165,6 +165,9 @@ return {
 						capabilities = capabilities(),
 						settings = {
 							Lua = {
+								telemetry = {
+									enable = false,
+								},
 								semantic = { enable = false },
 								hint = {
 									enable = true,
