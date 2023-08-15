@@ -27,7 +27,7 @@ bind \cg expand-abbr
 # eval $HOME/.miniconda3/bin/conda "shell.fish" hook $argv | source
 # <<< conda initialize <<<
 
-~/.local/bin/starship init fish | source
+~/.cargo/bin/starship init fish | source
 direnv hook fish | source
 
 abbr -ag nv nvim

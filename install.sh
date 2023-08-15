@@ -38,10 +38,16 @@ if [ "$platform" == "Darwin" ]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    $brew install kitty fish node tmux fontconfig wget python"$PYTHON_VERSION" wezterm helix nushell brave-browser dbeaver-community discord firefox opera postman rectangle slack subler transmission vlc zoom
+    $brew install fish node fontconfig wget python@"$PYTHON_VERSION" wezterm helix brave-browser dbeaver-community discord firefox opera postman rectangle slack subler transmission vlc zoom
     $brew install --HEAD neovim
     $brew tap finestructure/Hummingbird
     $brew install finestructure/hummingbird/hummingbird
+
+    # Add Terminfo for wezterm:
+    tempfile=$(mktemp) \
+    && curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo \
+    && /usr/bin/tic -x -o ~/.terminfo $tempfile \
+    && rm $tempfile
 
 #------------------------------------------------------------------------------#
 #                               Linux (no root)                                #
@@ -79,12 +85,6 @@ elif [ "$platform" == "Linux" ]; then
     tar -xf cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz && rm cmake-"$CMAKE_VERSION"-linux-x86_64.tar.gz || exit
 
     #------------------------------------------------------------------------------#
-    #                                    Kitty                                     #
-    #------------------------------------------------------------------------------#
-    curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
-    ln -fs "$HOME"/.local/kitty.app/bin/kitty "$HOME"/.local/bin/
-
-    #------------------------------------------------------------------------------#
     #                                     Fish                                     #
     #------------------------------------------------------------------------------#
     curl -LJO https://github.com/fish-shell/fish-shell/releases/download/"$FISH_SHELL_VERSION"/fish-"$FISH_SHELL_VERSION".tar.xz
@@ -113,13 +113,7 @@ elif [ "$platform" == "Linux" ]; then
     rm -rf tmux-*/
 
     # Add Terminfo for tmux:
-    # curl https://gist.githubusercontent.com/nicm/ea9cf3c93f22e0246ec858122d9abea1/raw/37ae29fc86e88b48dbc8a674478ad3e7a009f357/tmux-256color | /usr/bin/tic -x -
-    #
-    # Add Terminfo for wezterm:
-    # tempfile=$(mktemp) \
-    # && curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo \
-    # && /usr/bin/tic -x -o ~/.terminfo $tempfile \
-    # && rm $tempfile
+    curl https://gist.githubusercontent.com/nicm/ea9cf3c93f22e0246ec858122d9abea1/raw/37ae29fc86e88b48dbc8a674478ad3e7a009f357/tmux-256color | /usr/bin/tic -x -
 
     #------------------------------------------------------------------------------#
     #                                    Neovim                                    #
@@ -171,7 +165,7 @@ if [ ! -d "$HOME"/.cargo ]; then
 
     curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
     cargo=$HOME/.cargo/bin/cargo
-    $cargo install --locked exa ripgrep bat fd-find du-dust nu starship || exit
+    PATH=/opt/homebrew/bin:$PATH $cargo install --locked exa ripgrep bat fd-find du-dust nu starship || exit
 
     git clone https://github.com/crescentrose/sunshine
     pushd sunshine || exit
@@ -221,7 +215,7 @@ fi
 # https://github.com/be5invis/Iosevka # To try
 mkdir FantasqueSansMono
 curl -JLO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FantasqueSansMono.tar.xz
-tar --directory FantasqueSansMono -xf FantasqueSansMono.tar.xz && rm -rf FantasqueSansMono.tar.gz
+tar --directory FantasqueSansMono -xf FantasqueSansMono.tar.xz && rm -rf FantasqueSansMono.tar.xz
 
 if [ "$platform" == "Darwin" ]; then
     mkdir -p "$HOME"/Library/Fonts
