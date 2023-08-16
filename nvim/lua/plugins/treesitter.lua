@@ -18,6 +18,8 @@ return {
 			vim.g.matchup_matchparen_deferred = 0
 			vim.g.matchup_motion_cursor_end = 0
 			vim.g.matchup_text_obj_linewise_operators = { "d", "y" } -- "c"?
+			vim.g.matchup_matchparen_pumvisible = 0
+			vim.g.matchup_matchparen_nomode = "i"
 
 			local call = vim.api.nvim_call_function
 			local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
@@ -28,11 +30,10 @@ return {
 					additional_vim_regex_highlighting = { "python" },
 				},
 				indent = {
-					enable = true,
-					-- disable = { "python" },
+					enable = false,
 				},
 				incremental_selection = {
-					enable = true,
+					enable = false,
 					keymaps = {
 						node_incremental = ";",
 						node_decremental = ",",
@@ -192,7 +193,7 @@ return {
 					enable = true,
 				},
 				matchup = {
-					enable = true, -- mandatory, false will disable the whole extension
+					enable = false, -- mandatory, false will disable the whole extension
 					enable_quotes = true,
 					-- disable = { },  -- optional, list of language that will be disabled
 					-- [options]
