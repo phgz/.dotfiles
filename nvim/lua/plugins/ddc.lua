@@ -21,8 +21,6 @@ return {
 		"Shougo/ddc-source-around",
 		"Shougo/ddc-ui-inline",
 		"Shougo/ddc-ui-native",
-		"Shougo/ddc-ui-pum",
-		"Shougo/pum.vim",
 		"tani/ddc-fuzzy",
 		"tani/ddc-path",
 		"SirVer/ultisnips",
@@ -98,7 +96,7 @@ return {
 					vim.v.completed_item = item
 					vim.g["ddc#_skip_next_complete"] = vim.g["ddc#_skip_next_complete"] + 1
 					insert_suggestion(suggestion)
-					call("ddc#complete#_on_complete_done", { item })
+					call("ddc#on_complete_done", { item })
 				end
 			else
 				api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
