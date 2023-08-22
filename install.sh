@@ -44,10 +44,10 @@ if [ "$platform" == "Darwin" ]; then
     $brew install finestructure/hummingbird/hummingbird
 
     # Add Terminfo for wezterm:
-    tempfile=$(mktemp) \
-    && curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo \
-    && /usr/bin/tic -x -o ~/.terminfo $tempfile \
-    && rm $tempfile
+    tempfile=$(mktemp) &&
+        curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo &&
+        /usr/bin/tic -x -o ~/.terminfo $tempfile &&
+        rm $tempfile
 
 #------------------------------------------------------------------------------#
 #                               Linux (no root)                                #
@@ -165,7 +165,7 @@ if [ ! -d "$HOME"/.cargo ]; then
 
     curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
     cargo=$HOME/.cargo/bin/cargo
-    PATH=/opt/homebrew/bin:$PATH $cargo install --locked exa ripgrep bat fd-find du-dust nu starship || exit
+    PATH=/opt/homebrew/bin:$PATH $cargo install --locked exa ripgrep sd bat fd-find du-dust nu starship || exit
 
     git clone https://github.com/crescentrose/sunshine
     pushd sunshine || exit
