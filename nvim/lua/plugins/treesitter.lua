@@ -270,6 +270,11 @@ return {
 			end, function()
 				vim.cmd("norm! h")
 			end)
+			local next_tab, prev_tab = ts_repeat_move.make_repeatable_move_pair(function()
+				require("tabtree").next()
+			end, function()
+				require("tabtree").previous()
+			end)
 			local find_unmatched = function(visual, forward)
 				return function()
 					call("matchup#motion#find_unmatched", { visual, forward })
@@ -280,38 +285,38 @@ return {
 			local xnext_match, xprev_match =
 				ts_repeat_move.make_repeatable_move_pair(find_unmatched(1, 1), find_unmatched(1, 0))
 
-			local rhs =
-				"<cmd>lua require('multiline_ft').multiline_find(%s,%s,require('nvim-treesitter.textobjects.repeatable_move'))<cr>"
-			vim.keymap.set({ "n", "x", "o" }, "f", string.format(rhs, "true", "false"))
-			vim.keymap.set({ "n", "x", "o" }, "F", string.format(rhs, "false", "false"))
-			vim.keymap.set({ "n", "x", "o" }, "t", string.format(rhs, "true", "true"))
-			vim.keymap.set({ "n", "x", "o" }, "T", string.format(rhs, "false", "true"))
-			vim.api.nvim_create_autocmd("CmdlineLeave", {
-				callback = function()
-					if not vim.v.event.abort and call("getcmdline", {}):match("norm%s") then
-						-- Cannot set vim.v.event as it is read-only and to modify a key in a dict from lua,
-						-- we must first copy dict, then assign the key, then reassing key, so we use "let"
-						vim.cmd("let v:event.abort = 1")
-
-						vim.keymap.set({ "n", "x", "o" }, "f", ts_repeat_move.builtin_f)
-						vim.keymap.set({ "n", "x", "o" }, "F", ts_repeat_move.builtin_F)
-						vim.keymap.set({ "n", "x", "o" }, "t", ts_repeat_move.builtin_t)
-						vim.keymap.set({ "n", "x", "o" }, "T", ts_repeat_move.builtin_T)
-
-						local success, err = pcall(vim.cmd, call("getcmdline", {}))
-
-						vim.keymap.set({ "n", "x", "o" }, "f", string.format(rhs, "true", "false"))
-						vim.keymap.set({ "n", "x", "o" }, "F", string.format(rhs, "false", "false"))
-						vim.keymap.set({ "n", "x", "o" }, "t", string.format(rhs, "true", "true"))
-						vim.keymap.set({ "n", "x", "o" }, "T", string.format(rhs, "false", "true"))
-						if not success then
-							vim.cmd(
-								'echohl ErrorMsg | echom "' .. string.match(err, "Vim[^:]*:(.*)") .. '" | echohl None'
-							)
-						end
-					end
-				end,
-			})
+			-- local rhs =
+			-- 	"<cmd>lua require('multiline_ft').multiline_find(%s,%s,require('nvim-treesitter.textobjects.repeatable_move'))<cr>"
+			-- vim.keymap.set({ "n", "x", "o" }, "f", string.format(rhs, "true", "false"))
+			-- vim.keymap.set({ "n", "x", "o" }, "F", string.format(rhs, "false", "false"))
+			-- vim.keymap.set({ "n", "x", "o" }, "t", string.format(rhs, "true", "true"))
+			-- vim.keymap.set({ "n", "x", "o" }, "T", string.format(rhs, "false", "true"))
+			-- vim.api.nvim_create_autocmd("CmdlineLeave", {
+			-- 	callback = function()
+			-- 		if not vim.v.event.abort and call("getcmdline", {}):match("norm%s") then
+			-- 			-- Cannot set vim.v.event as it is read-only and to modify a key in a dict from lua,
+			-- 			-- we must first copy dict, then assign the key, then reassing key, so we use "let"
+			-- 			vim.cmd("let v:event.abort = 1")
+			--
+			-- 			vim.keymap.set({ "n", "x", "o" }, "f", ts_repeat_move.builtin_f)
+			-- 			vim.keymap.set({ "n", "x", "o" }, "F", ts_repeat_move.builtin_F)
+			-- 			vim.keymap.set({ "n", "x", "o" }, "t", ts_repeat_move.builtin_t)
+			-- 			vim.keymap.set({ "n", "x", "o" }, "T", ts_repeat_move.builtin_T)
+			--
+			-- 			local success, err = pcall(vim.cmd, call("getcmdline", {}))
+			--
+			-- 			vim.keymap.set({ "n", "x", "o" }, "f", string.format(rhs, "true", "false"))
+			-- 			vim.keymap.set({ "n", "x", "o" }, "F", string.format(rhs, "false", "false"))
+			-- 			vim.keymap.set({ "n", "x", "o" }, "t", string.format(rhs, "true", "true"))
+			-- 			vim.keymap.set({ "n", "x", "o" }, "T", string.format(rhs, "false", "true"))
+			-- 			if not success then
+			-- 				vim.cmd(
+			-- 					'echohl ErrorMsg | echom "' .. string.match(err, "Vim[^:]*:(.*)") .. '" | echohl None'
+			-- 				)
+			-- 			end
+			-- 		end
+			-- 	end,
+			-- })
 			vim.keymap.set({ "n", "x", "o" }, "]h", next_hunk)
 			vim.keymap.set({ "n", "x", "o" }, "[h", prev_hunk)
 			vim.keymap.set({ "n", "x", "o" }, "]d", next_diagnostic)
@@ -324,6 +329,8 @@ return {
 			vim.keymap.set({ "n", "x", "o" }, "[<cr>", prev_line)
 			vim.keymap.set({ "n", "x", "o" }, "]<space>", next_col)
 			vim.keymap.set({ "n", "x", "o" }, "[<space>", prev_col)
+			vim.keymap.set({ "n", "x", "o" }, "]<tab>", next_tab)
+			vim.keymap.set({ "n", "x", "o" }, "[<tab>", prev_tab)
 			vim.keymap.set({ "n" }, "]%", nnext_match)
 			vim.keymap.set({ "n" }, "[%", nprev_match)
 			vim.keymap.set({ "x" }, "]%", xnext_match)

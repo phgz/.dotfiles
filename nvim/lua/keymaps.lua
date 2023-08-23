@@ -146,9 +146,9 @@ set("o", "?", function() -- select a diagnostic
 	require("utils").diagnostic(5)
 end)
 set("n", "R", function() -- Replace motion with " register
-	require("multiline_ft").set_registry(
-		vim.tbl_extend("force", require("multiline_ft").get_registry(), { operator_count = vim.v.count })
-	)
+	-- require("multiline_ft").set_registry(
+	-- 	vim.tbl_extend("force", require("multiline_ft").get_registry(), { operator_count = vim.v.count })
+	-- )
 	vim.go.operatorfunc = "v:lua.require'utils'.replace"
 	api.nvim_feedkeys("g@", "n", false)
 end, { expr = false })

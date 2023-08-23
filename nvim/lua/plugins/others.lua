@@ -31,6 +31,7 @@ return {
 		end,
 	},
 	{
+		enabled = false,
 		dir = "~/.dotfiles/nvim/multiline-ft", -- multiline find/repeat
 		config = function()
 			require("multiline_ft")
@@ -201,6 +202,35 @@ return {
 				callback = function()
 					deferred_clipboard.write()
 				end,
+			})
+		end,
+	},
+	{
+		"roobert/tabtree.nvim",
+		config = function()
+			require("tabtree").setup({
+				key_bindings_disabled = true,
+				language_configs = {
+					lua = {
+						target_query = [[
+						(string) @string_capture
+						(parameters) @parameters_capture
+						]],
+						offsets = {},
+					},
+					python = {
+						target_query = [[
+              (string) @string_capture
+              (interpolation) @interpolation_capture
+              (parameters) @parameters_capture
+              (argument_list) @argument_list_capture
+            ]],
+						-- experimental feature, to move the cursor in certain situations like when handling python f-strings
+						offsets = {
+							string_start_capture = 1,
+						},
+					},
+				},
 			})
 		end,
 	},
