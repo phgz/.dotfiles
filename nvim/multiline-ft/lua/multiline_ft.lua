@@ -1,7 +1,7 @@
 local M = {}
 local api = vim.api
 local call = api.nvim_call_function
-local esc = api.nvim_replace_termcodes("<esc>", true, false, true)
+local esc = vim.keycode("<esc>")
 local dummy_fn = "{_ -> v:true}"
 local global_repeat_fn = "v:lua.require'multiline_ft'.multiline_find_repeat"
 local registry = {}

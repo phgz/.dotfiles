@@ -5,6 +5,7 @@ local goto_after_sep = require("utils").goto_after_sep
 local apply_to_next_motion = require("utils").apply_to_next_motion
 local new_lines = require("utils").new_lines
 local get_modes = require("utils").get_modes
+local abort = require("utils").abort
 
 local set = vim.keymap.set
 local api = vim.api
@@ -78,7 +79,7 @@ set("v", "<leader>s", function() -- Sort selection
 	local lines = api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
 	table.sort(lines)
 	api.nvim_buf_set_lines(0, start_row - 1, end_row, true, lines)
-	api.nvim_feedkeys(api.nvim_replace_termcodes("<esc>", true, false, true), "x", true)
+	api.nvim_feedkeys(vim.keycode("<esc>"), "x", true)
 end)
 
 set("n", "<leader>o", function() -- Add input to beginning of file
@@ -112,7 +113,6 @@ set("n", "<left>", "<nop>")
 set("n", "<right>", "<nop>")
 set("n", "<up>", "<nop>")
 set("n", "<down>", "<nop>")
-set("n", "<C-r>", "R") -- R is rare, so change it to <C-r>
 set({ "n", "x" }, "k", function()
 	local line = vim.fn.line(".")
 	local bound = call("line", { "w0" })
@@ -139,19 +139,12 @@ set("n", "<S-cr>", function() -- Pad with newlines
 	api.nvim_buf_set_lines(0, row, row, true, { "" })
 	api.nvim_win_set_cursor(0, { row + 1, col })
 end)
-set("o", "R", function() -- select line from first char to end
+set("o", "L", function() -- select line from first char to end
 	vim.cmd.normal({ "vg_o^", bang = true })
 end)
 set("o", "?", function() -- select a diagnostic
 	require("utils").diagnostic(5)
 end)
-set("n", "R", function() -- Replace motion with " register
-	-- require("multiline_ft").set_registry(
-	-- 	vim.tbl_extend("force", require("multiline_ft").get_registry(), { operator_count = vim.v.count })
-	-- )
-	vim.go.operatorfunc = "v:lua.require'utils'.replace"
-	api.nvim_feedkeys("g@", "n", false)
-end, { expr = false })
 set("n", "Z", function() -- Write buffer
 	vim.cmd("silent write")
 	vim.notify("buffer written")
@@ -374,7 +367,7 @@ end)
 set("", "h", function() -- Goto line
 	local char = call("getchar", {})
 	if char == 27 then
-		-- escape
+		abort()
 		return
 	end
 	vim.cmd.normal({ "m'", bang = true })
@@ -392,7 +385,7 @@ end)
 set("", "l", function() -- Goto line
 	local char = call("getchar", {})
 	if char == 27 then
-		-- escape
+		abort()
 		return
 	end
 	vim.cmd.normal({ "m'", bang = true })

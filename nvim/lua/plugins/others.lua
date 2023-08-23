@@ -206,6 +206,26 @@ return {
 		end,
 	},
 	{
+		"gbprod/substitute.nvim",
+		config = function()
+			require("substitute").setup({
+				on_substitute = nil,
+				yank_substituted_text = false,
+				highlight_substituted_text = {
+					enabled = false,
+				},
+				exchange = {
+					motion = false,
+					use_esc_to_cancel = true,
+				},
+			})
+			vim.keymap.set("n", "sx", require("substitute").operator, { noremap = true })
+			vim.keymap.set("n", "sxx", require("substitute").line, { noremap = true })
+			vim.keymap.set("n", "sX", require("substitute").eol, { noremap = true })
+			vim.keymap.set("n", "cx", require("substitute.exchange").operator, { noremap = true })
+		end,
+	},
+	{
 		"roobert/tabtree.nvim",
 		config = function()
 			require("tabtree").setup({

@@ -3,6 +3,13 @@ local call = api.nvim_call_function
 
 local M = {}
 
+local esc = vim.keycode("<esc>")
+
+function M.abort()
+	api.nvim_feedkeys(esc, "x", true)
+	api.nvim_feedkeys(esc, "n", true)
+end
+
 function M.update_selection(use_gv, requested_visual_mode, start_row, start_col, end_row, end_col)
 	api.nvim_buf_set_mark(0, "<", start_row, start_col, {})
 	api.nvim_buf_set_mark(0, ">", end_row, end_col, {})
