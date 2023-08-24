@@ -3,15 +3,12 @@
 platform=$(uname -s)
 arch=$(uname -m)
 
-BISON_VERSION=3.8.2
-PKG_CONFIG_VERSION=0.29.2
-LIBEVENT_VERSION=2.1.12
-NCURSES_VERSION=6.3
-CMAKE_VERSION=3.23.2
+# Linux sudo requirements: libevent-dev libncurses5-dev build-essential bison pkg-config cmake
+
 FISH_SHELL_VERSION=3.6.1
 TMUX_VERSION=3.3a
-NODE_VERSION=20.5.0
-POETRY_VERSION=1.5.0
+NODE_VERSION=20.5.1
+POETRY_VERSION=1.6.1
 PYTHON_VERSION=3.11
 
 mkdir -p "$HOME"/.local/bin
@@ -49,40 +46,11 @@ if [ "$platform" == "Darwin" ]; then
         /usr/bin/tic -x -o ~/.terminfo $tempfile &&
         rm $tempfile
 
+
 #------------------------------------------------------------------------------#
-#                               Linux (no root)                                #
+#                                    Linux                                     #
 #------------------------------------------------------------------------------#
 elif [ "$platform" == "Linux" ]; then
-
-    #------------------------------------------------------------------------------#
-    #                                 Dependencies                                 #
-    #------------------------------------------------------------------------------#
-    curl -JLO http://ftp.gnu.org/gnu/bison/bison-"$BISON_VERSION".tar.gz
-    tar -xf bison-"$BISON_VERSION".tar.gz && rm -rf bison-"$BISON_VERSION".tar.gz
-    pushd bison-"$BISON_VERSION"/ || exit
-    ./configure --prefix="$HOME"/.local
-    make && make install && popd || exit
-
-    curl -JLO https://pkg-config.freedesktop.org/releases/pkg-config-"$PKG_CONFIG_VERSION".tar.gz
-    tar -xf pkg-config-"$PKG_CONFIG_VERSION".tar.gz && rm -rf pkg-config-"$PKG_CONFIG_VERSION".tar.gz
-    pushd pkg-config-"$PKG_CONFIG_VERSION"/ || exit
-    ./configure --prefix="$HOME"/.local --with-internal-glib
-    make && make install && popd || exit
-
-    curl -LJO https://github.com/libevent/libevent/releases/download/release-"$LIBEVENT_VERSION"-stable/libevent-"$LIBEVENT_VERSION"-stable.tar.gz
-    tar -xf libevent-*.tar.gz && rm libevent-"$LIBEVENT_VERSION"-stable.tar.gz
-    pushd libevent-*/ || exit
-    ./configure --prefix="$HOME"/.local --enable-shared --disable-openssl
-    make && make install && popd || exit
-
-    curl -LJO https://invisible-mirror.net/archives/ncurses/ncurses-"$NCURSES_VERSION".tar.gz
-    tar -xf ncurses-"$NCURSES_VERSION".tar.gz && rm ncurses-"$NCURSES_VERSION".tar.gz
-    pushd ncurses-*/ || exit
-    ./configure --prefix="$HOME"/.local --with-shared --with-termlib --enable-pc-files --with-pkg-config-libdir="$HOME"/.local/lib/pkgconfig
-    make && make install && popd || exit
-
-    curl -LJO https://github.com/Kitware/CMake/releases/download/v"$CMAKE_VERSION"/cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz
-    tar -xf cmake-"$CMAKE_VERSION"-linux-"$arch".tar.gz && rm cmake-"$CMAKE_VERSION"-linux-x86_64.tar.gz || exit
 
     #------------------------------------------------------------------------------#
     #                                     Fish                                     #
@@ -92,10 +60,7 @@ elif [ "$platform" == "Linux" ]; then
     pushd fish-"$FISH_SHELL_VERSION" || exit
     mkdir build
     pushd build || exit
-    ../../cmake-"$CMAKE_VERSION"-linux-"$arch"/bin/cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local ..
-    # Check for PCRE2 (headers and libraries) if missing
-    # Try this instead if previous line fails:
-    # ../../cmake-"$CMAKE_VERSION"-linux-"$arch"/bin/cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local -DCMAKE_CXX_FLAGS=-I\ "$HOME"/.local/include/ncurses ..
+    cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local ..
     make && make install && popd || exit
     popd || exit
 
@@ -107,7 +72,7 @@ elif [ "$platform" == "Linux" ]; then
     curl -LJO https://github.com/tmux/tmux/releases/download/"$TMUX_VERSION"/tmux-"$TMUX_VERSION".tar.gz
     tar -xf tmux-*.tar.gz && rm tmux-"$TMUX_VERSION".tar.gz
     pushd tmux-*/ || exit
-    PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig ./configure --prefix="$HOME"/.local --enable-static
+    pkg-config ./configure --prefix="$HOME"/.local --enable-static
     make && make install && popd || exit
 
     rm -rf tmux-*/
@@ -128,11 +93,6 @@ elif [ "$platform" == "Linux" ]; then
     curl -LJO https://nodejs.org/dist/v"$NODE_VERSION"/node-v"$NODE_VERSION"-linux-x64.tar.xz
     tar -xf node-v"$NODE_VERSION"-linux-x64.tar.xz && rm node-v"$NODE_VERSION"-linux-x64.tar.xz
     mv node-v"$NODE_VERSION"-linux-x64 "$HOME"/.local/node
-
-    #------------------------------------------------------------------------------#
-    #                       Remove dependencies src folders                        #
-    #------------------------------------------------------------------------------#
-    rm -rf ncurses-*/ libevent-*/ cmake-*/ pkg-config-*/ bison-*/
 fi
 
 #------------------------------------------------------------------------------#
