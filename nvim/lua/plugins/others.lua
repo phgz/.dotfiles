@@ -194,14 +194,29 @@ return {
 		},
 	}, -- Comment frame
 	{
-		"EtiamNullam/deferred-clipboard.nvim", -- Sync system clipboard with nvim
+		"ibhagwan/smartyank.nvim", -- Sync system clipboard with nvim
+		event = "BufReadPost",
 		config = function()
-			local deferred_clipboard = require("deferred-clipboard")
-			deferred_clipboard.setup()
-			vim.api.nvim_create_autocmd("CmdlineEnter", {
-				callback = function()
-					deferred_clipboard.write()
-				end,
+			require("smartyank").setup({
+				highlight = {
+					enabled = true, -- highlight yanked text
+					higroup = "IncSearch", -- highlight group of yanked text
+					timeout = 140, -- timeout for clearing the highlight
+				},
+				clipboard = {
+					enabled = true,
+				},
+				tmux = {
+					enabled = false,
+					-- remove `-w` to disable copy to host client's clipboard
+					cmd = { "tmux", "set-buffer", "-w" },
+				},
+				osc52 = {
+					enabled = true,
+					ssh_only = true, -- false to OSC52 yank also in local sessions
+					silent = true, -- true to disable the "n chars copied" echo
+					echo_hl = "Directory", -- highlight group of the OSC52 echo message
+				},
 			})
 		end,
 	},
