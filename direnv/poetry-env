@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+echo "layout poetry" >.envrc
+direnv allow .
