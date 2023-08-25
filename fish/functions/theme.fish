@@ -13,7 +13,11 @@ function theme
     set -f info (sunshine -f %s "$coordinates")
     set -f sunrise (string split ' ' $info[1])[2]
     set -f sunset (string split ' ' $info[2])[2]
-    set -f midnight (date -j -f "%Y-%m-%d %H:%M:%S" "$(date +%Y-%m-%d) 00:00:00" "+%s")
+    if test (uname -s) = Linux
+        set -f midnight (date -d "$(date +%Y-%m-%d) 00:00:00" "+%s")
+    else
+        set -f midnight (date -j -f "%Y-%m-%d %H:%M:%S" "$(date +%Y-%m-%d) 00:00:00" "+%s")
+    end
     set -f current (date +%s)
 
     set -f choices day night midnight
