@@ -7,7 +7,6 @@ return {
 			"RRethy/nvim-treesitter-endwise", -- Add Delimiters for Pascal-like languages
 			"nvim-treesitter/nvim-treesitter-textobjects", -- More text motions
 			"nvim-treesitter/nvim-treesitter-refactor", -- Highlight definitions, Rename
-			"nvim-treesitter/playground", -- See parsed tree
 		},
 		build = function()
 			vim.cmd("TSUpdate")
@@ -164,24 +163,6 @@ return {
 					lsp_interop = {
 						enable = true,
 						floating_preview_opts = { max_height = 9 },
-					},
-				},
-				playground = {
-					enable = true,
-					disable = {},
-					updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
-					persist_queries = false, -- Whether the query persists across vim sessions
-					keybindings = {
-						toggle_query_editor = "o",
-						toggle_hl_groups = "i",
-						toggle_injected_languages = "t",
-						toggle_anonymous_nodes = "a",
-						toggle_language_display = "I",
-						focus_language = "f",
-						unfocus_language = "F",
-						update = "R",
-						goto_node = "<cr>",
-						show_help = "?",
 					},
 				},
 				query_linter = {
@@ -353,7 +334,7 @@ return {
 				{ silent = true }
 			)
 
-			vim.keymap.set("n", "<localleader>t", "<cmd>TSHighlightCapturesUnderCursor<cr>")
+			vim.keymap.set("n", "<localleader>t", "<cmd>Inspect<cr>")
 			vim.keymap.set("n", "<leader>i", function()
 				local func = require("nvim-treesitter.textobjects.lsp_interop").peek_definition_code
 				local captures = vim.treesitter.get_captures_at_cursor()
