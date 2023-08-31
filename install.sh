@@ -5,11 +5,12 @@ arch=$(uname -m)
 
 # Linux sudo requirements: libevent-dev libncurses5-dev build-essential bison pkg-config cmake
 
+GLOW_VERSION=1.5.1
 FISH_SHELL_VERSION=3.6.1
-TMUX_VERSION=3.3a
-NODE_VERSION=20.5.1
+NODE_VERSION=v20.5.1
 POETRY_VERSION=1.6.1
 PYTHON_VERSION=3.11
+TMUX_VERSION=3.3a
 
 mkdir -p "$HOME"/.local/bin
 
@@ -35,7 +36,7 @@ if [ "$platform" == "Darwin" ]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    $brew install fish node fontconfig wget python@"$PYTHON_VERSION" wezterm helix brave-browser dbeaver-community discord firefox opera postman rectangle slack subler transmission vlc zoom
+    $brew install fish node glow fontconfig wget python@"$PYTHON_VERSION" wezterm helix brave-browser dbeaver-community discord firefox opera postman rectangle slack subler transmission vlc zoom
     $brew install --HEAD neovim
     $brew tap finestructure/Hummingbird
     $brew install finestructure/hummingbird/hummingbird
@@ -45,7 +46,6 @@ if [ "$platform" == "Darwin" ]; then
         curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo &&
         /usr/bin/tic -x -o ~/.terminfo $tempfile &&
         rm $tempfile
-
 
 #------------------------------------------------------------------------------#
 #                                    Linux                                     #
@@ -81,6 +81,13 @@ elif [ "$platform" == "Linux" ]; then
     curl https://gist.githubusercontent.com/nicm/ea9cf3c93f22e0246ec858122d9abea1/raw/37ae29fc86e88b48dbc8a674478ad3e7a009f357/tmux-256color | /usr/bin/tic -x -
 
     #------------------------------------------------------------------------------#
+    #                                     Glow                                     #
+    #------------------------------------------------------------------------------#
+    curl -LJO https://github.com/charmbracelet/glow/releases/download/"$GLOW_VERSION"/glow_Linux_x86_64.tar.gz
+    tar -xf glow_Linux_x86_64.tar.gz && rm glow_Linux_x86_64.tar.gz
+    mv ./glow "$HOME"/.local/bin/glow
+
+    #------------------------------------------------------------------------------#
     #                                    Neovim                                    #
     #------------------------------------------------------------------------------#
     curl -LJO https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
@@ -90,9 +97,9 @@ elif [ "$platform" == "Linux" ]; then
     #------------------------------------------------------------------------------#
     #                                    Nodejs                                    #
     #------------------------------------------------------------------------------#
-    curl -LJO https://nodejs.org/dist/v"$NODE_VERSION"/node-v"$NODE_VERSION"-linux-x64.tar.xz
-    tar -xf node-v"$NODE_VERSION"-linux-x64.tar.xz && rm node-v"$NODE_VERSION"-linux-x64.tar.xz
-    mv node-v"$NODE_VERSION"-linux-x64 "$HOME"/.local/node
+    curl -LJO https://nodejs.org/dist/"$NODE_VERSION"/node-"$NODE_VERSION"-linux-x64.tar.xz
+    tar -xf node-"$NODE_VERSION"-linux-x64.tar.xz && rm node-"$NODE_VERSION"-linux-x64.tar.xz
+    mv node-"$NODE_VERSION"-linux-x64 "$HOME"/.local/node
 fi
 
 #------------------------------------------------------------------------------#
