@@ -487,7 +487,7 @@ c.keys = {
 		key = "LeftArrow",
 		mods = "SUPER|META",
 		action = act.PaneSelect({
-			mode = "SwapWithActive",
+			mode = "SwapWithActive", -- SwapWithActiveKeepFocus: swap the position of the active pane with the selected pane, retaining focus on the currently active pane but in its new position
 		}),
 	},
 	{

@@ -3,7 +3,7 @@
 platform=$(uname -s)
 arch=$(uname -m)
 
-# Linux sudo requirements: libevent-dev libncurses5-dev build-essential bison pkg-config cmake
+# Linux sudo requirements: bison build-essential cmake libevent-dev libncurses5-dev libssl-dev pkg-config
 
 GLOW_VERSION=1.5.1
 FISH_SHELL_VERSION=3.6.1
@@ -40,12 +40,6 @@ if [ "$platform" == "Darwin" ]; then
     $brew install --HEAD neovim
     $brew tap finestructure/Hummingbird
     $brew install finestructure/hummingbird/hummingbird
-
-    # Add Terminfo for wezterm:
-    tempfile=$(mktemp) &&
-        curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo &&
-        /usr/bin/tic -x -o ~/.terminfo $tempfile &&
-        rm $tempfile
 
 #------------------------------------------------------------------------------#
 #                                    Linux                                     #
@@ -176,6 +170,15 @@ if [ ! -f "$HOME"/.local/bin/direnv ]; then
 fi
 
 #------------------------------------------------------------------------------#
+#                                   Wezterm                                    #
+#------------------------------------------------------------------------------#
+# Add Terminfo for wezterm:
+tempfile=$(mktemp) &&
+    curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo &&
+    /usr/bin/tic -x -o ~/.terminfo $tempfile &&
+    rm $tempfile
+
+#------------------------------------------------------------------------------#
 #                         FantasqueSansMono Nerd Font                          #
 #------------------------------------------------------------------------------#
 
@@ -203,7 +206,7 @@ for folder in "$HOME"/*/; do
     ln -sf "$HOME"/.dotfiles/git/pre-commit "${folder%/*}"/.git/hooks/
 done
 
-sed "s/<<EMAIL>>/$(git log | head -2 | rg Author | sed -r 's/.*<(.*)>.*/\1/')/" "$HOME"/.dotfiles/git/gitconfig >"$HOME"/.gitconfig
+sed "s/<<EMAIL>>/$(git log | head -2 | "$HOME"/.cargo/bin/rg Author | sed -r 's/.*<(.*)>.*/\1/')/" "$HOME"/.dotfiles/git/gitconfig >"$HOME"/.gitconfig
 
 #------------------------------------------------------------------------------#
 #                                    Theme                                     #
