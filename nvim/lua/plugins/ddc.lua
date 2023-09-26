@@ -123,7 +123,7 @@ return {
 		end, opts_expr)
 
 		vim.keymap.set("i", "<CR>", function()
-			return call("pumvisible", {}) == 1 and "<C-y>" or npairs.autopairs_cr()
+			return call("pumvisible", {}) == 1 and "<C-y>" or vim.api.nvim_feedkeys(npairs.autopairs_cr(), "n", false)
 		end, opts_expr)
 
 		vim.keymap.set("i", "<ESC>", function()

@@ -191,6 +191,7 @@ set("", "-", function() -- Go to end of file
 	local count = vim.v.count
 	local op_pending = get_modes().operator_pending
 	local has_count = count ~= 0
+	abort()
 	vim.api.nvim_feedkeys((has_count and count or "") .. (op_pending and vim.v.operator or "") .. "G", "n", false)
 	if not (has_count or op_pending) then
 		vim.cmd.call("cursor(line('$'),1)")
