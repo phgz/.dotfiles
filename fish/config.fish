@@ -1,6 +1,6 @@
 set -g fish_greeting
 string match -q (uname -ms) "Darwin arm64" && fish_add_path /opt/homebrew/bin
-fish_add_path $HOME/.local/bin $HOME/.cargo/bin $HOME/.local/node/bin $HOME/.local/wezterm/usr/bin $HOME/.miniconda/bin
+fish_add_path $HOME/.local/bin $HOME/.cargo/bin $HOME/.local/node/bin $HOME/.local/wezterm/usr/bin $HOME/.local/nvim/bin $HOME/.miniconda/bin
 set -gx MANPATH $HOME/.local/share/man /usr/share/man $MANPATH
 set -gx DIRENV_LOG_FORMAT ""
 
