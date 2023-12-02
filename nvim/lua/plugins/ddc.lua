@@ -119,7 +119,7 @@ return {
 			if call("pumvisible", {}) == 1 then
 				api.nvim_feedkeys(vim.keycode("<Up>"), "n", false)
 			else
-				vim.fn["ddc#map#manual_complete"]({ sources = { "nvim-lsp" }, ui = "native" })
+				vim.fn["ddc#map#manual_complete"]({ sources = { "lsp" }, ui = "native" })
 			end
 		end, opts_expr)
 

@@ -26,7 +26,7 @@ export class Config extends BaseConfig {
           mark: "F",
           forceCompletionPattern: "\\S/\\S*",
         },
-        "nvim-lsp": {
+        lsp: {
           mark: "LSP",
           forceCompletionPattern: "\\.\\w*|::\\w*|->\\w*",
           sorters: ["sorter_lsp-kind"],
@@ -34,7 +34,7 @@ export class Config extends BaseConfig {
         },
       },
       sourceParams: {
-        "nvim-lsp": {
+        "lsp": {
           snippetEngine: "vim.snippet",
           enableResolveItem: true,
           enableAdditionalTextEdit: true,
@@ -44,6 +44,9 @@ export class Config extends BaseConfig {
         matcher_fuzzy: {
           splitMode: "word",
         },
+        "sorter_lsp-kind": {
+          priority: [["Variable", "Text", "Method", "Function"]]
+        }
       },
       backspaceCompletion: true,
     });
