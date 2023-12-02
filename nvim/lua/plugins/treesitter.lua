@@ -49,8 +49,8 @@ return {
 						enable = true,
 						keymaps = {
 							goto_definition = "<leader>J",
-							list_definitions = "`<nop>`",
-							list_definitions_toc = "`<nop>`",
+							list_definitions = false,
+							list_definitions_toc = false,
 							goto_next_usage = "<a-*>",
 							goto_previous_usage = "<a-#>",
 						},
@@ -210,7 +210,7 @@ return {
 
 				local capture_id = vim.iter(query:iter_captures(node, 0)):find(function(id, _, _)
 					local name = query.captures[id] -- name of the capture in the query
-					print(id, name)
+					-- print(id, name)
 					return name ~= "block.outer"
 				end)
 

@@ -23,7 +23,7 @@ set("n", "<leader>h", function() -- Split horizontal
 end)
 
 set("n", "<leader>d", function() -- delete buffer and set alternate file
-	print("about to delete", call("expand", { "%:p" }))
+	-- print("about to delete", call("expand", { "%:p" }))
 	vim.cmd("bdelete")
 	local new_current_file = call("expand", { "%:p" })
 	local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
@@ -34,8 +34,8 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 	local possible_alternatives = vim.iter.filter(function(name)
 		return name ~= new_current_file
 	end, still_listed)
-	print("still_listed:", vim.inspect(still_listed))
-	print("possible_alternatives:", vim.inspect(possible_alternatives))
+	-- print("still_listed:", vim.inspect(still_listed))
+	-- print("possible_alternatives:", vim.inspect(possible_alternatives))
 
 	if #still_listed == 0 then
 		return
@@ -52,11 +52,11 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 			break
 		end
 	end
-	print("jumps_current_file_index:", jumps[jumps_current_file_index]["f"])
+	-- print("jumps_current_file_index:", jumps[jumps_current_file_index]["f"])
 
 	local jumps_alternate_file_index = jumps_current_file_index - 4
 	local found = false
-	print("first jumps_alternate_file_index:", jumps[jumps_alternate_file_index]["f"])
+	-- print("first jumps_alternate_file_index:", jumps[jumps_alternate_file_index]["f"])
 
 	for i = jumps_alternate_file_index, 1, -4 do
 		if vim.list_contains(possible_alternatives, jumps[i]["f"]) then
@@ -66,10 +66,10 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 		end
 	end
 	if found then
-		print("found jumps_alternate_file_index:", jumps[jumps_alternate_file_index]["f"])
+		-- print("found jumps_alternate_file_index:", jumps[jumps_alternate_file_index]["f"])
 		call("setreg", { "#", jumps[jumps_alternate_file_index]["f"] })
 	else
-		print("Alternate file not found in jumplist! Picking last in possible_alternatives")
+		-- print("Alternate file not found in jumplist! Picking last in possible_alternatives")
 		call("setreg", { "#", possible_alternatives[#possible_alternatives] })
 	end
 end)
@@ -146,7 +146,7 @@ set("o", "?", function() -- select a diagnostic
 	require("utils").diagnostic(5)
 end)
 set("n", "Z", function() -- Write buffer
-	vim.cmd("silent write")
+	vim.cmd("silent write!")
 	vim.notify("buffer written")
 end)
 set("n", "Q", function() -- Quit no write buffer
@@ -344,7 +344,7 @@ end)
 
 set("i", "<C-k>", function() -- Delete next word
 	local word_under_cursor = call("expand", { "<cword>" })
-	print(word_under_cursor)
+	-- print(word_under_cursor)
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	local end_col = call("searchpos", { word_under_cursor, "Wcnb" })[2] - 1 + #word_under_cursor
 	api.nvim_buf_set_text(0, row - 1, col, row - 1, end_col, {})

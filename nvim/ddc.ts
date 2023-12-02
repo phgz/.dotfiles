@@ -5,7 +5,7 @@ export class Config extends BaseConfig {
   override config(args: ConfigArguments): Promise<void> {
     args.contextBuilder.patchGlobal({
       ui: "inline",
-      sources: ["nvim-lsp", "around", "ultisnips", "file"],
+      sources: ["lsp", "around", "file"],
       autoCompleteEvents: [
         "InsertEnter",
         "TextChangedI",
@@ -32,13 +32,10 @@ export class Config extends BaseConfig {
           sorters: ["sorter_lsp-kind"],
           dup: "force",
         },
-        ultisnips: {
-          mark: "U",
-        },
       },
       sourceParams: {
         "nvim-lsp": {
-          snippetEngine: "{ body -> vsnip#anonymous(body) }",
+          snippetEngine: "vim.snippet",
           enableResolveItem: true,
           enableAdditionalTextEdit: true,
         },

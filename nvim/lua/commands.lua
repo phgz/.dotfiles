@@ -17,14 +17,15 @@ api.nvim_create_autocmd("TextYankPost", {
 api.nvim_create_autocmd("VimEnter", {
 	callback = function()
 		vim.keymap.set("n", "<esc>", function() -- Close popups
-			local relative = function(win)
-				return api.nvim_win_get_config(win).relative ~= ""
-			end
-			vim.iter(api.nvim_list_wins()):filter(relative):each(function(win)
-				if api.nvim_win_is_valid(win) then
-					api.nvim_win_close(win, true)
-				end
-			end)
+			-- local relative = function(win)
+			-- 	return api.nvim_win_get_config(win).relative ~= ""
+			-- end
+			-- vim.iter(api.nvim_list_wins()):filter(relative):each(function(win)
+			-- 	if api.nvim_win_is_valid(win) then
+			-- 		api.nvim_win_close(win, true)
+			-- 	end
+			-- end)
+			vim.cmd("fclose!")
 			api.nvim_feedkeys(vim.keycode("<esc>"), "n", false)
 		end)
 	end,

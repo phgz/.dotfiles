@@ -130,7 +130,7 @@ return {
 			vim.diagnostic.config(lsp_config.diagnostic)
 
 			-- local capabilities = vim.lsp.protocol.make_client_capabilities
-			local capabilities = require("ddc_nvim_lsp").make_client_capabilities
+			local capabilities = require("ddc_source_lsp").make_client_capabilities
 			require("mason-lspconfig").setup_handlers({
 				function(server_name) -- default handler
 					require("lspconfig")[server_name].setup({ on_attach = on_attach, capabilities = capabilities() })

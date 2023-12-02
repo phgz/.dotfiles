@@ -1,6 +1,7 @@
 return {
 	"Shougo/ddc.vim",
 	event = "InsertEnter",
+	ft = { "python", "lua", "json", "toml", "yaml" },
 	dependencies = {
 		"vim-denops/denops.vim",
 		{
@@ -17,7 +18,7 @@ return {
 		"matsui54/ddc-ultisnips",
 		"LumaKernel/ddc-file",
 		"Shougo/ddc-converter_remove_overlap",
-		"Shougo/ddc-nvim-lsp",
+		"Shougo/ddc-source-lsp",
 		"Shougo/ddc-source-around",
 		"Shougo/ddc-ui-inline",
 		"Shougo/ddc-ui-native",
@@ -55,7 +56,7 @@ return {
 
 		local get_wuc_start_col = function()
 			local word_under_cursor = call("expand", { "<cword>" })
-			print(word_under_cursor)
+			-- print(word_under_cursor)
 			return call("searchpos", { word_under_cursor, "Wcnb" })[2] - 1
 		end
 		-- TextChangedP
@@ -68,12 +69,12 @@ return {
 				return capture:match("^punctuation%.")
 			end)
 
-			print(api.nvim_get_current_line():sub(col, col))
+			-- print(api.nvim_get_current_line():sub(col, col))
 			local word_under_cursor_start_col = (is_punctuation or api.nvim_get_current_line():sub(col, col) == "/")
 					and col
 				or get_wuc_start_col()
-			print(is_punctuation, col)
-			print(word_under_cursor_start_col)
+			-- print(is_punctuation, col)
+			-- print(word_under_cursor_start_col)
 			api.nvim_win_set_cursor(0, { row, col })
 			local construct = string.rep(vim.keycode("<BS>"), col - word_under_cursor_start_col)
 

@@ -1,3 +1,5 @@
+-- https://github.com/trimclain/builder.nvim: Simple building plugin
+
 return {
 	"nvim-lua/plenary.nvim", -- Lua functions
 	"nvim-lua/popup.nvim",
@@ -195,7 +197,7 @@ return {
 	}, -- Comment frame
 	{
 		"ibhagwan/smartyank.nvim", -- Sync system clipboard with nvim
-		event = "BufReadPost",
+		event = "TextYankPost",
 		config = function()
 			require("smartyank").setup({
 				highlight = {
