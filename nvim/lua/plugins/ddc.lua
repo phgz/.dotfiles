@@ -10,11 +10,11 @@ return {
 					border = false,
 					winblend = 30,
 					maxHeight = 12,
-					supportUltisnips = true,
+					-- supportUltisnips = true,
 				}
 			end,
 		},
-		"matsui54/ddc-ultisnips",
+		-- "matsui54/ddc-ultisnips",
 		"LumaKernel/ddc-file",
 		"Shougo/ddc-converter_remove_overlap",
 		"Shougo/ddc-source-lsp",
@@ -23,21 +23,21 @@ return {
 		"Shougo/ddc-ui-native",
 		"tani/ddc-fuzzy",
 		"tani/ddc-path",
-		"SirVer/ultisnips",
+		-- "SirVer/ultisnips",
 		"onsails/lspkind-nvim", -- LSP pictograms
-		{
-			"SirVer/ultisnips",
-			dependencies = { "honza/vim-snippets" },
-			config = function()
-				vim.g.UltiSnipsSnippetDirectories =
-					{ os.getenv("HOME") .. "/.local/share/nvim/site/pack/packer/start/vim-snippets/UltiSnips" }
-
-				vim.g.UltiSnipsExpandTrigger = "`<nop>`"
-				vim.g.UltiSnipsJumpForwardTrigger = "<tab>"
-				vim.g.UltiSnipsJumpBackwardTrigger = "<s-tab>"
-				vim.g.ultisnips_python_style = "numpy"
-			end,
-		},
+		-- {
+		-- 	"SirVer/ultisnips",
+		-- 	dependencies = { "honza/vim-snippets" },
+		-- 	config = function()
+		-- 		vim.g.UltiSnipsSnippetDirectories =
+		-- 			{ os.getenv("HOME") .. "/.local/share/nvim/site/pack/packer/start/vim-snippets/UltiSnips" }
+		--
+		-- 		vim.g.UltiSnipsExpandTrigger = "`<nop>`"
+		-- 		vim.g.UltiSnipsJumpForwardTrigger = "<tab>"
+		-- 		vim.g.UltiSnipsJumpBackwardTrigger = "<s-tab>"
+		-- 		vim.g.ultisnips_python_style = "numpy"
+		-- 	end,
+		-- },
 	},
 
 	config = function()
@@ -46,11 +46,11 @@ return {
 		local npairs = require("nvim-autopairs")
 
 		local insert_snippet_or_tab = function()
-			if call("UltiSnips#CanExpandSnippet", {}) == 1 then
-				call("UltiSnips#ExpandSnippet", {})
-			else
+			-- if call("UltiSnips#CanExpandSnippet", {}) == 1 then
+			-- 	call("UltiSnips#ExpandSnippet", {})
+			-- else
 				api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
-			end
+			-- end
 		end
 
 		local get_wuc_start_col = function()
