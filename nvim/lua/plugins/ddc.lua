@@ -1,7 +1,6 @@
 return {
 	"Shougo/ddc.vim",
-	event = "InsertEnter",
-	ft = { "python", "lua", "json", "toml", "yaml" },
+	ft = { "python", "lua", "json", "toml", "yaml", "haskell" },
 	dependencies = {
 		"vim-denops/denops.vim",
 		{
