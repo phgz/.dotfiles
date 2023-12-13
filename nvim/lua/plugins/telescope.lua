@@ -105,10 +105,19 @@ return {
 				builtin.live_grep(dropdown_theme)
 			end)
 			vim.keymap.set("n", "<leader>b", function()
-				builtin.buffers(vim.tbl_extend("error", dropdown_theme, { cwd_only = true }))
+				builtin.buffers(vim.tbl_extend("error", dropdown_theme, {
+					cwd_only = true,
+					sort_buffers = function(bufnr_a, bufnr_b)
+						return vim.api.nvim_buf_get_name(bufnr_a) < vim.api.nvim_buf_get_name(bufnr_b)
+					end,
+				}))
 			end)
 			vim.keymap.set("n", "<leader>B", function()
-				builtin.buffers(dropdown_theme)
+				builtin.buffers(vim.tbl_extend("error", dropdown_theme, {
+					sort_buffers = function(bufnr_a, bufnr_b)
+						return vim.api.nvim_buf_get_name(bufnr_a) < vim.api.nvim_buf_get_name(bufnr_b)
+					end,
+				}))
 			end)
 			vim.keymap.set("n", "<leader>l", function()
 				builtin.lsp_workspace_symbols(
