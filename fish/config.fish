@@ -25,7 +25,7 @@ bind \cg expand-abbr
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-eval $HOME/.miniconda3/bin/conda "shell.fish" hook $argv | source
+# eval $HOME/.miniconda3/bin/conda "shell.fish" hook $argv | source
 # <<< conda initialize <<<
 
 ~/.cargo/bin/starship init fish | source
