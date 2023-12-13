@@ -25,7 +25,7 @@ bind \cg expand-abbr
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-# eval $HOME/.miniconda3/bin/conda "shell.fish" hook $argv | source
+eval $HOME/.miniconda3/bin/conda "shell.fish" hook $argv | source
 # <<< conda initialize <<<
 
 ~/.cargo/bin/starship init fish | source
@@ -49,7 +49,7 @@ abbr -ag gpsh git push
 abbr -ag gpu git push -u origin \(git branch --show-current\)
 abbr -ag gs git status
 abbr -ag gsw git switch
-abbr -ag gst git stash -u
+abbr -ag gst git stash
 abbr -ag gstp git stash pop
 abbr -ag gr git restore
 abbr -ag gm git merge
@@ -70,4 +70,4 @@ abbr -ag ll exal
 abbr -ag la exal -a
 abbr -ag grep rg
 
-# test -t 0 && initialize_tmux
+test -t 0 && initialize_tmux
