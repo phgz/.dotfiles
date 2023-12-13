@@ -5,6 +5,7 @@ set -gx MANPATH $HOME/.local/share/man /usr/share/man $MANPATH
 set -gx DIRENV_LOG_FORMAT ""
 
 set -gx STARSHIP_CONFIG ~/.config/starship/config.toml
+set -gx GHCUP_USE_XDG_DIRS true
 set -gx EDITOR nvim
 set -gx PYTHONBREAKPOINT pdbr.set_trace
 ### "bat" as manpager
