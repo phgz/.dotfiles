@@ -113,6 +113,23 @@ set("n", "<left>", "<nop>")
 set("n", "<right>", "<nop>")
 set("n", "<up>", "<nop>")
 set("n", "<down>", "<nop>")
+set({ "n" }, "go", function()
+	local current_file = call("expand", { "%:p" })
+	local p_git_diff = vim.system({ "git", "diff", "--name-only" }, { text = true })
+	local p_git_root = vim.system({ "git", "rev-parse", "--show-toplevel" }, { text = true })
+	local git_diff = p_git_diff:wait()
+	local git_root = p_git_root:wait().stdout
+	git_root = git_root:sub(1, #git_root - 1) .. "/"
+
+	local files = vim.split(git_diff.stdout, "\n", { trimempty = true })
+	for _, file in ipairs(files) do
+		vim.cmd.edit(git_root .. file)
+	end
+
+	if current_file ~= "" then
+		call("setreg", { "#", current_file })
+	end
+end, { silent = true })
 set({ "n", "x" }, "k", function()
 	local line = vim.fn.line(".")
 	local bound = call("line", { "w0" })

@@ -164,6 +164,15 @@ return {
 				}))
 			end)
 
+			vim.keymap.set("n", "<leader>R", function() --
+				require("telescope").extensions.repo.list(vim.tbl_extend("error", dropdown_theme, {
+					post_action = function(prefix)
+						vim.cmd.cd(prefix)
+					end,
+					prompt = " (cd into a repo)",
+				}))
+			end)
+
 			vim.keymap.set("n", "<leader>r", function()
 				vim.go.autochdir = false
 				require("telescope").extensions.repo.list()
