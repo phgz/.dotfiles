@@ -420,6 +420,7 @@ return {
 			)
 		end,
 	},
+	{ "github/copilot.vim", enabled = false },
 	{
 		"folke/flash.nvim",
 		event = "VeryLazy",
