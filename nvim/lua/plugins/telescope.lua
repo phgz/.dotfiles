@@ -165,6 +165,7 @@ return {
 			end)
 
 			vim.keymap.set("n", "<leader>R", function() --
+				vim.go.autochdir = false
 				require("telescope").extensions.repo.list(vim.tbl_extend("error", dropdown_theme, {
 					post_action = function(prefix)
 						vim.cmd.cd(prefix)

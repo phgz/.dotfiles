@@ -64,7 +64,8 @@ return {
 						command = "python3.11",
 						args = {
 							"-c",
-							[[import base64, hashlib, pathlib, tomllib; h = base64.urlsafe_b64encode(hashlib.sha256(bytes(pathlib.Path.cwd())).digest()).decode()[:8]; p=tomllib.load(open('pyproject.toml', 'rb'))['tool']['poetry']['name'].replace('.','-').replace('_', '-'); print(next(dir for dir in (pathlib.Path.home() / '.cache/pypoetry/virtualenvs').iterdir() if str(dir.name).startswith(p+'-'+h)))]],
+							[[import base64, hashlib, pathlib, tomllib; h = base64.urlsafe_b64encode(hashlib.sha256(bytes(pathlib.Path.cwd())).digest()).decode()[:8]; p = tomllib.load(open("pyproject.toml", "rb"))["tool"]["poetry"]["name"].replace(".", "-").replace("_", "-"); cache = ".cache" if "$(uname -s)" == "Linux" else "Library/Caches"; virtualenvs = (pathlib.Path.home() / cache / "pypoetry/virtualenvs").iterdir(); env_name = next(dir for dir in virtualenvs if str(dir.name).startswith(p + "-" + h)); print(env_name)
+]],
 						},
 						cwd = project_root,
 						env = { ["PATH"] = vim.env.PATH },
