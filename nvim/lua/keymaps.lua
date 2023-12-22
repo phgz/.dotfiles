@@ -132,23 +132,33 @@ set({ "n" }, "go", function()
 	end
 end, { silent = true })
 set({ "n", "x" }, "k", function()
+	if call("line", { "w$" }) == 1 then
+		return
+	end
+
 	local line = vim.fn.line(".")
 	local bound = call("line", { "w0" })
 	local increment = math.floor(api.nvim_win_get_height(0) / 3)
 
 	api.nvim_feedkeys(increment .. vim.keycode("<C-e>"), "n", false)
 	if line - increment < bound then
-		api.nvim_feedkeys("M", "n", false)
+		local dist = line - bound
+		api.nvim_feedkeys(dist > 0 and dist .. "+" or "_", "n", false)
 	end
 end, { silent = true })
 set({ "n", "x" }, "j", function()
+	if call("line", { "w0" }) == 1 then
+		return
+	end
+
 	local line = vim.fn.line(".")
 	local bound = call("line", { "w$" })
 	local increment = math.floor(api.nvim_win_get_height(0) / 3)
 
 	api.nvim_feedkeys(increment .. vim.keycode("<C-y>"), "n", false)
 	if line + increment > bound then
-		api.nvim_feedkeys("M", "n", false)
+		local dist = bound - line
+		api.nvim_feedkeys(dist > 0 and dist .. "-" or "_", "n", false)
 	end
 end, { silent = true })
 set("n", "<S-cr>", function() -- Pad with newlines
