@@ -368,6 +368,10 @@ set("i", "<C-k>", function() -- Delete next word
 	api.nvim_buf_set_text(0, row - 1, col, row - 1, end_col, {})
 end)
 
+set("n", "<C-l>", function() -- Clear message
+	vim.cmd.echo([["\u00A0"]])
+	vim.wo.statusline = vim.wo.statusline
+end)
 set("i", "<C-l>", function() -- Add new string parameter
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	local content = api.nvim_get_current_line()
