@@ -76,12 +76,19 @@ set("v", "<leader>s", function() -- Sort selection
 	api.nvim_feedkeys(vim.keycode("<esc>"), "x", true)
 end)
 
-set("n", "<leader>o", function() -- Add input to beginning of file
-	local input = call("input", { "Add before first line: " })
-	if input == "" then
-		return
+set("n", "<leader>o", function() -- open files returned by input command
+	local current_file = call("expand", { "%:p" })
+	local input = vim.fn.input("Command (cwd is " .. vim.fn.getcwd() .. "): ")
+	local command = vim.system(vim.split(input, " "), { text = true }):wait()
+
+	local files = vim.split(command.stdout, "\n", { trimempty = true })
+	for _, file in ipairs(files) do
+		vim.cmd.edit(file)
 	end
-	api.nvim_buf_set_lines(0, 0, 0, true, { input })
+
+	if current_file ~= "" then
+		call("setreg", { "#", current_file })
+	end
 end)
 
 -- localleader key
