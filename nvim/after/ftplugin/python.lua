@@ -5,5 +5,8 @@ local match = vim.iter(call("getmatches", {})):find(function(match)
 	return match["group"] == "DiffText"
 end)
 
-call("matchdelete", { match["id"] })
+if match ~= nil then
+	call("matchdelete", { match["id"] })
+end
+
 call("matchadd", { "DiffText", "\\%89v" })
