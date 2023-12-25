@@ -12,7 +12,7 @@ set -gx PYTHONBREAKPOINT pdbr.set_trace
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 
 set fish_vi_force_cursor 1
-set fish_cursor_default underscore
+set fish_cursor_default line
 fish_vi_cursor
 
 bind \ca beginning-of-line
