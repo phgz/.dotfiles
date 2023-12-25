@@ -176,9 +176,11 @@ return {
 
 			vim.keymap.set("n", "<leader>r", function()
 				vim.go.autochdir = false
-				require("telescope").extensions.repo.list()
+				require("telescope").extensions.repo.list(dropdown_theme)
 			end)
-			vim.keymap.set("n", "<leader>u", require("telescope").extensions.undo.undo)
+			vim.keymap.set("n", "<leader>u", function()
+				require("telescope").extensions.undo.undo(dropdown_theme)
+			end)
 		end,
 	},
 }
