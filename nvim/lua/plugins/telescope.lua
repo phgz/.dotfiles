@@ -103,6 +103,9 @@ return {
 			vim.keymap.set("n", "<leader>g", function()
 				builtin.live_grep(dropdown_theme)
 			end)
+			vim.keymap.set("n", "<leader>G", function()
+				builtin.grep_string(dropdown_theme)
+			end)
 			vim.keymap.set("n", "<leader>b", function()
 				builtin.buffers(vim.tbl_extend("error", dropdown_theme, {
 					cwd_only = true,
