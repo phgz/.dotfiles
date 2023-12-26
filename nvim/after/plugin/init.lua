@@ -7,4 +7,4 @@ local status_line = function()
 end
 vim.go.statusline = status_line()
 vim.opt.formatoptions:remove({ "l", "o", "r" })
-vim.wo.statuscolumn = [[%s%#LineNr#%{luaeval("require'utils'.status_column()")}]]
+vim.wo.statuscolumn = [[%s%{%luaeval("require'utils'.status_column()")%}]]
