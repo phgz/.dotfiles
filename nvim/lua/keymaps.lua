@@ -110,11 +110,11 @@ end)
 --Normal key
 set({ "v" }, "ab", "apk") -- a block is a paragraph
 set({ "o" }, "ab", "ap") -- a block is a paragraph
-set("n", "<left>", "<nop>")
-set("n", "<right>", "<nop>")
-set("n", "<up>", "<nop>")
-set("n", "<down>", "<nop>")
-set({ "n" }, "go", function()
+set("n", "<left>", "<nop>") -- do nothing with arrows
+set("n", "<right>", "<nop>") -- do nothing with arrows
+set("n", "<up>", "<nop>") -- do nothing with arrows
+set("n", "<down>", "<nop>") -- do nothing with arrows
+set({ "n" }, "go", function() -- open git modified files
 	local current_file = call("expand", { "%:p" })
 	local p_git_diff = vim.system({ "git", "diff", "--name-only" }, { text = true })
 	local p_git_root = vim.system({ "git", "rev-parse", "--show-toplevel" }, { text = true })
@@ -131,7 +131,7 @@ set({ "n" }, "go", function()
 		call("setreg", { "#", current_file })
 	end
 end, { silent = true })
-set({ "n", "x" }, "k", function()
+set({ "n", "x" }, "k", function() -- scroll down 1/3 of screen
 	if call("line", { "w$" }) == call("line", { "$" }) then
 		return
 	end
@@ -147,7 +147,7 @@ set({ "n", "x" }, "k", function()
 		api.nvim_feedkeys(dist > 0 and dist .. "+" or "_", "n", false)
 	end
 end, { silent = true })
-set({ "n", "x" }, "j", function()
+set({ "n", "x" }, "j", function() -- scroll up 1/3 of screen
 	if call("line", { "w0" }) == 1 then
 		return
 	end
@@ -165,8 +165,8 @@ set({ "n", "x" }, "j", function()
 end, { silent = true })
 set("n", "<S-cr>", function() -- Pad with newlines
 	local row, col = unpack(api.nvim_win_get_cursor(0))
-	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
 	api.nvim_buf_set_lines(0, row, row, true, { "" })
+	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
 	api.nvim_win_set_cursor(0, { row + 1, col })
 end)
 set("o", "L", function() -- select line from first char to end
@@ -185,21 +185,21 @@ end)
 set("n", "U", function() -- Redo
 	vim.cmd("redo")
 end)
-set("n", "o", function()
+set("n", "o", function() -- `o` with count
 	local count = vim.v.count1
 	if count > 1 then
 		new_lines(true, count - 1)
 	end
 	vim.api.nvim_feedkeys("o", "n", false)
 end)
-set("n", "O", function()
+set("n", "O", function() -- `O` with count
 	local count = vim.v.count1
 	if count > 1 then
 		new_lines(false, count - 1)
 	end
 	vim.api.nvim_feedkeys("O", "n", false)
 end)
-set("o", "q", function()
+set("o", "q", function() -- go to after next word delimiter
 	local pattern = "_"
 	local word_under_cursor = call("expand", { "<cword>" })
 	if word_under_cursor:find("_") == nil then
@@ -239,11 +239,11 @@ set({ "n" }, "<M-[>", function() -- Swap with prev line
 	api.nvim_feedkeys("==", "n", false)
 end)
 
-vim.keymap.set({ "v" }, "<M-]>", function() -- Swap selection with next line
+set({ "v" }, "<M-]>", function() -- Swap selection with next line
 	move(true)
 end)
 
-vim.keymap.set({ "v" }, "<M-[>", function() -- Swap selection with prev line
+set({ "v" }, "<M-[>", function() -- Swap selection with prev line
 	move(false)
 end)
 
@@ -302,8 +302,8 @@ set("i", "<C-space>", function() -- Pad with space
 end)
 set("i", "<C-cr>", function() -- Pad with newlines
 	local row, col = unpack(api.nvim_win_get_cursor(0))
-	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
 	api.nvim_buf_set_lines(0, row, row, true, { "" })
+	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
 	api.nvim_win_set_cursor(0, { row + 1, col })
 end)
 
@@ -339,6 +339,7 @@ end)
 set("n", "<M-a>", function() -- Paste above
 	vim.cmd("put!")
 end)
+
 set("n", "<M-b>", function() -- Paste below
 	vim.cmd("put")
 end)
@@ -356,7 +357,7 @@ set("i", "<C-f>", function() -- Go one character right
 	api.nvim_win_set_cursor(0, { row, col + 1 })
 end)
 
-set("i", "<C-b>", function() -- Go one character right
+set("i", "<C-b>", function() -- Go one character left
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_win_set_cursor(0, { row, col - 1 })
 end)
@@ -384,6 +385,7 @@ set("n", "<C-l>", function() -- Clear message
 	vim.cmd.echo([["\u00A0"]])
 	vim.wo.statusline = vim.wo.statusline
 end)
+
 set("i", "<C-l>", function() -- Add new string parameter
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	local content = api.nvim_get_current_line()
@@ -460,14 +462,14 @@ set("n", "vn", function() -- Apply "v" to next motion
 	apply_to_next_motion("v")
 end)
 
-set("n", "yn", function() -- Apply "v" to next motion
+set("n", "yn", function() -- Apply "y" to next motion
 	apply_to_next_motion("y")
 end)
 
-set("n", "dn", function() -- Apply "v" to next motion
+set("n", "dn", function() -- Apply "d" to next motion
 	apply_to_next_motion("d")
 end)
 
-set("n", "cn", function() -- Apply "v" to next motion
+set("n", "cn", function() -- Apply "c" to next motion
 	apply_to_next_motion("c")
 end)

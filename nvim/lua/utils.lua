@@ -219,9 +219,9 @@ M.move = function(fwd)
 	vim.cmd(start_row .. "," .. end_row .. "move" .. (fwd and end_row .. "+1" or start_row .. "-2"))
 
 	if fwd then
-		M.update_selection(true, visual_mode, end_row, start_col, end_row + range, end_col)
+		M.update_selection(true, visual_mode, start_row + 1, start_col, end_row + 1, end_col)
 	else
-		M.update_selection(true, visual_mode, start_row - range, start_col, start_row, end_col)
+		M.update_selection(true, visual_mode, start_row - 1, start_col, end_row - 1, end_col)
 	end
 	vim.api.nvim_feedkeys("=gv", "n", false)
 end
