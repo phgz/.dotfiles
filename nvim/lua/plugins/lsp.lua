@@ -56,6 +56,9 @@ return {
 				"folke/neodev.nvim",
 				config = true,
 			},
+			{
+				"SmiteshP/nvim-navic", -- Context in the status bar
+			},
 		}, -- LSP and completion
 		config = function()
 			local get_poetry_venv = function(project_root)
@@ -82,9 +85,18 @@ return {
 					vim.cmd("silent cfirst")
 				end
 
+				if client.server_capabilities.documentSymbolProvider then
+					require("nvim-navic").attach(client, bufnr)
+				end
 				-- Mappings.
 
 				local opts = { buffer = bufnr, silent = true }
+				vim.keymap.set("n", "<leader>w", function()
+					if require("nvim-navic").is_available() then
+						vim.notify(require("nvim-navic").get_location())
+					end
+					vim.wo.statusline = vim.wo.statusline
+				end, opts)
 				vim.keymap.set("n", "<leader>j", function()
 					vim.lsp.buf.definition({ on_list = on_list })
 				end, opts)

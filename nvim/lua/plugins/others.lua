@@ -2,7 +2,6 @@
 
 return {
 	"nvim-lua/plenary.nvim", -- Lua functions
-	"nvim-lua/popup.nvim",
 	"tpope/vim-repeat", -- Repeat plugins commands
 	{
 		"ayu-theme/ayu-vim", -- midnight theme
@@ -133,8 +132,8 @@ return {
 			require("illuminate").configure({
 				-- providers: provider used to get references in the buffer, ordered by priority
 				providers = {
-					"treesitter",
 					"lsp",
+					"treesitter",
 					"regex",
 				},
 				-- delay: delay in milliseconds
@@ -269,17 +268,6 @@ return {
 					},
 				},
 			})
-		end,
-	},
-	{
-		"SmiteshP/nvim-gps", -- Context in the status bar
-		keys = "<leader>w",
-		config = function()
-			require("nvim-gps").setup()
-			vim.keymap.set("n", "<leader>w", function()
-				vim.notify(require("nvim-gps").get_location())
-				vim.wo.statusline = vim.wo.statusline
-			end, { silent = true })
 		end,
 	},
 	{

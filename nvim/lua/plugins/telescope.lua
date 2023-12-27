@@ -2,7 +2,6 @@ return {
 	{
 		"nvim-telescope/telescope.nvim",
 		dependencies = {
-			"popup.nvim",
 			{ "phgz/telescope-repo.nvim", branch = "feature/custom-post-action" },
 			"debugloop/telescope-undo.nvim",
 			"nvim-telescope/telescope-ui-select.nvim",
