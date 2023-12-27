@@ -132,7 +132,7 @@ set({ "n" }, "go", function()
 	end
 end, { silent = true })
 set({ "n", "x" }, "k", function()
-	if call("line", { "w$" }) == 1 then
+	if call("line", { "w$" }) == call("line", { "$" }) then
 		return
 	end
 
