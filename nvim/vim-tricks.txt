@@ -30,6 +30,7 @@
 
 gJ                        => join without space
 gf                        => start editing the file whose name is under the cursor
+gi                        => Start insert mode where it was stopped last time
 gI                        => Insert at column 1
 g{j,k}                    => Go down/up by one screen line
 gUU                       => Make line uppercase (`guu` for lowercase)
