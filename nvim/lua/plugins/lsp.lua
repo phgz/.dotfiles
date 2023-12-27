@@ -80,23 +80,35 @@ return {
 				-- Enable completion triggered by <c-x><c-o>
 				vim.bo[bufnr].omnifunc = "v:lua.vim.lsp.omnifunc"
 
+				-- Mappings.
+
+				local opts = { buffer = bufnr, silent = true }
+
+				if client.server_capabilities.documentSymbolProvider then
+					local navic = require("nvim-navic")
+					local navic_lib = require("nvim-navic.lib")
+
+					vim.keymap.set("n", "<leader>w", function()
+						if navic.is_available() then
+							navic_lib.update_context(bufnr)
+							vim.notify(navic.get_location())
+						end
+						vim.wo.statusline = vim.wo.statusline
+					end, opts)
+
+					navic.attach(client, bufnr)
+
+					local navic_cursor_autocmds =
+						vim.api.nvim_get_autocmds({ group = "navic", event = { "CursorHold", "CursorMoved" } })
+					vim.api.nvim_del_autocmd(navic_cursor_autocmds[2].id)
+					vim.api.nvim_del_autocmd(navic_cursor_autocmds[3].id)
+				end
+
 				local function on_list(options)
 					vim.fn.setqflist({}, " ", options)
 					vim.cmd("silent cfirst")
 				end
 
-				if client.server_capabilities.documentSymbolProvider then
-					require("nvim-navic").attach(client, bufnr)
-				end
-				-- Mappings.
-
-				local opts = { buffer = bufnr, silent = true }
-				vim.keymap.set("n", "<leader>w", function()
-					if require("nvim-navic").is_available() then
-						vim.notify(require("nvim-navic").get_location())
-					end
-					vim.wo.statusline = vim.wo.statusline
-				end, opts)
 				vim.keymap.set("n", "<leader>j", function()
 					vim.lsp.buf.definition({ on_list = on_list })
 				end, opts)
