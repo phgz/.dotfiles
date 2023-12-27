@@ -17,14 +17,6 @@ api.nvim_create_autocmd("TextYankPost", {
 api.nvim_create_autocmd("VimEnter", {
 	callback = function()
 		vim.keymap.set("n", "<esc>", function() -- Close popups
-			-- local relative = function(win)
-			-- 	return api.nvim_win_get_config(win).relative ~= ""
-			-- end
-			-- vim.iter(api.nvim_list_wins()):filter(relative):each(function(win)
-			-- 	if api.nvim_win_is_valid(win) then
-			-- 		api.nvim_win_close(win, true)
-			-- 	end
-			-- end)
 			vim.cmd("fclose!")
 			api.nvim_feedkeys(vim.keycode("<esc>"), "n", false)
 		end)
@@ -39,24 +31,6 @@ api.nvim_create_autocmd("BufReadPost", {
 		end
 	end,
 })
-
--- local signs = vim.iter.map(function(letter)
--- 	return { name = "StaticViewport" .. letter, text = letter, texthl = "mangenta" }
--- end, vim.gsplit("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", ""))
---
--- call("sign_define", { signs })
---
--- local function set_signs_for_viewport()
--- 	-- Clear existing signs for the window
--- 	vim.fn.sign_unplace("StaticViewport", { buffer = "%" })
---
--- 	local lnum_start = vim.fn.line("w0")
--- 	local lnum_end = vim.fn.line("w$")
---
--- 	for i, letter in ipairs(vim.list_slice(signs, 1, lnum_end - lnum_start + 1)) do
--- 		vim.fn.sign_place(0, "StaticViewport", letter.name, "%", { lnum = lnum_start + i - 1 })
--- 	end
--- end
 
 api.nvim_create_autocmd("WinScrolled", {
 	callback = function()
