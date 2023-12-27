@@ -403,39 +403,50 @@ end)
 
 set("", "h", function() -- Goto line
 	local char = call("getchar", {})
+
 	if char == 27 then
 		abort()
 		return
 	end
+
 	vim.cmd.normal({ "m'", bang = true })
-	local text_height = vim.api.nvim_win_text_height(
-		0,
-		{ start_row = call("line", { "w0" }) - 1, end_row = call("line", { "w$" }) - 1 }
-	)
-	local middle = math.ceil(text_height.all / 2)
+	local first_screen_row = call("line", { "w0" })
+	local last_screen_row = call("line", { "w$" })
+	local last_row = call("line", { "$" })
+	local middle
+
+	if last_row == last_screen_row then
+		-- use text height
+		local text_height = vim.api.nvim_win_text_height(0, {
+			start_row = first_screen_row - 1,
+			end_row = last_screen_row - 1,
+		})
+		middle = math.ceil(text_height.all / 2)
+	else
+		-- use win height
+		local window_height = vim.api.nvim_win_get_height(0)
+		middle = math.ceil(window_height / 2)
+	end
+
 	local curpos = call("winline", {})
 	local wanted = middle - (char - 96)
 	local dist = math.abs(wanted - curpos)
 
 	vim.cmd.normal({ dist .. "g" .. (wanted > curpos and "j" or "k"), bang = true })
 end)
+
 set("", "l", function() -- Goto line
 	local char = call("getchar", {})
 	if char == 27 then
 		abort()
 		return
 	end
-	vim.cmd.normal({ "m'", bang = true })
-	local text_height = vim.api.nvim_win_text_height(
-		0,
-		{ start_row = call("line", { "w0" }) - 1, end_row = call("line", { "w$" }) - 1 }
-	)
-	local middle = math.ceil(text_height.all / 2)
-	local curpos = call("winline", {})
-	local wanted = middle + (char - 96)
-	local dist = math.abs(wanted - curpos)
 
-	vim.cmd.normal({ dist .. "g" .. (wanted > curpos and "j" or "k"), bang = true })
+	vim.cmd.normal("h" .. call("nr2char", { 192 - char }))
+end)
+
+set("", "M", function() -- Goto line
+	vim.cmd.normal("h`")
 end)
 
 set("n", "q", function() -- Go to after next _
