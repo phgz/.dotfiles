@@ -132,6 +132,20 @@ function M.adj_commented()
 	M.update_selection(true, "V", rs, 0, re, 0)
 end
 
+function M.paste(lowercase)
+	local char = lowercase and "p" or "P"
+	api.nvim_feedkeys(char, "n", true)
+	api.nvim_create_autocmd("TextChanged", {
+		once = true,
+		callback = function()
+			local start_row, start_col = unpack(api.nvim_buf_get_mark(0, "["))
+			local end_row, end_col = unpack(api.nvim_buf_get_mark(0, "]"))
+			api.nvim_buf_set_mark(0, "<", start_row, start_col, {})
+			api.nvim_buf_set_mark(0, ">", end_row, end_col, {})
+		end,
+	})
+end
+
 function M.yank_comment_paste()
 	local utils = require("Comment.utils")
 	local col = call("col", { "." })

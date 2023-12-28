@@ -1,4 +1,5 @@
 local get_range = require("utils").get_range
+local paste = require("utils").paste
 local move = require("utils").move
 local goto_block_extremity = require("utils").goto_block_extremity
 local goto_after_sep = require("utils").goto_after_sep
@@ -114,6 +115,12 @@ set("n", "<left>", "<nop>") -- do nothing with arrows
 set("n", "<right>", "<nop>") -- do nothing with arrows
 set("n", "<up>", "<nop>") -- do nothing with arrows
 set("n", "<down>", "<nop>") -- do nothing with arrows
+set("", "p", function() -- Paste and set '< and '> marks
+	paste(true)
+end)
+set("", "P", function() -- Paste and set '< and '> marks
+	paste(false)
+end)
 set({ "n" }, "go", function() -- open git modified files
 	local current_file = call("expand", { "%:p" })
 	local p_git_diff = vim.system({ "git", "diff", "--name-only" }, { text = true })
