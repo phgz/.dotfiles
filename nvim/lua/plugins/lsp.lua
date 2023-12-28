@@ -113,7 +113,7 @@ return {
 					vim.lsp.buf.definition({ on_list = on_list })
 				end, opts)
 				vim.keymap.set("n", "<localleader>h", function()
-					vim.lsp.inlay_hint(bufnr)
+					vim.lsp.inlay_hint.enable(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr))
 				end, opts)
 				vim.keymap.set("n", "H", function()
 					local captures = vim.treesitter.get_captures_at_cursor()
