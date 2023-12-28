@@ -18,26 +18,21 @@ local config = {
 	telescope_theme = false,
 	transparent_mode = true,
 	highlights = {
-		DiagnosticUnderlineOk = { style = "undercurl", bg = "None", sp = colors.magenta },
-		DiagnosticUnderlineHint = { style = "undercurl", bg = "None", sp = colors.forest_green },
+		DiagnosticUnderlineInfo = { style = "undercurl", bg = "None", sp = colors.forest_green },
+		DiagnosticUnderlineHint = { style = "undercurl", bg = "None", sp = colors.light_blue },
 		DiagnosticUnderlineWarn = { style = "undercurl", bg = "None", sp = colors.soft_yellow },
-		DiagnosticUnderlineInfo = { style = "undercurl", bg = "None", sp = colors.light_blue },
 		DiagnosticUnderlineError = { style = "undercurl", bg = "None", sp = colors.red },
 
-		DiagnosticLineNrOk = { style = "bold", bg = "None", fg = colors.magenta },
-		DiagnosticLineNrHint = { style = "bold", bg = "None", fg = colors.forest_green },
+		DiagnosticLineNrInfo = { style = "bold", bg = "None", fg = colors.forest_green },
+		DiagnosticLineNrHint = { style = "bold", bg = "None", fg = colors.light_blue },
 		DiagnosticLineNrWarn = { style = "bold", bg = "None", fg = colors.soft_yellow },
-		DiagnosticLineNrInfo = { style = "bold", bg = "None", fg = colors.light_blue },
 		DiagnosticLineNrError = { style = "bold", bg = "None", fg = colors.red },
 
-		DiagnosticOk = { bg = "None", fg = colors.magenta },
-		DiagnosticHint = { bg = "None", fg = colors.forest_green },
+		DiagnosticInfo = { bg = "None", fg = colors.forest_green },
+		DiagnosticHint = { bg = "None", fg = colors.light_blue },
 		DiagnosticWarn = { bg = "None", fg = colors.soft_yellow },
-		DiagnosticInfo = { bg = "None", fg = colors.light_blue },
 		DiagnosticError = { bg = "None", fg = colors.red },
 
-		DiagnosticDeprecated = { bg = "None", fg = colors.orange },
-		-- DiagnosticUnnecessary = { bg = "None", fg = colors.pink },
 		LspInlayHint = { fg = "teal" },
 
 		LspSignatureActiveParameter = { style = "italic", fg = colors.soft_green },
@@ -72,6 +67,8 @@ local config = {
 		BlueStatusLine = { fg = colors.soft_yellow, bg = "#413c37" },
 		GreyStatusLine = { fg = "grey", bg = "#413c37" },
 
+		WrappedLineNr = { fg = util.darken(colors.medium_gray, 0.66) },
+
 		TelescopeBorder = { fg = background_dark, bg = background_dark },
 		TelescopePromptCounter = { fg = colors.milk, bg = colors.medium_gray },
 		TelescopePromptBorder = { fg = colors.medium_gray, bg = colors.medium_gray },
@@ -95,10 +92,11 @@ local config = {
 		NoiceCursor = { bg = "#928374" },
 		NoiceCmdlineIcon = { link = "StatusLine" },
 		NoiceCmdline = { link = "StatusLine" },
+
 		FlashPrompt = { link = "StatusLine" },
 	},
 }
-
 vim.cmd("hi clear")
 vim.go.background = "dark"
 util.load(theme.setup(config))
+-- require("gruvbox-baby").colorscheme()

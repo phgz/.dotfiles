@@ -25,9 +25,12 @@ local user_config = {
 			DiagnosticHint = { fg = c.green },
 			DiagnosticLineNrError = { fg = c.error, style = "bold" },
 			DiagnosticLineNrWarn = { fg = c.warning, style = "bold" },
-			DiagnosticLineNrInfo = { fg = c.info, style = "bold" },
-			DiagnosticLineNrHint = { fg = c.green, style = "bold" },
-			DiagnosticUnderlineHint = { style = "undercurl", sp = c.green },
+			DiagnosticLineNrInfo = { fg = c.green, style = "bold" },
+			DiagnosticLineNrHint = { fg = c.info, style = "bold" },
+			DiagnosticUnderlineHint = { style = "undercurl", sp = c.info },
+			DiagnosticUnderlineInfo = { style = "undercurl", sp = c.green },
+			WrappedLineNr = { fg = util.darken(c.cursor_line_nr, 0.33) },
+			CursorLineNr = { fg = c.cursor_line_nr, style = "bold" },
 			LspInlayHint = { fg = "teal" },
 			YellowStatusLine = { fg = c.warning, bg = "#babbbd" },
 			RedStatusLine = { fg = "#fb4934", bg = "#babbbd" },
@@ -61,7 +64,7 @@ local user_config = {
 		}
 	end,
 }
-
+-- vim.cmd('colorscheme github_light')
 vim.cmd("hi clear")
 config.apply_configuration(user_config)
 util.load(theme.setup(config.schema))

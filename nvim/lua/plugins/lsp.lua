@@ -123,16 +123,6 @@ return {
 						vim.lsp.buf.signature_help()
 					end
 				end, opts)
-
-				call("sign_define", {
-					{
-						{ name = "DiagnosticSignError", numhl = "DiagnosticLineNrError" },
-						{ name = "DiagnosticSignWarn", numhl = "DiagnosticLineNrWarn" },
-						{ name = "DiagnosticSignInfo", numhl = "DiagnosticLineNrInfo" },
-						{ name = "DiagnosticSignHint", numhl = "DiagnosticLineNrHint" },
-						{ name = "DiagnosticSignOk", numhl = "DiagnosticLineNrOk" },
-					},
-				})
 			end
 
 			local lsp_config = {
@@ -140,8 +130,21 @@ return {
 					virtual_text = false,
 					underline = true,
 					update_in_insert = true,
-					severity_sort = false,
-					signs = true,
+					severity_sort = true,
+					signs = {
+						text = {
+							[vim.diagnostic.severity.WARN] = "",
+							[vim.diagnostic.severity.INFO] = "",
+							[vim.diagnostic.severity.HINT] = "",
+							[vim.diagnostic.severity.ERROR] = "",
+						},
+						numhl = {
+							[vim.diagnostic.severity.ERROR] = "DiagnosticLineNrError",
+							[vim.diagnostic.severity.WARN] = "DiagnosticLineNrWarn",
+							[vim.diagnostic.severity.INFO] = "DiagnosticLineNrInfo",
+							[vim.diagnostic.severity.HINT] = "DiagnosticLineNrHint",
+						},
+					},
 					float = {
 						focusable = true,
 						style = "minimal",
