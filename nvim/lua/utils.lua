@@ -306,7 +306,6 @@ end
 
 function M.status_column()
 	local screen_row = call("screenpos", { 0, vim.v.lnum, 1 }).row
-	local first_screen_row = call("line", { "w0" })
 	local last_screen_row = call("line", { "w$" })
 	local last_row = call("line", { "$" })
 	local middle
@@ -314,7 +313,7 @@ function M.status_column()
 	if last_row == last_screen_row then
 		-- use text height
 		local text_height = vim.api.nvim_win_text_height(0, {
-			start_row = first_screen_row - 1,
+			start_row = call("line", { "w0" }) - 1,
 			end_row = last_screen_row - 1,
 		})
 		middle = math.ceil(text_height.all / 2)
@@ -324,7 +323,7 @@ function M.status_column()
 		middle = math.ceil(window_height / 2)
 	end
 
-	local highlight = vim.v.virtnum > 0 and "%#WinSeparator#" or "%#LineNr#"
+	local highlight = vim.v.virtnum > 0 and "%#WrappedLineNr#" or ""
 	local chars = " M"
 	if screen_row + vim.v.virtnum ~= middle then
 		chars = (screen_row + vim.v.virtnum < middle and "h" or "l")
