@@ -32,6 +32,19 @@ api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
+api.nvim_create_autocmd("BufAdd", {
+	callback = function()
+		print("BufAdd")
+		api.nvim_create_autocmd("BufEnter", {
+			once = true,
+			callback = function()
+				print("BufEnter")
+				vim.cmd.normal({ "zX", bang = true })
+			end,
+		})
+	end,
+})
+
 api.nvim_create_autocmd("WinScrolled", {
 	callback = function()
 		vim.wo.statuscolumn = vim.wo.statuscolumn
