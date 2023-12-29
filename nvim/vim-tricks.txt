@@ -28,6 +28,7 @@
 :<C-f>                    => expand command line
 :cd %:h                   => change to the directory of the current file
 :write ++p                => creates parent directories
+<C-R>_<C-W>               => insert the Word under the cursor.
 
 gJ                        => join without space
 gf                        => start editing the file whose name is under the cursor
