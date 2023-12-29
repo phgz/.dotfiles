@@ -17,6 +17,7 @@
 :=                        => echo last line number
 :s/a/&b                   => append b to a
 :s/\%Va/b                 => apply substitution only in previous visual range
+:s/\%>.ca/b               => apply substitution only after the cursor col
 :s/.\{-}/b                => non-greedy `*` equivalent
 :s/.\zea/b                => until `a` (`a` not included in match, \zs for match start)
 :s/\_./b                  => any single character including newline
