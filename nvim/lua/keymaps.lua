@@ -143,32 +143,22 @@ set({ "n", "x" }, "k", function() -- scroll down 1/3 of screen
 		return
 	end
 
-	local line = vim.fn.line(".")
 	local first_screen_row = call("line", { "w0" })
 	local last_screen_row = call("line", { "w$" })
 	local increment = math.floor((last_screen_row - first_screen_row + 1) / 3)
 
 	api.nvim_feedkeys(increment .. vim.keycode("<C-e>"), "n", false)
-	if line - increment < first_screen_row then
-		local dist = line - first_screen_row
-		api.nvim_feedkeys(dist > 0 and dist .. "+" or "_", "n", false)
-	end
 end, { silent = true })
 set({ "n", "x" }, "j", function() -- scroll up 1/3 of screen
 	if call("line", { "w0" }) == 1 then
 		return
 	end
 
-	local line = vim.fn.line(".")
 	local first_screen_row = call("line", { "w0" })
 	local last_screen_row = call("line", { "w$" })
 	local increment = math.floor((last_screen_row - first_screen_row + 1) / 3)
 
 	api.nvim_feedkeys(increment .. vim.keycode("<C-y>"), "n", false)
-	if line + increment > last_screen_row then
-		local dist = last_screen_row - line
-		api.nvim_feedkeys(dist > 0 and dist .. "-" or "_", "n", false)
-	end
 end, { silent = true })
 set("n", "<S-cr>", function() -- Pad with newlines
 	local row, col = unpack(api.nvim_win_get_cursor(0))
