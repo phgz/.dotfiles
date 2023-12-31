@@ -49,7 +49,7 @@ return {
 			-- if call("UltiSnips#CanExpandSnippet", {}) == 1 then
 			-- 	call("UltiSnips#ExpandSnippet", {})
 			-- else
-				api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
+			api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
 			-- end
 		end
 
@@ -92,7 +92,7 @@ return {
 				if vim.endswith(prev_input, suggestion) then
 					insert_snippet_or_tab()
 				else
-					call("ddc#_notify", { "hide", { "CompleteDone" } })
+					call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
 					vim.v.completed_item = item
 					vim.g["ddc#_skip_next_complete"] = vim.g["ddc#_skip_next_complete"] + 1
 					insert_suggestion(suggestion)
@@ -128,7 +128,7 @@ return {
 
 		vim.keymap.set("i", "<ESC>", function()
 			if call("pumvisible", {}) == 1 then
-				call("ddc#_notify", { "hide", { "CompleteDone" } })
+				call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
 				return "<C-e>"
 			else
 				return "<ESC>"
