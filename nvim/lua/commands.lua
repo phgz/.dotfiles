@@ -11,6 +11,7 @@ api.nvim_create_autocmd("FileType", {
 api.nvim_create_autocmd("TextYankPost", {
 	callback = function()
 		vim.highlight.on_yank()
+		call("setreg", { "/", call("getreg", { '"' }) })
 	end,
 })
 
