@@ -9,7 +9,7 @@ ansi = [
   '#0598bc',
   '#6a737d',
 ]
-background = '#f4f4f4'
+background = '#f6f8fa'
 brights = [
   '#959da5',
   '#cb2431',
@@ -22,7 +22,7 @@ brights = [
 ]
 cursor_bg = '#044289'
 cursor_border = '#044289'
-cursor_fg = '#f4f4f4'
+cursor_fg = '#f6f8fa'
 foreground = '#282828'
 selection_bg = '#dbe9f9'
 selection_fg = '#24292f'
