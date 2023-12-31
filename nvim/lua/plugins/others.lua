@@ -4,7 +4,7 @@ return {
 	"nvim-lua/plenary.nvim", -- Lua functions
 	"tpope/vim-repeat", -- Repeat plugins commands
 	{
-		"ayu-theme/ayu-vim", -- midnight theme
+		"Shatur/neovim-ayu", -- midnight theme
 		lazy = true,
 		config = function() end,
 	},
