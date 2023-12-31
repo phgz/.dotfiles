@@ -5,6 +5,7 @@ local status_line = function()
 		[[%#GreyStatusLine#%{%luaeval('require("noice.api.status").search.get() or require("noice.api.status").message.get() or ""')%}]]
 	return "%F" .. git .. flags .. "%=" .. message
 end
+
 vim.go.statusline = status_line()
 vim.opt.formatoptions:remove({ "l", "o", "r" })
 vim.wo.statuscolumn = [[%s%{%luaeval("require'utils'.status_column()")%}]]
