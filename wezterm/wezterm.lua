@@ -113,47 +113,42 @@ wezterm.on("update-status", function(window, pane)
 end)
 
 local get_tab_title = function(tab, reserved)
-	reserved = reserved or 0
-	local path
-	local cwd = tab:active_pane():get_current_working_dir()
-	local username = wezterm.home_dir:match("/.*/(.*)")
-	local home = cwd:match("/Users/" .. username) or cwd:match("/home/" .. username)
+	local cwd = tab:active_pane():get_current_working_dir().file_path
+	local formatted_path = cwd
+	local home = cwd:match(wezterm.home_dir)
 	if home then
 		local rel_dir = cwd:match(home .. "/(.*)")
 		if rel_dir then
-			path = rel_dir:match("[^/]+") -- project root
+			formatted_path = rel_dir:match("[^/]+") -- project root
 		else
-			path = "~" -- home
+			formatted_path = "~" -- home
 		end
-	else
-		path = cwd:match("file://[^/]+(.*)") or "Pending..."
 	end
 	local config = tab:window():gui_window():effective_config()
+	if reserved then
 	local path_max_width = config.tab_max_width - reserved
-	local too_large = #path > path_max_width
+	local too_large = #formatted_path > path_max_width
 	if too_large then
-		while #path + 4 > path_max_width do
-			path = path:match("(.*)/")
+		while #formatted_path + 4 > path_max_width do
+			formatted_path = formatted_path:match("(.*)/")
 		end
-		path = path .. "/..."
+		formatted_path = formatted_path .. "/..."
 	end
-	return path
+	end
+	return formatted_path
 end
 
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-	local path
-	local cwd = tab.active_pane.current_working_dir
-	local username = wezterm.home_dir:match("/.*/(.*)")
-	local home = cwd:match("/Users/" .. username) or cwd:match("/home/" .. username)
+	local cwd = tab:active_pane():get_current_working_dir().file_path
+	local formatted_path = cwd
+	local home = cwd:match(wezterm.home_dir)
 	if home then
 		local rel_dir = cwd:match(home .. "/(.*)")
 		if rel_dir then
-			path = rel_dir:match("[^/]+") -- project root
+			formatted_path = rel_dir:match("[^/]+") -- project root
 		else
-			path = "~" -- home
+			formatted_path = "~" -- home
 		end
-	else
-		path = cwd:match("file://[^/]+(.*)") or "Pending..."
 	end
 	local is_first = tab.tab_index == 0
 	local is_last = tab.tab_index == #tabs - 1
@@ -168,14 +163,21 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 	local tab_index = tab.tab_index + 1 .. " "
 	local reserved = #tab_index + #pad_left + #pad_right + #zoomed + #active + #active_zoomed_pad + has_separator
 	local path_max_width = config.tab_max_width - reserved
-	local too_large = #path > path_max_width
+	local too_large = #formatted_path > path_max_width
 	if too_large then
-		while #path + 4 > path_max_width do
-			path = path:match("(.*)/")
+		while #formatted_path + 4 > path_max_width do
+			formatted_path = formatted_path:match("(.*)/")
 		end
-		path = path .. "/..."
+		formatted_path = formatted_path .. "/..."
 	end
-	local title = pad_left .. tab_index .. active .. zoomed .. active_zoomed_pad .. path .. pad_right .. separator
+	local title = pad_left
+		.. tab_index
+		.. active
+		.. zoomed
+		.. active_zoomed_pad
+		.. formatted_path
+		.. pad_right
+		.. separator
 	local output = {
 		{ Text = title },
 	}
