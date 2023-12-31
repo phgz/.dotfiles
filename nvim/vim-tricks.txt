@@ -24,6 +24,7 @@
 :s/\(a\)/\=f(submatch(1)) => apply function `f` to submatch
 :s/\d\+/\=submatch(0)+1   => increment match of 1 unit
 :g/p/s/a/b                => apply substitution only where `p` pattern appears
+:g!/p/s/a/b                => apply substitution only where `p` pattern does not appears
 :<C-v>                    => insert literal
 :<C-f>                    => expand command line
 :cd %:h                   => change to the directory of the current file
