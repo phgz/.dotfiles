@@ -7,12 +7,15 @@ local apply_to_next_motion = require("utils").apply_to_next_motion
 local new_lines = require("utils").new_lines
 local get_modes = require("utils").get_modes
 local abort = require("utils").abort
+local esc = vim.keycode("<esc>")
 
 local set = vim.keymap.set
 local api = vim.api
 local call = api.nvim_call_function
 
 -- leader key
+set("n", "<leader><esc>", function() -- Do nothing
+end)
 set("n", "<leader>t", function() -- Toggle alternate buffer
 	vim.cmd(":b #")
 end)
@@ -74,7 +77,7 @@ set("v", "<leader>s", function() -- Sort selection
 	local lines = api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
 	table.sort(lines)
 	api.nvim_buf_set_lines(0, start_row - 1, end_row, true, lines)
-	api.nvim_feedkeys(vim.keycode("<esc>"), "x", true)
+	api.nvim_feedkeys(esc, "x", true)
 end)
 
 set("n", "<leader>o", function() -- open files returned by input command
@@ -94,6 +97,8 @@ end)
 
 -- localleader key
 set("n", "<localleader>d", "<cmd>:windo :diffthis<cr>") -- Diff
+set("n", "<localleader><esc>", function() -- Do nothing
+end)
 set("n", "<localleader>q", function() -- Remove breakpoints
 	local cur_pos = api.nvim_win_get_cursor(0)
 	vim.cmd("g/breakpoint()/d")
@@ -360,7 +365,7 @@ set("i", "<C-b>", function() -- Go one character left
 end)
 
 set("i", "<C-q>", function() -- Go to normal mode one char right
-	api.nvim_feedkeys(api.nvim_replace_termcodes("<esc>", true, false, true), "t", true)
+	api.nvim_feedkeys(esc, "t", true)
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_win_set_cursor(0, { row, col + 1 })
 end)
