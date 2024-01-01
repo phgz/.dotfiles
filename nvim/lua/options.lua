@@ -34,8 +34,7 @@ bo.softtabstop = 4
 bo.tabstop = 4
 
 go.autochdir = true -- False to work with vim rooter, telescope-repo
--- go.clipboard = "unnamedplus"
--- go.cmdheight = 0
+go.cmdheight = 0
 go.completeopt = "menu,menuone,noinsert,noselect"
 go.gdefault = true
 go.hlsearch = false
