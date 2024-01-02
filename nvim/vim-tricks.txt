@@ -25,6 +25,7 @@
 :s/\d\+/\=submatch(0)+1   => increment match of 1 unit
 :g/p/s/a/b                => apply substitution only where `p` pattern appears
 :g!/p/s/a/b                => apply substitution only where `p` pattern does not appears
+:'<,'>g!/^$/exe "norm! f{vi}^[" | s/\%V\S\+/&, => apply to non-empty lines, chain commands with |
 :<C-v>                    => insert literal
 :<C-f>                    => expand command line
 :cd %:h                   => change to the directory of the current file

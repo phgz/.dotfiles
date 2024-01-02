@@ -14,18 +14,19 @@ require("github-theme").setup({
 	palettes = {
 		-- all = {
 		-- 	blue = {
-		-- 		base = "#0366d6",
-		-- 		bright = "#005cc5",
+		-- 		base = "#0366D6",
+		-- 		bright = "#005CC5",
 		-- 	},
 		-- },
 	},
 	specs = {
 		all = {
 			syntax = {
-				param = "#e36209",
+				param = "#E36209",
 			},
 			diag = {
 				hint = "success.fg",
+				warn = "#BF8803",
 			},
 		},
 	},
@@ -46,7 +47,7 @@ require("github-theme").setup({
 			NoiceCursor = { bg = "#044289" },
 
 			NormalFloat = { bg = "bg1" },
-			TelescopePromptTitle = { fg = "#4c92e1" },
+			TelescopePromptTitle = { fg = "#4C92E1" },
 			LspSignatureActiveParameter = { fg = "palette.green.bright", style = "italic" },
 
 			DiagnosticLineNrError = { fg = "diag.error", style = "bold" },
@@ -54,9 +55,9 @@ require("github-theme").setup({
 			DiagnosticLineNrInfo = { fg = "diag.info", style = "bold" },
 			DiagnosticLineNrHint = { fg = "diag.hint", style = "bold" },
 
-			CursorLine = { bg = "#dee9f6" },
+			CursorLine = { bg = "#DEE9F6" },
 			CursorLineNr = { fg = "fg2", style = "bold" },
-			StatusLine = { fg = "#4c92e1", bg = "bg3" },
+			StatusLine = { fg = "#4C92E1", bg = "bg3" },
 			YellowStatusLine = { fg = "diag.info", bg = "bg3" },
 			GreenStatusLine = { fg = "git.add", bg = "bg3" },
 			BlueStatusLine = { fg = "git.changed", bg = "bg3" },
