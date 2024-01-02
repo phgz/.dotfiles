@@ -1,102 +1,80 @@
-local theme = require("gruvbox-baby.theme")
-local colors = require("gruvbox-baby.colors").config({
-	transparent_mode = true,
-	use_original_palette = false,
-	-- color_overrides = { light_blue = "#4FABB1" },
-})
+local colors = require("gruvbox-baby.colors").p
 local util = require("gruvbox-baby.util")
-local background_dark = "#1d2021"
-local background = "#282828"
-local config = {
-	comment_style = "italic",
-	keyword_style = "italic",
-	function_style = "bold",
-	string_style = "nocombine",
-	variable_style = "NONE",
-	-- color_overrides = { light_blue = "#4FABB1" },
 
-	telescope_theme = false,
-	transparent_mode = true,
-	highlights = {
-		DiagnosticUnderlineInfo = { style = "undercurl", bg = "None", sp = colors.forest_green },
-		DiagnosticUnderlineHint = { style = "undercurl", bg = "None", sp = colors.light_blue },
-		DiagnosticUnderlineWarn = { style = "undercurl", bg = "None", sp = colors.soft_yellow },
-		DiagnosticUnderlineError = { style = "undercurl", bg = "None", sp = colors.red },
+vim.g.gruvbox_baby_transparent_mode = 1
 
-		DiagnosticLineNrInfo = { style = "bold", bg = "None", fg = colors.forest_green },
-		DiagnosticLineNrHint = { style = "bold", bg = "None", fg = colors.light_blue },
-		DiagnosticLineNrWarn = { style = "bold", bg = "None", fg = colors.soft_yellow },
-		DiagnosticLineNrError = { style = "bold", bg = "None", fg = colors.red },
+vim.g.gruvbox_baby_highlights = {
+	DiagnosticUnderlineInfo = { style = "undercurl", bg = "None", sp = colors.light_blue },
+	DiagnosticUnderlineHint = { style = "undercurl", bg = "None", sp = colors.forest_green },
+	DiagnosticUnderlineWarn = { style = "undercurl", bg = "None", sp = colors.soft_yellow },
+	DiagnosticUnderlineError = { style = "undercurl", bg = "None", sp = colors.red },
 
-		DiagnosticInfo = { bg = "None", fg = colors.forest_green },
-		DiagnosticHint = { bg = "None", fg = colors.light_blue },
-		DiagnosticWarn = { bg = "None", fg = colors.soft_yellow },
-		DiagnosticError = { bg = "None", fg = colors.red },
+	DiagnosticLineNrInfo = { style = "bold", bg = "None", fg = colors.light_blue },
+	DiagnosticLineNrHint = { style = "bold", bg = "None", fg = colors.forest_green },
+	DiagnosticLineNrWarn = { style = "bold", bg = "None", fg = colors.soft_yellow },
+	DiagnosticLineNrError = { style = "bold", bg = "None", fg = colors.red },
 
-		LspInlayHint = { fg = "teal" },
+	DiagnosticInfo = { bg = "None", fg = colors.light_blue },
+	DiagnosticHint = { bg = "None", fg = colors.forest_green },
+	DiagnosticWarn = { bg = "None", fg = colors.soft_yellow },
+	DiagnosticError = { bg = "None", fg = colors.red },
 
-		LspSignatureActiveParameter = { style = "italic", fg = colors.soft_green },
+	LspInlayHint = { fg = "teal" },
 
-		GitSignsDelete = { bg = "None", fg = colors.red },
-		GitSignsAdd = { bg = "None", fg = colors.forest_green },
-		GitSignsChange = { bg = "None", fg = colors.soft_yellow },
+	LspSignatureActiveParameter = { style = "italic", fg = colors.soft_green },
 
-		EndOfBuffer = { fg = colors.medium_gray },
+	GitSignsDelete = { bg = "None", fg = colors.red },
+	GitSignsAdd = { bg = "None", fg = colors.forest_green },
+	GitSignsChange = { bg = "None", fg = colors.soft_yellow },
 
-		MatchParen = { bg = colors.medium_gray },
-		MatchWord = { style = "bold" },
+	EndOfBuffer = { fg = colors.medium_gray },
 
-		IncSearch = { fg = colors.forest_green, bg = colors.comment },
-		Substitute = { bg = colors.diff.text },
+	MatchParen = { bg = colors.medium_gray },
+	MatchWord = { style = "bold" },
 
-		StatusLine = { fg = colors.foreground, bg = "#413c37" },
+	IncSearch = { fg = colors.forest_green, bg = colors.comment },
+	Substitute = { bg = colors.diff.text },
 
-		NormalFloat = { bg = background_dark },
-		ErrorFloat = { bg = background_dark },
-		WarningFloat = { bg = background_dark },
-		InfoFloat = { bg = background_dark },
-		HintFloat = { bg = background_dark },
-		FloatBorder = { bg = background_dark },
+	StatusLine = { fg = "#ffd787", bg = "#413c37" },
 
-		PopupPreviewDocument = { fg = colors.foreground, bg = colors.background_light },
-		PopupPreviewBorder = { fg = colors.foreground, bg = colors.background_light },
+	NormalFloat = { bg = colors.background_dark },
 
-		YellowStatusLine = { fg = colors.soft_yellow, bg = "#413c37" },
-		RedStatusLine = { fg = colors.red, bg = "#413c37" },
-		GreenStatusLine = { fg = colors.forest_green, bg = "#413c37" },
-		BlueStatusLine = { fg = colors.soft_yellow, bg = "#413c37" },
-		GreyStatusLine = { fg = "grey", bg = "#413c37" },
+	PopupPreviewDocument = { fg = colors.foreground, bg = colors.background_light },
+	PopupPreviewBorder = { fg = colors.foreground, bg = colors.background_light },
 
-		WrappedLineNr = { fg = util.darken(colors.medium_gray, 0.66) },
+	YellowStatusLine = { fg = colors.soft_yellow, bg = "#413c37" },
+	RedStatusLine = { fg = colors.red, bg = "#413c37" },
+	GreenStatusLine = { fg = colors.forest_green, bg = "#413c37" },
+	BlueStatusLine = { fg = colors.soft_yellow, bg = "#413c37" },
+	GreyStatusLine = { fg = "grey", bg = "#413c37" },
 
-		TelescopeBorder = { fg = background_dark, bg = background_dark },
-		TelescopePromptCounter = { fg = colors.milk, bg = colors.medium_gray },
-		TelescopePromptBorder = { fg = colors.medium_gray, bg = colors.medium_gray },
-		TelescopePromptNormal = { fg = colors.milk, bg = colors.medium_gray },
-		TelescopePromptPrefix = { fg = colors.soft_yellow, bg = colors.medium_gray },
+	WrappedLineNr = { fg = util.darken(colors.medium_gray, 0.66) },
 
-		TelescopeNormal = { bg = background_dark },
+	TelescopeBorder = { fg = colors.background_dark, bg = colors.background_dark },
+	TelescopePromptCounter = { fg = colors.milk, bg = colors.medium_gray },
+	TelescopePromptBorder = { fg = colors.medium_gray, bg = colors.medium_gray },
+	TelescopePromptNormal = { fg = colors.milk, bg = colors.medium_gray },
+	TelescopePromptPrefix = { fg = colors.soft_yellow, bg = colors.medium_gray },
 
-		TelescopePreviewTitle = { fg = background, bg = colors.forest_green },
-		TelescopePreviewMatch = { fg = background_dark, bg = colors.milk },
-		TelescopePromptTitle = { fg = background, bg = colors.soft_yellow },
-		TelescopeResultsTitle = { fg = background_dark, bg = colors.milk },
+	TelescopeNormal = { bg = colors.background_dark },
 
-		TelescopeSelection = { bg = colors.diff.change },
-		TelescopeMultiSelection = { fg = colors.soft_yellow },
+	TelescopePreviewTitle = { fg = colors.background, bg = colors.forest_green },
+	TelescopePreviewMatch = { fg = colors.background_dark, bg = colors.milk },
+	TelescopePromptTitle = { fg = colors.background, bg = colors.soft_yellow },
+	TelescopeResultsTitle = { fg = colors.background_dark, bg = colors.milk },
 
-		IlluminatedWordText = { style = "bold" },
-		IlluminatedWordRead = { style = "bold" },
-		IlluminatedWordWrite = { style = "bold" },
+	TelescopeSelection = { bg = colors.diff.change },
+	TelescopeMultiSelection = { fg = colors.soft_yellow },
 
-		NoiceCursor = { bg = "#928374" },
-		NoiceCmdlineIcon = { link = "StatusLine" },
-		NoiceCmdline = { link = "StatusLine" },
+	IlluminatedWordText = { style = "bold" },
+	IlluminatedWordRead = { style = "bold" },
+	IlluminatedWordWrite = { style = "bold" },
 
-		FlashPrompt = { link = "StatusLine" },
-	},
+	NoiceCursor = { bg = "#928374" },
+	NoiceCmdlineIcon = { link = "StatusLine" },
+	NoiceCmdline = { link = "StatusLine" },
+
+	FlashPrompt = { link = "StatusLine" },
 }
-vim.cmd("hi clear")
-vim.go.background = "dark"
-util.load(theme.setup(config))
--- require("gruvbox-baby").colorscheme()
+
+-- vim.go.background = "dark"

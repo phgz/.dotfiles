@@ -1,13 +1,20 @@
 local dotfiles_path = os.getenv("HOME") .. "/.dotfiles"
 local current_path = dotfiles_path .. "/theme/current"
+local colorschemes_mapping =
+	{ night = "gruvbox-baby", day = "github_light", transition = "paper", midnight = "ayu-dark" }
+
+local initialized = {}
 
 local function reload()
 	local current
 	for line in io.lines(current_path) do
 		current = line
 	end
-	local colorFile = dotfiles_path .. "/nvim/theme/lua/" .. current .. "-theme.lua"
-	vim.cmd("luafile " .. colorFile)
+	if not vim.list_contains(initialized, current) then
+		local colorFile = dotfiles_path .. "/nvim/theme/lua/" .. colorschemes_mapping[current] .. ".lua"
+		vim.cmd("luafile " .. colorFile)
+	end
+	vim.cmd("colorscheme " .. colorschemes_mapping[current])
 end
 
 local w = vim.uv.new_fs_event()

@@ -21,7 +21,7 @@ return {
 	{
 		"projekt0n/github-nvim-theme", -- day theme
 		lazy = true,
-		tag = "v0.0.7",
+		-- tag = "v0.0.7",
 		config = function() end,
 	},
 	{
