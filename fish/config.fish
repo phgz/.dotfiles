@@ -19,7 +19,6 @@ bind \ca beginning-of-line
 bind \ce end-of-line
 bind \c_ kill-line
 bind \ck kill-word
-bind \cs 'clear; commandline -f repaint'
 bind \cc kill-whole-line repaint
 bind \cg expand-abbr
 
@@ -39,6 +38,7 @@ abbr -ag gco git checkout
 abbr -ag gcl git clone
 abbr -ag gc --set-cursor "git commit -m \"%\""
 abbr -ag gd git diff
+abbr -ag gds git diff --staged
 abbr -ag gf git fetch
 abbr -ag gfp git fetch --prune
 abbr -ag gl git log
