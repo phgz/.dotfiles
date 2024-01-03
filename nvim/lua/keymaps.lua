@@ -120,6 +120,18 @@ set("n", "<left>", "<nop>") -- do nothing with arrows
 set("n", "<right>", "<nop>") -- do nothing with arrows
 set("n", "<up>", "<nop>") -- do nothing with arrows
 set("n", "<down>", "<nop>") -- do nothing with arrows
+set("", "gh", "h") -- move left
+set("", "gl", "l") -- move right
+set("", "zJ", function() -- scroll  left
+	local count = math.floor(api.nvim_win_get_width(0) / 3)
+	vim.cmd.normal({ count .. "zh", bang = true })
+end) -- scroll right
+set("", "zK", function()
+	local count = math.floor(api.nvim_win_get_width(0) / 3)
+	vim.cmd.normal({ count .. "zl", bang = true })
+end) -- scroll right
+set("n", "`", "'") -- Swap ` and '
+set("n", "'", "`") -- Swap ` and '
 set("", "p", function() -- Paste and set '< and '> marks
 	paste(true)
 end)
