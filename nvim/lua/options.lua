@@ -54,6 +54,7 @@ go.termguicolors = true
 go.timeoutlen = 4000
 go.wildmode = "list:longest"
 go.incsearch = true
+go.cpoptions = go.cpoptions .. "y"
 
 wo.cursorline = true
 wo.foldtext = "getline(v:foldstart+1)"
