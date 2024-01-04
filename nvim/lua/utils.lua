@@ -163,6 +163,14 @@ function M.yank_comment_paste()
 	api.nvim_win_set_cursor(0, { srow + 1, col - 1 })
 end
 
+function M.cursor_is_punctuation()
+	local captures = vim.treesitter.get_captures_at_cursor()
+
+	return vim.iter(captures):any(function(capture)
+		return capture:match("^punctuation%.")
+	end)
+end
+
 function M.goto_quote(fwd)
 	call("search", { [[\("\|'\)]], "W" .. (fwd and "" or "b") })
 end

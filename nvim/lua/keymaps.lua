@@ -1,6 +1,7 @@
 local get_range = require("utils").get_range
 local paste = require("utils").paste
 local move = require("utils").move
+local cursor_is_punctuation = require("utils").cursor_is_punctuation
 local goto_block_extremity = require("utils").goto_block_extremity
 local goto_after_sep = require("utils").goto_after_sep
 local apply_to_next_motion = require("utils").apply_to_next_motion
@@ -122,6 +123,25 @@ set("n", "<up>", "<nop>") -- do nothing with arrows
 set("n", "<down>", "<nop>") -- do nothing with arrows
 set("", "gh", "h") -- move left
 set("", "gl", "l") -- move right
+-- set({ "n" }, "m", function() end) -- ...
+set("o", "iB", function() -- scroll  left
+	vim.cmd.normal({ "m`", bang = true })
+	api.nvim_win_set_cursor(0, { 1, 0 })
+	vim.cmd.normal({ "Vo", bang = true })
+	api.nvim_win_set_cursor(0, { api.nvim_buf_line_count(0), 0 })
+	if vim.v.operator == "y" then
+		vim.api.nvim_feedkeys(vim.keycode("<C-o>"), "n", true)
+	end
+end) -- buffer motion
+set("o", "aB", function() -- scroll  left
+	vim.cmd.normal({ "m`", bang = true })
+	api.nvim_win_set_cursor(0, { 1, 0 })
+	vim.cmd.normal({ "Vo", bang = true })
+	api.nvim_win_set_cursor(0, { api.nvim_buf_line_count(0), 0 })
+	if vim.v.operator == "y" then
+		vim.api.nvim_feedkeys(vim.keycode("<C-o>"), "n", true)
+	end
+end) -- buffer motion
 set("", "zJ", function() -- scroll  left
 	local count = math.floor(api.nvim_win_get_width(0) / 3)
 	vim.cmd.normal({ count .. "zh", bang = true })
@@ -216,17 +236,26 @@ set("n", "O", function() -- `O` with count
 	end
 	vim.api.nvim_feedkeys("O", "n", false)
 end)
-set("o", "q", function() -- go to after next word delimiter
-	local pattern = "_"
-	local word_under_cursor = call("expand", { "<cword>" })
-	if word_under_cursor:find("_") == nil then
-		pattern = "\\u"
-	end
-	local row, col = unpack(call("searchpos", { pattern, "Wn" }))
-	if not (vim.v.operator == "d" and pattern == "_") then
-		col = col - 1
-	end
-	api.nvim_win_set_cursor(0, { row, col })
+set("o", "b", function() -- inclusive motion
+	local next_beginning_of_word = call("searchpos", { "\\<", "Wcn" })
+	local cursor_pos = call("getpos", { "." })
+	local is_beginning_of_word = vim.deep_equal(next_beginning_of_word, { cursor_pos[2], cursor_pos[3] })
+	local is_identifier_edge
+	api.nvim_feedkeys(
+		vim.v.operator .. ((is_beginning_of_word or cursor_is_punctuation()) and "" or "v") .. "b",
+		"n",
+		true
+	)
+end)
+set("o", "B", function() -- inclusive motion
+	local next_beginning_of_word = call("searchpos", { "\\<", "Wcn" })
+	local cursor_pos = call("getpos", { "." })
+	local is_beginning_of_word = vim.deep_equal(next_beginning_of_word, { cursor_pos[2], cursor_pos[3] })
+	api.nvim_feedkeys(
+		vim.v.operator .. ((is_beginning_of_word or cursor_is_punctuation()) and "" or "v") .. "B",
+		"n",
+		true
+	)
 end)
 set("", "<M-j>", "^") -- Go to first nonblank char
 set("", "<M-k>", "$") -- Go to last char
