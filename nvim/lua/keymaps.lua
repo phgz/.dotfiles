@@ -186,8 +186,11 @@ end)
 set("o", "L", function() -- select line from first char to end
 	vim.cmd.normal({ "vg_o^", bang = true })
 end)
-set("o", "?", function() -- select a diagnostic
-	require("utils").diagnostic(5)
+set("o", "?", function() -- select prev diagnostic
+	require("utils").diagnostic(false)
+end)
+set("o", "/", function() -- select next diagnostic
+	require("utils").diagnostic(true)
 end)
 set("n", "Z", function() -- Write buffer
 	vim.cmd("silent write!")

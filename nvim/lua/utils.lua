@@ -167,7 +167,7 @@ function M.goto_quote(fwd)
 	call("search", { [[\("\|'\)]], "W" .. (fwd and "" or "b") })
 end
 
-function M.diagnostic(lookForwL)
+function M.diagnostic(fwd)
 	-- INFO for whatever reason, diagnostic line numbers and the end column (but
 	-- not the start column) are all off-by-one
 
@@ -191,11 +191,13 @@ function M.diagnostic(lookForwL)
 	end
 
 	local target
-	if curStandingOnPrevD then
+	if not fwd or curStandingOnPrevD then
 		target = prevD
-	elseif nextD and (curRow + lookForwL > nextD.lnum) then
+	elseif nextD then
 		target = nextD
-	else
+	end
+	if not target then
+		vim.notify("Diagnostic not found")
 		return
 	end
 	local start_pos, end_pos = { target.lnum + 1, target.col }, { target.end_lnum + 1, target.end_col - 1 }
