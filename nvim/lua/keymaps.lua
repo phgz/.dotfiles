@@ -3,7 +3,7 @@ local paste = require("utils").paste
 local move = require("utils").move
 local cursor_is_punctuation = require("utils").cursor_is_punctuation
 local goto_block_extremity = require("utils").goto_block_extremity
-local goto_after_sep = require("utils").goto_after_sep
+local goto_camelCase_or_snake_case_part = require("utils").goto_camelCase_or_snake_case_part
 local apply_to_next_motion = require("utils").apply_to_next_motion
 local new_lines = require("utils").new_lines
 local get_modes = require("utils").get_modes
@@ -336,6 +336,84 @@ set("v", "+", function() -- get tabular stats
 	vim.wo.statusline = vim.wo.statusline
 end)
 
+set("", "h", function() -- Goto line
+	local char = call("getchar", {})
+
+	if char == 27 then
+		abort()
+		return
+	end
+
+	vim.cmd.normal({ "m'", bang = true })
+	local first_screen_row = call("line", { "w0" })
+	local last_screen_row = call("line", { "w$" })
+	local last_row = call("line", { "$" })
+	local middle
+
+	if last_row == last_screen_row then
+		-- use text height
+		local text_height = vim.api.nvim_win_text_height(0, {
+			start_row = first_screen_row - 1,
+			end_row = last_screen_row - 1,
+		})
+		middle = math.ceil(text_height.all / 2)
+	else
+		-- use win height
+		local window_height = vim.api.nvim_win_get_height(0)
+		middle = math.ceil(window_height / 2)
+	end
+
+	local curpos = call("winline", {})
+	local wanted = middle - (char - 96)
+	local dist = math.abs(wanted - curpos)
+
+	vim.cmd.normal({ dist .. "g" .. (wanted > curpos and "j" or "k"), bang = true })
+end)
+
+set("", "l", function() -- Goto line
+	local char = call("getchar", {})
+	if char == 27 then
+		abort()
+		return
+	end
+
+	vim.cmd.normal("h" .. call("nr2char", { 192 - char }))
+end)
+
+set("", "M", function() -- Goto line
+	vim.cmd.normal("h`")
+end)
+
+set("n", "q", function() -- Go to after next identifer part
+	goto_camelCase_or_snake_case_part(true, 0)
+end, { silent = true })
+set("n", "gq", function() -- Go to after previous identifier part
+	goto_camelCase_or_snake_case_part(false, 0)
+end, { silent = true })
+set("o", "q", function() -- go to after next identifier part
+	goto_camelCase_or_snake_case_part(true, vim.v.operator == "d" and 0 or -1)
+end)
+set("o", "gq", function() -- go to after previous identifier part
+	api.nvim_feedkeys("v", "x", true)
+	goto_camelCase_or_snake_case_part(false, vim.v.operator == "d" and -1 or 0)
+end)
+
+set("n", "vn", function() -- Apply "v" to next motion
+	apply_to_next_motion("v")
+end)
+
+set("n", "yn", function() -- Apply "y" to next motion
+	apply_to_next_motion("y")
+end)
+
+set("n", "dn", function() -- Apply "d" to next motion
+	apply_to_next_motion("d")
+end)
+
+set("n", "cn", function() -- Apply "c" to next motion
+	apply_to_next_motion("c")
+end)
+
 -- --Modifiers keys
 set("n", "<M-s>", "r<CR>") -- Split below
 set("n", "<M-S-s>", "r<CR><cmd>move .-2<cr>") -- Split up
@@ -447,75 +525,4 @@ set("", "<M-x>", function() -- Delete character after cursor
 	call("setreg", { '"', content:sub(col + 2, col + 2) })
 
 	api.nvim_set_current_line(content:sub(1, col + 1) .. content:sub(col + 3))
-end)
-
-set("", "h", function() -- Goto line
-	local char = call("getchar", {})
-
-	if char == 27 then
-		abort()
-		return
-	end
-
-	vim.cmd.normal({ "m'", bang = true })
-	local first_screen_row = call("line", { "w0" })
-	local last_screen_row = call("line", { "w$" })
-	local last_row = call("line", { "$" })
-	local middle
-
-	if last_row == last_screen_row then
-		-- use text height
-		local text_height = vim.api.nvim_win_text_height(0, {
-			start_row = first_screen_row - 1,
-			end_row = last_screen_row - 1,
-		})
-		middle = math.ceil(text_height.all / 2)
-	else
-		-- use win height
-		local window_height = vim.api.nvim_win_get_height(0)
-		middle = math.ceil(window_height / 2)
-	end
-
-	local curpos = call("winline", {})
-	local wanted = middle - (char - 96)
-	local dist = math.abs(wanted - curpos)
-
-	vim.cmd.normal({ dist .. "g" .. (wanted > curpos and "j" or "k"), bang = true })
-end)
-
-set("", "l", function() -- Goto line
-	local char = call("getchar", {})
-	if char == 27 then
-		abort()
-		return
-	end
-
-	vim.cmd.normal("h" .. call("nr2char", { 192 - char }))
-end)
-
-set("", "M", function() -- Goto line
-	vim.cmd.normal("h`")
-end)
-
-set("n", "q", function() -- Go to after next _
-	goto_after_sep(true)
-end, { silent = true })
-set("n", "gq", function() -- Go to after previous _
-	goto_after_sep(false)
-end, { silent = true })
-
-set("n", "vn", function() -- Apply "v" to next motion
-	apply_to_next_motion("v")
-end)
-
-set("n", "yn", function() -- Apply "y" to next motion
-	apply_to_next_motion("y")
-end)
-
-set("n", "dn", function() -- Apply "d" to next motion
-	apply_to_next_motion("d")
-end)
-
-set("n", "cn", function() -- Apply "c" to next motion
-	apply_to_next_motion("c")
 end)

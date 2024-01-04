@@ -268,27 +268,39 @@ M.goto_block_extremity = function(forward)
 	call("cursor", { line + rhs, col })
 end
 
-M.goto_after_sep = function(fwd)
+M.goto_camelCase_or_snake_case_part = function(fwd, supplemental_snakecase_offset)
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	local prev_char = api.nvim_get_current_line():sub(col, col)
-	local back_on_edge = not fwd and prev_char:find("[%u_]")
-	local opts = "Wn"
-	opts = fwd and opts or opts .. "b"
+	local is_backward_and_neighbour = not fwd and prev_char:find("[%u_]")
+	local snake_case = "_"
+	local opts = "Wn" .. (fwd and "" or "b")
 
-	if back_on_edge then
+	if is_backward_and_neighbour then
 		api.nvim_win_set_cursor(0, { row, col - 1 })
 	end
 
-	local new_row, new_col = unpack(call("searchpos", { "\\u\\|_", opts }))
+	local pattern = snake_case
+	local word_under_cursor = call("expand", { "<cword>" })
+	local wuc_start_col = call("searchpos", { word_under_cursor, "Wcnb" })[2] - 1
+	local i = fwd and col - wuc_start_col + 1 or 1
+	local j = fwd and -1 or col - wuc_start_col - (is_backward_and_neighbour and 1 or 0)
+
+	if word_under_cursor:sub(i, j):find(snake_case) == nil then
+		pattern = pattern .. "\\|\\u\\l"
+	end
+
+	local new_row, new_col = unpack(call("searchpos", { pattern, opts }))
 
 	if new_row == 0 then
-		if back_on_edge then
+		if is_backward_and_neighbour then
+			-- Reset cursor position since we moved it for `searchpos`
 			api.nvim_win_set_cursor(0, { row, col })
-		else
-			return
 		end
 	else
-		api.nvim_win_set_cursor(0, { new_row, new_col })
+		new_col = new_col - 1 -- 0-based indexed in neovim API
+		local char = api.nvim_buf_get_text(0, new_row - 1, new_col, new_row - 1, new_col + 1, {})[1]
+		local offset = char == snake_case and 1 + supplemental_snakecase_offset or 0
+		api.nvim_win_set_cursor(0, { new_row, new_col + offset })
 	end
 end
 
