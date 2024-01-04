@@ -6,9 +6,10 @@
 &                         => repeat last :s
 @:                        => repeat the previous ":" command N times
 
-<C-r> =                   => insert result of expr
+<C-r>=repeat('-', 9)      => insert result of expr
 <C-g>                     => show ruler
 <C-l>                     => clear search highlight
+<C-{o,i}>                 => go to older/newer cursor position in jump list
 <Ctrl-]>                  => jump to tag definition
 <CTRL-W>^                 => split current window and edit alternate file
 
@@ -32,6 +33,7 @@
 :write ++p                => creates parent directories
 <C-R>_<C-W>               => insert the Word under the cursor.
 
+cgn                       => changes the text of the next match
 gJ                        => join without space
 gf                        => start editing the file whose name is under the cursor
 gi                        => Start insert mode where it was stopped last time
@@ -51,7 +53,10 @@ g{p,P}                    => same as `p` or `P`, but do not move cursor
 g{n,N}                    => select next/prev search match
 ga                        => print ascii value of char under cursor
 
+dvb                       => make the motion inclusive (v toggles inclusiveness of last char)
 yVaf                      => force operator to work linewise
+dVM                       => deletes linewise from the cursor position to the middle line included
+d<C-V>j                   => deletes the character under the cursor and the character below the cursor
 v_gv                      => toggle between current and last visual selection
 v_{o,O}                   => go to start/end of visual selection
 v_J                       => join the highlighted lines
