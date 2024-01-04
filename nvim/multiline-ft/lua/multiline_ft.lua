@@ -254,46 +254,46 @@ function M.multiline_find(forward, exclusive, repeat_module)
 		return
 	end
 
-	local modes = require("utils").get_modes()
-	local operator = vim.v.operator
+	-- local modes = require("utils").get_modes()
+	-- local operator = vim.v.operator
 	local operator_count = M.get_registry().operator_count or 0
-	local is_repeating = vim.go.operatorfunc == global_repeat_fn
+	-- local is_repeating = vim.go.operatorfunc == global_repeat_fn
 
 	local opts = {
 		char = char,
 		forward = forward,
 		exclusive = exclusive,
-		modes = modes,
-		operator = operator,
-		operator_count = nil,
 		count = operator_count > 0 and operator_count or vim.v.count1,
-		is_repeating = is_repeating,
-		old_operatorfunc = is_repeating and M.get_registry().old_operatorfunc or vim.go.operatorfunc,
-		register = vim.v.register,
+		-- modes = modes,
+		-- operator = operator,
+		-- operator_count = nil,
+		-- is_repeating = is_repeating,
+		-- old_operatorfunc = is_repeating and M.get_registry().old_operatorfunc or vim.go.operatorfunc,
+		-- register = vim.v.register,
 	}
 
 	M.set_registry(opts)
 	repeat_module.set_last_move(M.goto_pos_multiline, vim.tbl_extend("error", opts, { repeat_motion = true }))
 
-	if not modes.operator_pending then
-		M.goto_pos_multiline(opts)
-		return
-	end
+	-- if not modes.operator_pending then
+	M.goto_pos_multiline(opts)
+	-- 	return
+	-- end
 
-	vim.go.operatorfunc = global_repeat_fn
+	-- vim.go.operatorfunc = global_repeat_fn
 
-	if operator == "c" then
-		local positions = M.goto_pos_multiline(opts)
-		if positions == nil then
-			abort()
-			return
-		end
-		operate_func(positions)
-	elseif operator == "g@" then
-		return
-	else
-		api.nvim_feedkeys("g@l", "n", false)
-	end
+	-- if operator == "c" then
+	-- 	local positions = M.goto_pos_multiline(opts)
+	-- 	if positions == nil then
+	-- 		abort()
+	-- 		return
+	-- 	end
+	-- 	operate_func(positions)
+	-- elseif operator == "g@" then
+	-- 	return
+	-- else
+	-- 	api.nvim_feedkeys("g@l", "n", false)
+	-- end
 end
 
 return M

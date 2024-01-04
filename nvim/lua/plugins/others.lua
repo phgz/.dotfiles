@@ -32,7 +32,6 @@ return {
 		end,
 	},
 	{
-		enabled = false,
 		dir = "~/.dotfiles/nvim/multiline-ft", -- multiline find/repeat
 		config = function()
 			require("multiline_ft")
@@ -418,6 +417,7 @@ return {
 					enabled = false,
 				},
 				char = {
+					enabled = false,
 					jump_labels = true,
 					keys = { "f", "F", "t", "T", ";", "," },
 				},

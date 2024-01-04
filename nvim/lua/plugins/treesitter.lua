@@ -266,38 +266,12 @@ return {
 			local xnext_match, xprev_match =
 				ts_repeat_move.make_repeatable_move_pair(find_unmatched(1, 1), find_unmatched(1, 0))
 
-			-- local rhs =
-			-- 	"<cmd>lua require('multiline_ft').multiline_find(%s,%s,require('nvim-treesitter.textobjects.repeatable_move'))<cr>"
-			-- vim.keymap.set({ "n", "x", "o" }, "f", string.format(rhs, "true", "false"))
-			-- vim.keymap.set({ "n", "x", "o" }, "F", string.format(rhs, "false", "false"))
-			-- vim.keymap.set({ "n", "x", "o" }, "t", string.format(rhs, "true", "true"))
-			-- vim.keymap.set({ "n", "x", "o" }, "T", string.format(rhs, "false", "true"))
-			-- vim.api.nvim_create_autocmd("CmdlineLeave", {
-			-- 	callback = function()
-			-- 		if not vim.v.event.abort and call("getcmdline", {}):match("norm%s") then
-			-- 			-- Cannot set vim.v.event as it is read-only and to modify a key in a dict from lua,
-			-- 			-- we must first copy dict, then assign the key, then reassing key, so we use "let"
-			-- 			vim.cmd("let v:event.abort = 1")
-			--
-			-- 			vim.keymap.set({ "n", "x", "o" }, "f", ts_repeat_move.builtin_f)
-			-- 			vim.keymap.set({ "n", "x", "o" }, "F", ts_repeat_move.builtin_F)
-			-- 			vim.keymap.set({ "n", "x", "o" }, "t", ts_repeat_move.builtin_t)
-			-- 			vim.keymap.set({ "n", "x", "o" }, "T", ts_repeat_move.builtin_T)
-			--
-			-- 			local success, err = pcall(vim.cmd, call("getcmdline", {}))
-			--
-			-- 			vim.keymap.set({ "n", "x", "o" }, "f", string.format(rhs, "true", "false"))
-			-- 			vim.keymap.set({ "n", "x", "o" }, "F", string.format(rhs, "false", "false"))
-			-- 			vim.keymap.set({ "n", "x", "o" }, "t", string.format(rhs, "true", "true"))
-			-- 			vim.keymap.set({ "n", "x", "o" }, "T", string.format(rhs, "false", "true"))
-			-- 			if not success then
-			-- 				vim.cmd(
-			-- 					'echohl ErrorMsg | echom "' .. string.match(err, "Vim[^:]*:(.*)") .. '" | echohl None'
-			-- 				)
-			-- 			end
-			-- 		end
-			-- 	end,
-			-- })
+			local rhs =
+				"<cmd>lua require('multiline_ft').multiline_find(%s,%s,require('nvim-treesitter.textobjects.repeatable_move'))<cr>"
+			vim.keymap.set({ "n", "x" }, "f", string.format(rhs, "true", "false"))
+			vim.keymap.set({ "n", "x" }, "F", string.format(rhs, "false", "false"))
+			vim.keymap.set({ "n", "x" }, "t", string.format(rhs, "true", "true"))
+			vim.keymap.set({ "n", "x" }, "T", string.format(rhs, "false", "true"))
 			vim.keymap.set({ "n", "x", "o" }, "]h", next_hunk)
 			vim.keymap.set({ "n", "x", "o" }, "[h", prev_hunk)
 			vim.keymap.set({ "n", "x", "o" }, "]d", next_diagnostic)
