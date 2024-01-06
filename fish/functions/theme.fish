@@ -64,9 +64,9 @@ function theme
     # echo --- >>/Users/philip/theme-status.txt
 
     if test "$seeking" != "$cycle"
-        and test $seeking != midnight
+        and test $seeking = night
         and test $diff -lt 0
-        and test $dist -le 7200
+        and test $dist -le 3600
         set seeking transition
         set cycle transition
     end

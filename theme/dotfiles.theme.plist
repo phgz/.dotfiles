@@ -83,6 +83,24 @@
                 <key>Minute</key>
                 <integer>20</integer>
                 <key>Hour</key>
+                <integer>15</integer>
+            </dict>
+            <dict>
+                <key>Minute</key>
+                <integer>40</integer>
+                <key>Hour</key>
+                <integer>15</integer>
+            </dict>
+            <dict>
+                <key>Minute</key>
+                <integer>0</integer>
+                <key>Hour</key>
+                <integer>16</integer>
+            </dict>
+            <dict>
+                <key>Minute</key>
+                <integer>20</integer>
+                <key>Hour</key>
                 <integer>16</integer>
             </dict>
             <dict>
