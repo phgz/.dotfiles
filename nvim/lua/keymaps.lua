@@ -422,6 +422,9 @@ set("i", "<C-space>", function() -- Pad with space
 	api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { "  " })
 	api.nvim_win_set_cursor(0, { row, col + 1 })
 end)
+set("n", "<C-space>", function() -- Goto next space and start insert mode between words
+	api.nvim_feedkeys("f i ", "n", true)
+end)
 set("i", "<C-cr>", function() -- Pad with newlines
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_buf_set_lines(0, row, row, true, { "" })
