@@ -1,8 +1,10 @@
 return {
 	"Shougo/ddc.vim",
-	ft = { "python", "lua", "json", "toml", "yaml", "haskell" },
 	dependencies = {
+		{
 		"vim-denops/denops.vim",
+			dependencies = "neovim/nvim-lspconfig",
+		},
 		{
 			"matsui54/denops-popup-preview.vim",
 			config = function()
