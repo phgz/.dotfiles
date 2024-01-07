@@ -293,8 +293,6 @@ set({ "v" }, "<M-[>", function() -- Swap selection with prev line
 	move(false)
 end)
 
-set("v", "y", "ygv<Esc>") -- Do not move cursor on yank
-
 set("", "(", function() -- Goto beginning of block
 	goto_block_extremity(false)
 end)

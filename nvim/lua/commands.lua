@@ -1,5 +1,6 @@
 local api = vim.api
 local call = api.nvim_call_function
+local esc = vim.keycode("<esc>")
 
 call("matchadd", { "DiffText", "\\%97v" })
 
@@ -28,7 +29,27 @@ api.nvim_create_autocmd("SwapExists", {
 api.nvim_create_autocmd("TextYankPost", {
 	callback = function()
 		vim.highlight.on_yank()
+		local event_info = vim.v.event
+		if event_info.operator ~= "y" then
+			return
+		end
+
 		call("setreg", { "/", call("getreg", { '"' }) })
+
+		local extra_visual_command = ""
+
+		if not event_info.visual then
+			local start_row, start_col = unpack(api.nvim_buf_get_mark(0, "["))
+			local end_row, end_col = unpack(api.nvim_buf_get_mark(0, "]"))
+			api.nvim_buf_set_mark(0, "<", start_row, start_col, {})
+			api.nvim_buf_set_mark(0, ">", end_row, end_col - (event_info.inclusive and 0 or 1), {})
+			local previous_mode = vim.fn.visualmode()
+			if not (previous_mode == "" or previous_mode == event_info.regtype) then
+				extra_visual_command = event_info.regtype
+			end
+		end
+
+		api.nvim_feedkeys("gvo" .. extra_visual_command .. esc, "x", true)
 	end,
 })
 
@@ -36,7 +57,7 @@ api.nvim_create_autocmd("VimEnter", {
 	callback = function()
 		vim.keymap.set("n", "<esc>", function() -- Close popups
 			vim.cmd("fclose!")
-			api.nvim_feedkeys(vim.keycode("<esc>"), "n", false)
+			api.nvim_feedkeys(esc, "n", false)
 		end)
 	end,
 })
