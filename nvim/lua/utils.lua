@@ -3,6 +3,14 @@ local call = api.nvim_call_function
 
 local M = {}
 
+local keymaps_register = {}
+M.get_keymap_register = function()
+	return keymaps_register
+end
+M.set_keymap_register = function(keymaps)
+	keymaps_register = keymaps
+end
+
 local esc = vim.keycode("<esc>")
 
 function M.abort()

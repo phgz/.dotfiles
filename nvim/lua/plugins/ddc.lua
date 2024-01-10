@@ -46,6 +46,8 @@ return {
 		local api = vim.api
 		local call = api.nvim_call_function
 		local npairs = require("nvim-autopairs")
+		local gkr = require("utils").get_keymap_register
+		local skr = require("utils").set_keymap_register
 
 		local insert_snippet_or_tab = function()
 			-- if call("UltiSnips#CanExpandSnippet", {}) == 1 then
@@ -121,16 +123,33 @@ return {
 				api.nvim_feedkeys(vim.keycode("<Up>"), "n", false)
 			else
 				vim.fn["ddc#map#manual_complete"]({ sources = { "lsp" }, ui = "native" })
-			end
+				skr({ vim.fn.maparg("<C-f>", "i", false, true), vim.fn.maparg("<C-b>", "i", false, true) })
+				vim.keymap.set("i", "<C-f>", function()
+					vim.fn["popup_preview#scroll"](4)
+				end, opts_expr)
+				vim.keymap.set("i", "<C-b>", function()
+					vim.fn["popup_preview#scroll"](-4)
 		end, opts_expr)
+			end
+		end, opts)
 
 		vim.keymap.set("i", "<CR>", function()
-			return call("pumvisible", {}) == 1 and "<C-y>" or vim.api.nvim_feedkeys(npairs.autopairs_cr(), "n", false)
+			if call("pumvisible", {}) == 1 then
+				local keymaps = gkr()
+				vim.fn.mapset("i", false, keymaps[1])
+				vim.fn.mapset("i", false, keymaps[2])
+				return "<C-y>"
+			else
+				return vim.api.nvim_feedkeys(npairs.autopairs_cr(), "n", false)
+			end
 		end, opts_expr)
 
 		vim.keymap.set("i", "<ESC>", function()
 			if call("pumvisible", {}) == 1 then
 				call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
+				local keymaps = gkr()
+				vim.fn.mapset("i", false, keymaps[1])
+				vim.fn.mapset("i", false, keymaps[2])
 				return "<C-e>"
 			else
 				return "<ESC>"
