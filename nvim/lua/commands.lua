@@ -67,6 +67,7 @@ api.nvim_create_autocmd("BufReadPost", {
 		local row, col = unpack(api.nvim_buf_get_mark(0, '"'))
 		if row > 0 and row <= api.nvim_buf_line_count(0) then
 			api.nvim_win_set_cursor(0, { row, col })
+			vim.api.nvim_feedkeys("zz", "n", false)
 		end
 		vim.defer_fn(function()
 			vim.cmd("redrawstatus")
