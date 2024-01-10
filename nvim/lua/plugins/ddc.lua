@@ -12,7 +12,17 @@ return {
 					border = false,
 					winblend = 30,
 					maxHeight = 12,
-					-- supportUltisnips = true,
+					supportUltisnips = false,
+					supportVsnip = false,
+				}
+			end,
+		},
+		{
+			"matsui54/denops-signature_help",
+			config = function()
+				vim.g.signature_help_config = {
+					contentsStyle = "currentLabel",
+					viewStyle = "virtual",
 				}
 			end,
 		},
@@ -21,8 +31,10 @@ return {
 		"Shougo/ddc-converter_remove_overlap",
 		"Shougo/ddc-source-lsp",
 		"Shougo/ddc-source-around",
+		"Shougo/ddc-filter-sorter_rank",
 		"Shougo/ddc-ui-inline",
 		"Shougo/ddc-ui-native",
+		"matsui54/ddc-postfilter_score",
 		"tani/ddc-fuzzy",
 		"tani/ddc-path",
 		-- "SirVer/ultisnips",
@@ -120,7 +132,7 @@ return {
 
 		vim.keymap.set("i", "<S-Tab>", function()
 			if call("pumvisible", {}) == 1 then
-				api.nvim_feedkeys(vim.keycode("<Up>"), "n", false)
+				api.nvim_feedkeys(vim.keycode("<Up><Up><Down>"), "n", false)
 			else
 				vim.fn["ddc#map#manual_complete"]({ sources = { "lsp" }, ui = "native" })
 				skr({ vim.fn.maparg("<C-f>", "i", false, true), vim.fn.maparg("<C-b>", "i", false, true) })
@@ -159,6 +171,7 @@ return {
 		vim.cmd([[
 			call ddc#custom#load_config(expand('$HOME') . "/.dotfiles/nvim/ddc.ts")
 			call popup_preview#enable()
+			call signature_help#enable()
 			call ddc#enable(#{context_filetype: 'treesitter'})
 				]])
 	end,
