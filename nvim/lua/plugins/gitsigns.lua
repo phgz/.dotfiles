@@ -43,10 +43,16 @@ return {
 				end
 
 				-- Actions
-				map({ "n", "v" }, "gr", gs.reset_hunk)
-				map({ "n", "v" }, "ga", gs.stage_hunk)
-				map("n", "gA", gs.stage_buffer)
+				map("n", "gr", gs.reset_hunk)
+				map("v", "gr", function()
+					gs.reset_hunk({ vim.fn.line("v"), vim.fn.line(".") })
+				end)
+				map("n", "ga", gs.stage_hunk)
+				map("v", "ga", function()
+					gs.stage_hunk({ vim.fn.line("v"), vim.fn.line(".") })
+				end)
 				map("n", "gs", gs.undo_stage_hunk)
+				map("n", "gA", gs.stage_buffer)
 				map("n", "gR", gs.reset_buffer)
 				map("n", "gd", function()
 					gs.preview_hunk()
