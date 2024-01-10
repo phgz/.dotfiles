@@ -513,11 +513,10 @@ end)
 
 set("i", "<C-l>", function() -- Add new string parameter
 	local row, col = unpack(api.nvim_win_get_cursor(0))
-	local content = api.nvim_get_current_line()
-	local quote = content:sub(col + 1, col + 1)
-	local new_line_content = content:sub(1, col + 1) .. ", " .. quote .. quote .. content:sub(col + 2)
-	api.nvim_set_current_line(new_line_content)
+	local quote = api.nvim_get_current_line():sub(col + 1, col + 1)
+	api.nvim_buf_set_text(0, row - 1, col + 1, row - 1, col + 1, { ", " .. quote .. quote })
 	api.nvim_win_set_cursor(0, { row, col + 4 })
+	api.nvim_feedkeys(esc .. "a", "t", false)
 end)
 
 set("", "<M-x>", function() -- Delete character after cursor
