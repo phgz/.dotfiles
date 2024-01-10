@@ -217,13 +217,29 @@ return {
 				return "@" .. query.captures[capture_id]
 			end
 
+			local hunk_wrapper = function(fn)
+				return function()
+					fn()
+					vim.defer_fn(function()
+						local winid = require("gitsigns.popup").is_open("hunk")
+						if winid then
+							local filetype = vim.bo.filetype
+							vim.api.nvim_win_call(winid, function()
+								vim.bo.filetype = filetype
+								vim.keymap.set("n", "q", "<cmd>close<cr>", { silent = true, buffer = true })
+							end)
+						end
+					end, 1)
+				end
+			end
+
 			-- ensure ; goes forward and , goes backward regardless of the last direction
 			-- vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next)
 			-- vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous)
 
 			-- vim way: ; goes to the direction you were moving.
-			vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move)
-			vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_opposite)
+			vim.keymap.set({ "n", "x", "o" }, ";", hunk_wrapper(ts_repeat_move.repeat_last_move))
+			vim.keymap.set({ "n", "x", "o" }, ",", hunk_wrapper(ts_repeat_move.repeat_last_move_opposite))
 			local gs = require("gitsigns")
 			local next_hunk, prev_hunk = ts_repeat_move.make_repeatable_move_pair(gs.next_hunk, gs.prev_hunk)
 			local next_diagnostic, prev_diagnostic = ts_repeat_move.make_repeatable_move_pair(function()
@@ -272,8 +288,8 @@ return {
 			vim.keymap.set({ "n", "x" }, "F", string.format(rhs, "false", "false"))
 			vim.keymap.set({ "n", "x" }, "t", string.format(rhs, "true", "true"))
 			vim.keymap.set({ "n", "x" }, "T", string.format(rhs, "false", "true"))
-			vim.keymap.set({ "n", "x", "o" }, "]h", next_hunk)
-			vim.keymap.set({ "n", "x", "o" }, "[h", prev_hunk)
+			vim.keymap.set({ "n", "x", "o" }, "]h", hunk_wrapper(next_hunk))
+			vim.keymap.set({ "n", "x", "o" }, "[h", hunk_wrapper(prev_hunk))
 			vim.keymap.set({ "n", "x", "o" }, "]d", next_diagnostic)
 			vim.keymap.set({ "n", "x", "o" }, "[d", prev_diagnostic)
 			vim.keymap.set({ "n", "x", "o" }, "]q", next_quote)
