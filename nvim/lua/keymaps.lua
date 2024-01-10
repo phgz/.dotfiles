@@ -509,6 +509,7 @@ end)
 set("n", "<C-l>", function() -- Clear message
 	vim.cmd.echo([["\u00A0"]])
 	vim.wo.statusline = vim.wo.statusline
+	vim.cmd.mes("clear")
 end)
 
 set("i", "<C-l>", function() -- Add new string parameter
