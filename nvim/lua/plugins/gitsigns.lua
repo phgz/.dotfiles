@@ -48,7 +48,17 @@ return {
 				map("n", "gA", gs.stage_buffer)
 				map("n", "gs", gs.undo_stage_hunk)
 				map("n", "gR", gs.reset_buffer)
-				map("n", "gd", gs.preview_hunk)
+				map("n", "gd", function()
+					gs.preview_hunk()
+					local winid = require("gitsigns.popup").is_open("hunk")
+					if winid then
+						local filetype = vim.bo.filetype
+						vim.api.nvim_win_call(winid, function()
+							vim.bo.filetype = filetype
+							vim.keymap.set("n", "q", "<cmd>close<cr>", { silent = true, buffer = true })
+						end)
+					end
+				end)
 				map("n", "gb", function()
 					gs.blame_line({ ignore_whitespace = true })
 				end)
