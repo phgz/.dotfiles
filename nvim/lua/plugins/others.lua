@@ -464,11 +464,18 @@ return {
 				"\\",
 				mode = "n",
 				function()
-					local char = vim.fn.escape(vim.fn.getcharstr(), "^$.*~")
-					if char ~= "i" and char ~= "a" then
-						-- escape
+					if vim.v.count ~= 0 then
+						vim.api.nvim_feedkeys(":.-" .. vim.v.count - 1 .. ",.", "n", false)
 						return
-					else
+					end
+					local char = vim.fn.escape(vim.fn.getcharstr(), "^$.*~")
+					if char == "h" or char == "l" or char == "M" then
+						local offset = require("utils").get_linechars_offset_from_cursor(vim.fn.char2nr(char))
+						if not offset then
+						return
+						end
+						vim.api.nvim_feedkeys(":." .. offset .. ",.", "n", false)
+					elseif char == "i" or char == "a" then
 						local pos = vim.api.nvim_win_get_cursor(0)
 						local is_i_ctrl_o = vim.fn.mode(1) == "niI"
 						if is_i_ctrl_o then
