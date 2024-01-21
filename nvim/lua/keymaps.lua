@@ -1,15 +1,5 @@
-local get_range = require("utils").get_range
-local paste = require("utils").paste
-local move = require("utils").move
-local cursor_is_punctuation = require("utils").cursor_is_punctuation
-local goto_block_extremity = require("utils").goto_block_extremity
-local goto_camelCase_or_snake_case_part = require("utils").goto_camelCase_or_snake_case_part
-local apply_to_next_motion = require("utils").apply_to_next_motion
-local new_lines = require("utils").new_lines
-local get_modes = require("utils").get_modes
-local abort = require("utils").abort
 local esc = vim.keycode("<esc>")
-
+local utils = require("utils")
 local set = vim.keymap.set
 local api = vim.api
 local call = api.nvim_call_function
