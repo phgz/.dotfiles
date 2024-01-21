@@ -59,7 +59,7 @@ api.nvim_create_autocmd("TextYankPost", {
 			end
 		end
 
-		api.nvim_feedkeys("gvo" .. extra_visual_command .. esc, "x", true)
+		api.nvim_feedkeys("gvo" .. extra_visual_command .. esc, "x", false)
 	end,
 })
 
@@ -104,11 +104,9 @@ api.nvim_create_autocmd("BufReadPost", {
 
 api.nvim_create_autocmd("BufAdd", {
 	callback = function()
-		print("BufAdd")
 		api.nvim_create_autocmd("BufEnter", {
 			once = true,
 			callback = function()
-				print("BufEnter")
 				vim.cmd.normal({ "zX", bang = true })
 			end,
 		})
