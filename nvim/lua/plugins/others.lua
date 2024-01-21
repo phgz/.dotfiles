@@ -57,7 +57,7 @@ return {
 			end,
 			vim.iter({ "left", "right", "up", "down" })
 				:map(function(key)
-				return { "<C-S-" .. key .. ">", "<S-M-" .. key .. ">", "<S-" .. key .. ">" }
+					return { "<C-S-" .. key .. ">", "<S-M-" .. key .. ">", "<S-" .. key .. ">" }
 				end)
 				:flatten()
 		),
@@ -479,7 +479,7 @@ return {
 					if char == "h" or char == "l" or char == "M" then
 						local offset = require("utils").get_linechars_offset_from_cursor(vim.fn.char2nr(char))
 						if not offset then
-						return
+							return
 						end
 						vim.api.nvim_feedkeys(":." .. offset .. ",.", "n", false)
 					elseif char == "i" or char == "a" then
