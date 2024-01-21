@@ -471,20 +471,9 @@ set("o", "gq", function() -- go to after previous identifier part
 	goto_camelCase_or_snake_case_part(false, vim.v.operator == "d" and -1 or 0)
 end)
 
-set("n", "vn", function() -- Apply "v" to next motion
-	apply_to_next_motion("v")
-end)
-
-set("n", "yn", function() -- Apply "y" to next motion
-	apply_to_next_motion("y")
-end)
-
-set("n", "dn", function() -- Apply "d" to next motion
-	apply_to_next_motion("d")
-end)
-
-set("n", "cn", function() -- Apply "c" to next motion
+set("o", ">", function() -- Apply operator to next pair
 	utils.apply_to_next_motion(vim.v.operator)
+	api.nvim_feedkeys(esc, "i", false)
 end)
 
 -- --Modifiers keys
