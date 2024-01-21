@@ -527,7 +527,65 @@ end)
 
 set("n", "<M-m>", "mm")
 
-	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { api.nvim_get_current_line() })
+set({ "n", "v" }, "<M-S-m>", function() -- Move lines
+	local count
+	local first_char
+	local visual_state = utils.get_visual_state()
+	local original_cursor_pos = api.nvim_win_get_cursor(0)
+
+	if visual_state.is_active then
+		local start_row, end_row, _ = vim.fn.line("v"), vim.fn.line(".")
+		count = math.abs(end_row - start_row)
+		if start_row < end_row then
+			vim.cmd.normal({ "o", bang = true })
+		end
+	else
+		first_char = vim.fn.getchar()
+		if first_char == 27 then
+			return
+		end
+		if first_char ~= 77 and first_char ~= 104 and first_char ~= 108 and vim.v.count == 0 then
+			local operatorfunc = vim.go.operatorfunc
+			vim.go.operatorfunc = "{_ -> v:true}"
+			print(first_char)
+			api.nvim_feedkeys("g@" .. vim.fn.nr2char(first_char), "x!", false)
+			local start_row = api.nvim_buf_get_mark(0, "<")[1]
+			local end_row = api.nvim_buf_get_mark(0, ">")[1]
+			vim.go.operatorfunc = operatorfunc
+			count = math.abs(end_row - start_row)
+			first_char = nil
+		else
+			count = vim.v.count == 0 and 0 or vim.v.count - 1
+		end
+	end
+
+	local cursor_pos = api.nvim_win_get_cursor(0)
+	local offset = utils.get_linechars_offset_from_cursor(first_char)
+
+	if not offset then
+		api.nvim_win_set_cursor(0, original_cursor_pos)
+		return
+	end
+
+	if visual_state.is_active then
+		api.nvim_feedkeys(esc, "x", false)
+	end
+
+	vim.cmd(".,." .. count .. "move ." .. offset - 1)
+	local adjustment = offset < 0 and offset or offset - count - 1
+	api.nvim_win_set_cursor(0, { cursor_pos[1] + adjustment, cursor_pos[2] })
+	vim.cmd.normal({ count + 1 .. "==_", bang = true })
+end)
+
+set("n", "<M-S-w>", function() -- Swap line
+	local offset = utils.get_linechars_offset_from_cursor()
+	local cursor_row = api.nvim_win_get_cursor(0)[1]
+	local to_swap_row = cursor_row + offset
+	local cursor_line = api.nvim_buf_get_lines(0, cursor_row - 1, cursor_row, true)
+	local to_swap_line = api.nvim_buf_get_lines(0, to_swap_row - 1, to_swap_row, true)
+
+	api.nvim_buf_set_lines(0, cursor_row - 1, cursor_row, true, to_swap_line)
+	api.nvim_buf_set_lines(0, to_swap_row - 1, to_swap_row, true, cursor_line)
 end)
 
 set("n", "<M-d>", function() -- Delete line content
