@@ -341,13 +341,13 @@ return {
 	},
 	{
 		"Wansmer/sibling-swap.nvim", -- Swap sibling treesitter nodes
-		keys = { "sN", "sP" },
+		keys = { "<C-.>", "<C-,>" },
 		config = function()
 			require("sibling-swap").setup({
 				use_default_keymaps = false,
 			})
-			vim.keymap.set("n", "sN", require("sibling-swap")["swap_with_right_with_opp"])
-			vim.keymap.set("n", "sP", require("sibling-swap")["swap_with_left_with_opp"])
+			vim.keymap.set("n", "<C-.>", require("sibling-swap")["swap_with_right_with_opp"])
+			vim.keymap.set("n", "<C-,>", require("sibling-swap")["swap_with_left_with_opp"])
 		end,
 	},
 	{
