@@ -218,7 +218,9 @@ set("n", "<C-cr>", function() -- insert mode with padded newlines
 end)
 
 set("o", "L", function() -- select line from first char to end
-	vim.cmd.normal({ "vg_o^", bang = true })
+	local operator_pending_state = utils.get_operator_pending_state()
+	local visual_mode = operator_pending_state.forced_motion or "v"
+	vim.cmd.normal({ visual_mode .. "g_o^", bang = true })
 end)
 set("o", "?", function() -- select prev diagnostic
 	require("utils").diagnostic(false)
