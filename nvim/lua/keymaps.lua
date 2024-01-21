@@ -394,6 +394,67 @@ set("", "M", function() -- Goto line
 	vim.cmd.normal("l`")
 end)
 
+-- {motion} linewise remote
+set("o", "\\", function()
+	local operator = vim.v.operator
+	local offset = utils.get_linechars_offset_from_cursor()
+
+	if not offset then
+		return
+	end
+
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_win_set_cursor(0, { row + offset, col })
+	vim.cmd.normal({ "V", bang = true })
+	api.nvim_feedkeys(operator, "", false)
+	utils.abort()
+	if operator == "d" then
+		api.nvim_win_set_cursor(0, { row + (math.min(math.max(offset, -1), 0)), col })
+	else
+		api.nvim_win_set_cursor(0, { row, col })
+	end
+	api.nvim_feedkeys("p", "", false)
+	vim.defer_fn(function()
+		api.nvim_feedkeys("==_", "n", false)
+	end, 0)
+end)
+
+-- {motion} linewise range remote
+set("o", "R", function()
+	local operator = vim.v.operator
+	local first_line_offset = utils.get_linechars_offset_from_cursor(nil, true)
+	vim.cmd("redrawstatus")
+	local second_line_offset = utils.get_linechars_offset_from_cursor()
+
+	if not (first_line_offset and second_line_offset) then
+		return
+	end
+
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	api.nvim_win_set_cursor(0, { row + first_line_offset, col })
+	vim.cmd.normal({ "V", bang = true })
+	api.nvim_win_set_cursor(0, { row + second_line_offset, col })
+	api.nvim_feedkeys(operator, "", false)
+	utils.abort()
+
+	if operator == "d" then
+		api.nvim_win_set_cursor(0, {
+			row + (math.min(
+				math.max(
+					first_line_offset + second_line_offset,
+					-(math.abs(first_line_offset - second_line_offset - 1))
+				),
+				0
+			)),
+			col,
+		})
+	else
+		api.nvim_win_set_cursor(0, { row, col })
+	end
+	api.nvim_feedkeys("p", "", false)
+	vim.defer_fn(function()
+		api.nvim_feedkeys("gv=_", "n", false)
+	end, 0)
 end)
 
 set("n", "q", function() -- Go to after next identifer part
