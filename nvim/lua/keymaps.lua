@@ -70,11 +70,11 @@ set("n", "<leader>T", function()
 end)
 
 set("v", "<leader>s", function() -- Sort selection
-	local start_row, _, end_row, _ = get_range()
+	local start_row, _, end_row, _ = utils.get_range()
 	local lines = api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
 	table.sort(lines)
 	api.nvim_buf_set_lines(0, start_row - 1, end_row, true, lines)
-	api.nvim_feedkeys(esc, "x", true)
+	api.nvim_feedkeys(esc, "x", false)
 end)
 
 set("n", "<leader>o", function() -- open files returned by input command
@@ -126,7 +126,7 @@ set("o", "iB", function() -- scroll  left
 	vim.cmd.normal({ "Vo", bang = true })
 	api.nvim_win_set_cursor(0, { api.nvim_buf_line_count(0), 0 })
 	if vim.v.operator == "y" then
-		vim.api.nvim_feedkeys(vim.keycode("<C-o>"), "n", true)
+		api.nvim_feedkeys(vim.keycode("<C-o>"), "n", false)
 	end
 end) -- buffer motion
 set("o", "aB", function() -- scroll  left
@@ -135,7 +135,7 @@ set("o", "aB", function() -- scroll  left
 	vim.cmd.normal({ "Vo", bang = true })
 	api.nvim_win_set_cursor(0, { api.nvim_buf_line_count(0), 0 })
 	if vim.v.operator == "y" then
-		vim.api.nvim_feedkeys(vim.keycode("<C-o>"), "n", true)
+		api.nvim_feedkeys(vim.keycode("<C-o>"), "n", false)
 	end
 end) -- buffer motion
 set("", "zJ", function() -- scroll  left
@@ -149,10 +149,10 @@ end) -- scroll right
 set("n", "`", "'") -- Swap ` and '
 set("n", "'", "`") -- Swap ` and '
 set("", "p", function() -- Paste and set '< and '> marks
-	paste(true)
+	utils.paste(true)
 end)
 set("", "P", function() -- Paste and set '< and '> marks
-	paste(false)
+	utils.paste(false)
 end)
 set({ "n" }, "go", function() -- open git modified files
 	local current_file = call("expand", { "%:p" })
@@ -221,9 +221,9 @@ end)
 set("n", "o", function() -- `o` with count
 	local count = vim.v.count1
 	if count > 1 then
-		new_lines(true, count - 1)
+		utils.new_lines(true, count - 1)
 	end
-	vim.api.nvim_feedkeys("o", "n", false)
+	api.nvim_feedkeys("o", "n", false)
 end)
 set("n", "O", function() -- `O` with count
 	local count = vim.v.count1
@@ -264,7 +264,7 @@ set("", "-", function() -- Go to end of file
 	local op_pending = get_modes().operator_pending
 	local has_count = count ~= 0
 	if op_pending then
-		abort()
+		utils.abort()
 	end
 	vim.api.nvim_feedkeys((has_count and count or "") .. (op_pending and vim.v.operator or "") .. "G", "n", false)
 	if not (has_count or op_pending) then
@@ -282,26 +282,26 @@ set({ "n" }, "<M-[>", function() -- Swap with prev line
 end)
 
 set({ "v" }, "<M-]>", function() -- Swap selection with next line
-	move(true)
+	utils.move(true)
 end)
 
 set({ "v" }, "<M-[>", function() -- Swap selection with prev line
-	move(false)
+	utils.move(false)
 end)
 
 set("", "(", function() -- Goto beginning of block
-	goto_block_extremity(false)
+	utils.goto_block_extremity(false)
 end)
 
 set("", ")", function() -- Goto end of block
-	goto_block_extremity(true)
+	utils.goto_block_extremity(true)
 end)
 
 set("v", "+", function() -- get tabular stats
-	local sr, sc, er, ec = require("utils").get_range()
+	local sr, sc, er, ec = require("utils").utils.get_range()
 	local tbl = {}
 	for i = 0, er - sr do
-		local raw_line = vim.api.nvim_buf_get_text(0, sr + i - 1, sc, sr + i - 1, ec + 1, {})[1]
+		local raw_line = api.nvim_buf_get_text(0, sr + i - 1, sc, sr + i - 1, ec + 1, {})[1]
 		table.insert(tbl, vim.split(raw_line, " "))
 	end
 	tbl = vim.tbl_flatten(tbl)
@@ -367,7 +367,7 @@ end)
 set("", "l", function() -- Goto line
 	local char = call("getchar", {})
 	if char == 27 then
-		abort()
+		utils.abort()
 		return
 	end
 
@@ -379,16 +379,16 @@ set("", "M", function() -- Goto line
 end)
 
 set("n", "q", function() -- Go to after next identifer part
-	goto_camelCase_or_snake_case_part(true, 0)
+	utils.goto_camel_or_snake_or_kebab_part(true, true)
 end, { silent = true })
 set("n", "gq", function() -- Go to after previous identifier part
-	goto_camelCase_or_snake_case_part(false, 0)
+	utils.goto_camel_or_snake_or_kebab_part(false, false)
 end, { silent = true })
 set("o", "q", function() -- go to after next identifier part
-	goto_camelCase_or_snake_case_part(true, vim.v.operator == "d" and 0 or -1)
+	utils.goto_camel_or_snake_or_kebab_part(true, true, vim.v.operator)
 end)
 set("o", "gq", function() -- go to after previous identifier part
-	api.nvim_feedkeys("v", "x", true)
+	api.nvim_feedkeys("v", "x", false)
 	goto_camelCase_or_snake_case_part(false, vim.v.operator == "d" and -1 or 0)
 end)
 
@@ -405,7 +405,7 @@ set("n", "dn", function() -- Apply "d" to next motion
 end)
 
 set("n", "cn", function() -- Apply "c" to next motion
-	apply_to_next_motion("c")
+	utils.apply_to_next_motion(vim.v.operator)
 end)
 
 -- --Modifiers keys
@@ -419,7 +419,7 @@ set("i", "<C-space>", function() -- Pad with space
 	api.nvim_win_set_cursor(0, { row, col + 1 })
 end)
 set("n", "<C-space>", function() -- Goto next space and start insert mode between words
-	api.nvim_feedkeys("f i ", "n", true)
+	api.nvim_feedkeys("f i ", "n", false)
 end)
 set("i", "<C-cr>", function() -- Pad with newlines
 	local row, col = unpack(api.nvim_win_get_cursor(0))
@@ -466,11 +466,11 @@ set("n", "<M-b>", function() -- Paste below
 end)
 
 set("n", "<M-o>", function() -- New line down
-	new_lines(true, vim.v.count1)
+	utils.new_lines(true, vim.v.count1)
 end)
 
 set("n", "<M-S-o>", function() -- New line up
-	new_lines(false, vim.v.count1)
+	utils.new_lines(false, vim.v.count1)
 end)
 
 set("i", "<C-f>", function() -- Go one character right
@@ -484,7 +484,7 @@ set("i", "<C-b>", function() -- Go one character left
 end)
 
 set("i", "<C-q>", function() -- Go to normal mode one char right
-	api.nvim_feedkeys(esc, "t", true)
+	api.nvim_feedkeys(esc, "t", false)
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_win_set_cursor(0, { row, col + 1 })
 end)
