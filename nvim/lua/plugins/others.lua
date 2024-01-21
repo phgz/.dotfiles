@@ -244,7 +244,9 @@ return {
 					use_esc_to_cancel = true,
 				},
 			})
-			vim.keymap.set("n", "sx", require("substitute").operator, { noremap = true })
+			vim.keymap.set("n", "sx", function()
+				require("substitute").operator({ register = vim.v.register })
+			end, { noremap = true })
 			vim.keymap.set("n", "sxx", require("substitute").line, { noremap = true })
 			vim.keymap.set("n", "sX", require("substitute").eol, { noremap = true })
 			vim.keymap.set("n", "cx", require("substitute.exchange").operator, { noremap = true })
