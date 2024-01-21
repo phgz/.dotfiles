@@ -224,10 +224,10 @@ set("o", "L", function() -- select line from first char to end
 end)
 set("o", "?", function() -- select prev diagnostic
 	local forced_motion = utils.get_operator_pending_state().forced_motion
-	local diagnostic_range = require("utils").get_diagnostic_under_cursor_range()
+	local diagnostic_range = utils.get_diagnostic_under_cursor_range()
 
 	if not diagnostic_range then
-		diagnostic_range = require("utils").get_normalized_diag_range(vim.diagnostic.get_prev())
+		diagnostic_range = utils.get_normalized_diag_range(vim.diagnostic.get_prev())
 	end
 
 	api.nvim_win_set_cursor(0, diagnostic_range.start_pos)
@@ -237,10 +237,10 @@ end)
 set("o", "/", function() -- select next diagnostic
 	local forced_motion = utils.get_operator_pending_state().forced_motion
 
-	local diagnostic_range = require("utils").get_diagnostic_under_cursor_range()
+	local diagnostic_range = utils.get_diagnostic_under_cursor_range()
 
 	if not diagnostic_range then
-		diagnostic_range = require("utils").get_normalized_diag_range(vim.diagnostic.get_next())
+		diagnostic_range = utils.get_normalized_diag_range(vim.diagnostic.get_next())
 	end
 
 	api.nvim_win_set_cursor(0, diagnostic_range.start_pos)
@@ -325,7 +325,7 @@ set("", ")", function() -- Goto end of block
 end)
 
 set("v", "+", function() -- get tabular stats
-	local sr, sc, er, ec = require("utils").utils.get_range()
+	local sr, sc, er, ec = utils.get_range()
 	local tbl = {}
 	for i = 0, er - sr do
 		local raw_line = api.nvim_buf_get_text(0, sr + i - 1, sc, sr + i - 1, ec + 1, {})[1]
@@ -337,6 +337,12 @@ set("v", "+", function() -- get tabular stats
 			return vim.iter(numbers):fold(0, function(s, number)
 				return s + number
 			end)
+		end,
+		med = function(numbers)
+			table.sort(numbers)
+			local integral, fractional = math.modf((#numbers + 1) / 2)
+			local middle = (#numbers + 1) / 2
+			return (numbers[math.floor(middle)] + numbers[math.ceil(middle)]) / 2
 		end,
 		max = math.max,
 		min = math.min,
