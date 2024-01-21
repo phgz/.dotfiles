@@ -525,8 +525,8 @@ set("n", "<C-g>", function() -- Show file stats
 	vim.notify(row .. ":" .. col + 1 .. "; " .. line_count .. " lines --" .. relative .. "%--")
 end)
 
-set("n", "<M-S-d>", function() -- Duplicate line
-	local row = api.nvim_win_get_cursor(0)[1]
+set("n", "<M-m>", "mm")
+
 	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { api.nvim_get_current_line() })
 end)
 
