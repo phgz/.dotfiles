@@ -133,13 +133,10 @@ return {
 				}))
 			end)
 			vim.keymap.set("n", "<leader>l", function()
-				builtin.lsp_workspace_symbols(
-					vim.tbl_extend(
-						"error",
-						dropdown_theme,
-						{ query = vim.api.nvim_call_function("expand", { "<cword>" }) }
-					)
-				)
+				builtin.lsp_document_symbols(dropdown_theme)
+			end)
+			vim.keymap.set("n", "<leader>L", function()
+				builtin.lsp_document_symbols(vim.tbl_extend("error", dropdown_theme, { symbols = "function" }))
 			end)
 
 			local post_action_fn = function(prefix, is_equal)
