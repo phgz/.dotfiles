@@ -357,52 +357,43 @@ set("v", "+", function() -- get tabular stats
 	vim.wo.statusline = vim.wo.statusline
 end)
 
-set("", "h", function() -- Goto line
-	local char = call("getchar", {})
+set("", "l", function() -- Goto line
+	local op_pending_state = utils.operator_pending_registry or utils.get_operator_pending_state()
+	utils.operator_pending_registry = nil
+	local visual_state = utils.get_visual_state()
 
-	if char == 27 then
-		abort()
+	local offset = utils.get_linechars_offset_from_cursor(108)
+
+	if not offset then
 		return
 	end
 
-	vim.cmd.normal({ "m'", bang = true })
-	local first_screen_row = call("line", { "w0" })
-	local last_screen_row = call("line", { "w$" })
-	local last_row = call("line", { "$" })
-	local middle
-
-	if last_row == last_screen_row then
-		-- use text height
-		local text_height = vim.api.nvim_win_text_height(0, {
-			start_row = first_screen_row - 1,
-			end_row = last_screen_row - 1,
-		})
-		middle = math.ceil(text_height.all / 2)
-	else
-		-- use win height
-		local window_height = vim.api.nvim_win_get_height(0)
-		middle = math.ceil(window_height / 2)
+	local visual = ""
+	if op_pending_state.is_active then
+		visual = op_pending_state.forced_motion or "V"
+	elseif visual_state.is_active and visual_state.char == "v" then
+		visual = "V"
 	end
-
-	local curpos = call("winline", {})
-	local wanted = middle - (char - 96)
-	local dist = math.abs(wanted - curpos)
-
-	vim.cmd.normal({ dist .. "g" .. (wanted > curpos and "j" or "k"), bang = true })
+	vim.cmd.normal({ "m'", bang = true })
+	vim.cmd.normal({ visual .. math.abs(offset) .. "g" .. (offset > 0 and "j" or "k"), bang = true })
 end)
 
-set("", "l", function() -- Goto line
+set("", "h", function() -- Goto line
+	utils.operator_pending_registry = utils.get_operator_pending_state()
 	local char = call("getchar", {})
 	if char == 27 then
 		utils.abort()
 		return
 	end
 
-	vim.cmd.normal("h" .. call("nr2char", { 192 - char }))
+	vim.cmd.normal("l" .. call("nr2char", { 192 - char }))
 end)
 
 set("", "M", function() -- Goto line
-	vim.cmd.normal("h`")
+	utils.operator_pending_registry = utils.get_operator_pending_state()
+	vim.cmd.normal("l`")
+end)
+
 end)
 
 set("n", "q", function() -- Go to after next identifer part
