@@ -27,57 +27,9 @@
             </dict>
             <dict>
                 <key>Minute</key>
-                <integer>20</integer>
-                <key>Hour</key>
-                <integer>5</integer>
-            </dict>
-            <dict>
-                <key>Minute</key>
-                <integer>40</integer>
-                <key>Hour</key>
-                <integer>5</integer>
-            </dict>
-            <dict>
-                <key>Minute</key>
                 <integer>0</integer>
                 <key>Hour</key>
                 <integer>6</integer>
-            </dict>
-            <dict>
-                <key>Minute</key>
-                <integer>20</integer>
-                <key>Hour</key>
-                <integer>6</integer>
-            </dict>
-            <dict>
-                <key>Minute</key>
-                <integer>40</integer>
-                <key>Hour</key>
-                <integer>6</integer>
-            </dict>
-            <dict>
-                <key>Minute</key>
-                <integer>0</integer>
-                <key>Hour</key>
-                <integer>7</integer>
-            </dict>
-            <dict>
-                <key>Minute</key>
-                <integer>20</integer>
-                <key>Hour</key>
-                <integer>7</integer>
-            </dict>
-            <dict>
-                <key>Minute</key>
-                <integer>40</integer>
-                <key>Hour</key>
-                <integer>7</integer>
-            </dict>
-            <dict>
-                <key>Minute</key>
-                <integer>0</integer>
-                <key>Hour</key>
-                <integer>8</integer>
             </dict>
             <dict>
                 <key>Minute</key>

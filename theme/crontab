@@ -1,7 +1,7 @@
 fish=/home/philip/.local/bin/fish
 
-20,40 5,15 * * * $fish -lc "theme"
-*/20 6-7,16-20 * * * $fish -lc "theme"
-0 8,21 * * * $fish -lc "theme"
+20,40 15 * * * $fish -lc "theme"
+*/20 16-20 * * * $fish -lc "theme"
+0 0,6,21 * * * $fish -lc "theme"
 
 0 4 * * 1-5 printf "\n$(date '+\%a \%d \%b \%Y')\n---------------\n\n" >> $HOME/.log
