@@ -267,31 +267,19 @@ end)
 set("n", "O", function() -- `O` with count
 	local count = vim.v.count1
 	if count > 1 then
-		new_lines(false, count - 1)
+		utils.new_lines(false, count - 1)
 	end
-	vim.api.nvim_feedkeys("O", "n", false)
+	api.nvim_feedkeys("O", "n", false)
 end)
-set("o", "b", function() -- inclusive motion
-	local next_beginning_of_word = call("searchpos", { "\\<", "Wcn" })
-	local cursor_pos = call("getpos", { "." })
-	local is_beginning_of_word = vim.deep_equal(next_beginning_of_word, { cursor_pos[2], cursor_pos[3] })
-	local is_identifier_edge
-	api.nvim_feedkeys(
-		vim.v.operator .. ((is_beginning_of_word or cursor_is_punctuation()) and "" or "v") .. "b",
-		"n",
-		true
-	)
+
+set("o", "b", function() -- inclusive motion back
+	utils.motion_back(true)
 end)
-set("o", "B", function() -- inclusive motion
-	local next_beginning_of_word = call("searchpos", { "\\<", "Wcn" })
-	local cursor_pos = call("getpos", { "." })
-	local is_beginning_of_word = vim.deep_equal(next_beginning_of_word, { cursor_pos[2], cursor_pos[3] })
-	api.nvim_feedkeys(
-		vim.v.operator .. ((is_beginning_of_word or cursor_is_punctuation()) and "" or "v") .. "B",
-		"n",
-		true
-	)
+
+set("o", "B", function() -- inclusive motion BACK
+	utils.motion_back(false)
 end)
+
 set("", "<M-j>", "^") -- Go to first nonblank char
 set("", "<M-k>", "$") -- Go to last char
 set("", "0", function() -- Go to beggining of file
