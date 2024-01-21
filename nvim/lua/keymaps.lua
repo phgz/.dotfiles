@@ -160,6 +160,14 @@ end)
 set("", "P", function() -- Paste and set '< and '> marks
 	utils.paste(false)
 end)
+set("n", "mm", function()
+	api.nvim_feedkeys("mVL", "", false)
+end)
+set(
+	"n",
+	"m",
+	[[<cmd>lua require'utils'.set_position_registry(vim.fn.getpos("."))<cr><cmd>let &operatorfunc = "v:lua.require'utils'.duplicate"<cr>g@]]
+)
 set({ "n" }, "go", function() -- open git modified files
 	local current_file = call("expand", { "%:p" })
 	local p_git_diff = vim.system({ "git", "diff", "--name-only" }, { text = true })
