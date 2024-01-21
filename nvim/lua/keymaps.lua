@@ -223,10 +223,29 @@ set("o", "L", function() -- select line from first char to end
 	vim.cmd.normal({ visual_mode .. "g_o^", bang = true })
 end)
 set("o", "?", function() -- select prev diagnostic
-	require("utils").diagnostic(false)
+	local forced_motion = utils.get_operator_pending_state().forced_motion
+	local diagnostic_range = require("utils").get_diagnostic_under_cursor_range()
+
+	if not diagnostic_range then
+		diagnostic_range = require("utils").get_normalized_diag_range(vim.diagnostic.get_prev())
+	end
+
+	api.nvim_win_set_cursor(0, diagnostic_range.start_pos)
+	vim.cmd.normal({ forced_motion or "v", bang = true })
+	api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
 end)
 set("o", "/", function() -- select next diagnostic
-	require("utils").diagnostic(true)
+	local forced_motion = utils.get_operator_pending_state().forced_motion
+
+	local diagnostic_range = require("utils").get_diagnostic_under_cursor_range()
+
+	if not diagnostic_range then
+		diagnostic_range = require("utils").get_normalized_diag_range(vim.diagnostic.get_next())
+	end
+
+	api.nvim_win_set_cursor(0, diagnostic_range.start_pos)
+	vim.cmd.normal({ forced_motion or "v", bang = true })
+	api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
 end)
 set("n", "Z", function() -- Write buffer
 	vim.cmd("silent write!")
