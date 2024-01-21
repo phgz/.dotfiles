@@ -554,7 +554,7 @@ set("i", "<C-b>", function() -- Go one character left
 	api.nvim_win_set_cursor(0, { row, col - 1 })
 end)
 
-set("i", "<C-q>", function() -- Go to normal mode one char right
+set("i", "<C-esc>", function() -- Go to normal mode one char right
 	api.nvim_feedkeys(esc, "t", false)
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_win_set_cursor(0, { row, col + 1 })
