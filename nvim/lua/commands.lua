@@ -63,11 +63,28 @@ api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
+local close_popups = function()
+	local relative_focusable = function(win)
+		local config = api.nvim_win_get_config(win)
+		return config.relative ~= "" and config.focusable
+	end
+	vim.iter(api.nvim_list_wins()):filter(relative_focusable):each(function(win)
+		if api.nvim_win_is_valid(win) then
+			-- api.nvim_win_close(win, false) is not consistent
+			api.nvim_set_current_win(win)
+			vim.cmd.close()
+		end
+	end)
+end
+
 api.nvim_create_autocmd("VimEnter", {
 	callback = function()
 		vim.keymap.set("n", "<esc>", function() -- Close popups
-			vim.cmd("fclose!")
-			api.nvim_feedkeys(esc, "n", false)
+			close_popups()
+			-- api.nvim_feedkeys(esc, "n", false)
+		end)
+		vim.keymap.set("i", "<C-q>", function() -- Close popups in insert mode
+			close_popups()
 		end)
 	end,
 })
