@@ -126,9 +126,32 @@ return {
 		local opts = { silent = true, noremap = true }
 		local opts_expr = vim.tbl_extend("error", opts, { expr = true })
 
+		local has_registered_scroll_preview_keymaps = false
+		local keymaps_registry = {}
+		local register_scroll_preview_keymaps = function()
+			if not has_registered_scroll_preview_keymaps then
+				keymaps_registry =
+					{ vim.fn.maparg("<C-f>", "i", false, true), vim.fn.maparg("<C-b>", "i", false, true) }
+				vim.keymap.set("i", "<C-f>", function()
+					vim.fn["popup_preview#scroll"](4)
+				end, opts_expr)
+				vim.keymap.set("i", "<C-b>", function()
+					vim.fn["popup_preview#scroll"](-4)
+				end, opts_expr)
+				has_registered_scroll_preview_keymaps = true
+			end
+		end
+		local unregister_scroll_preview_keymaps = function()
+			local keymaps = keymaps_registry
+			vim.fn.mapset("i", false, keymaps[1])
+			vim.fn.mapset("i", false, keymaps[2])
+			has_registered_scroll_preview_keymaps = false
+		end
+
 		vim.keymap.set("i", "<Tab>", function()
 			if call("pumvisible", {}) == 1 then
 				api.nvim_feedkeys(vim.keycode("<Down>"), "n", false)
+				register_scroll_preview_keymaps()
 			else
 				wise_tab()
 			end
@@ -137,23 +160,15 @@ return {
 		vim.keymap.set("i", "<S-Tab>", function()
 			if call("pumvisible", {}) == 1 then
 				api.nvim_feedkeys(vim.keycode("<Up><Up><Down>"), "n", false)
+				register_scroll_preview_keymaps()
 			else
 				vim.fn["ddc#map#manual_complete"]({ sources = { "lsp" }, ui = "native" })
-				skr({ vim.fn.maparg("<C-f>", "i", false, true), vim.fn.maparg("<C-b>", "i", false, true) })
-				vim.keymap.set("i", "<C-f>", function()
-					vim.fn["popup_preview#scroll"](4)
-				end, opts_expr)
-				vim.keymap.set("i", "<C-b>", function()
-					vim.fn["popup_preview#scroll"](-4)
-		end, opts_expr)
 			end
 		end, opts)
 
 		vim.keymap.set("i", "<CR>", function()
 			if call("pumvisible", {}) == 1 then
-				local keymaps = gkr()
-				vim.fn.mapset("i", false, keymaps[1])
-				vim.fn.mapset("i", false, keymaps[2])
+				unregister_scroll_preview_keymaps()
 				return "<C-y>"
 			else
 				return vim.api.nvim_feedkeys(npairs.autopairs_cr(), "n", false)
@@ -163,9 +178,7 @@ return {
 		vim.keymap.set("i", "<ESC>", function()
 			if call("pumvisible", {}) == 1 then
 				call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
-				local keymaps = gkr()
-				vim.fn.mapset("i", false, keymaps[1])
-				vim.fn.mapset("i", false, keymaps[2])
+				unregister_scroll_preview_keymaps()
 				return "<C-e>"
 			else
 				return "<ESC>"
