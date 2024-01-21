@@ -288,13 +288,13 @@ set("", "0", function() -- Go to beggining of file
 end)
 set("", "-", function() -- Go to end of file
 	local count = vim.v.count
-	local op_pending = get_modes().operator_pending
+	local op_is_pending = utils.get_operator_pending_state().is_active
 	local has_count = count ~= 0
-	if op_pending then
+	if op_is_pending then
 		utils.abort()
 	end
-	vim.api.nvim_feedkeys((has_count and count or "") .. (op_pending and vim.v.operator or "") .. "G", "n", false)
-	if not (has_count or op_pending) then
+	api.nvim_feedkeys((has_count and count or "") .. (op_is_pending and vim.v.operator or "") .. "G", "n", false)
+	if not (has_count or op_is_pending) then
 		vim.cmd.call("cursor(line('$'),1)")
 	end
 end)
