@@ -2,7 +2,7 @@ return {
 	"Shougo/ddc.vim",
 	dependencies = {
 		{
-		"vim-denops/denops.vim",
+			"vim-denops/denops.vim",
 			dependencies = "neovim/nvim-lspconfig",
 		},
 		{
@@ -91,8 +91,8 @@ return {
 				assert(vim.snippet.active(), "Snippet did not expand.")
 			else
 				local construct = string.rep(vim.keycode("<BS>"), col - word_under_cursor_start_col)
-			api.nvim_feedkeys(construct .. suggestion, "n", false)
-		end
+				api.nvim_feedkeys(construct .. suggestion, "n", false)
+			end
 		end
 
 		local wise_tab = function()
