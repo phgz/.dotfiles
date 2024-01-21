@@ -17,7 +17,9 @@ set("n", "<leader>h", function() -- Split horizontal
 	vim.cmd("split")
 end)
 
+local last_deleted_buffer_registry = nil
 set("n", "<leader>d", function() -- delete buffer and set alternate file
+	last_deleted_buffer_registry = call("expand", { "%:p" })
 	vim.cmd("bdelete")
 	local new_current_file = call("expand", { "%:p" })
 	local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
@@ -61,6 +63,10 @@ set("n", "<leader>d", function() -- delete buffer and set alternate file
 		-- Alternate file not found in jumplist! Picking last in possible_alternatives
 		call("setreg", { "#", possible_alternatives[#possible_alternatives] })
 	end
+end)
+
+set("n", "<leader>T", function()
+	vim.cmd.edit(last_deleted_buffer_registry)
 end)
 
 set("v", "<leader>s", function() -- Sort selection
