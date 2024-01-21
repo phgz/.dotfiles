@@ -55,9 +55,11 @@ return {
 			function(key)
 				return { key, mode = { "i", "n", "o", "v" } }
 			end,
-			vim.tbl_flatten(vim.iter.map(function(key)
+			vim.iter({ "left", "right", "up", "down" })
+				:map(function(key)
 				return { "<C-S-" .. key .. ">", "<S-M-" .. key .. ">", "<S-" .. key .. ">" }
-			end, { "left", "right", "up", "down" }))
+				end)
+				:flatten()
 		),
 		config = function()
 			require("smart-splits").setup({
@@ -309,8 +311,8 @@ return {
 		config = function()
 			require("nvim-surround").setup({
 				keymaps = {
-					insert = "<C-g>s",
-					insert_line = "<C-s>",
+					insert = "<C-s>",
+					insert_line = "<C-g>s",
 					normal = "s",
 					normal_cur = "ss",
 					normal_line = "sc",
@@ -505,6 +507,30 @@ return {
 		dependencies = {
 			"MunifTanjim/nui.nvim",
 		},
+		keys = {
+			{
+				"<C-f>",
+				function()
+					if not require("noice.lsp").scroll(4) then
+						return "<C-f>"
+					end
+				end,
+				mode = { "n" },
+				silent = true,
+				expr = true,
+			},
+			{
+				"<C-b>",
+				function()
+					if not require("noice.lsp").scroll(-4) then
+						return "<C-b>"
+					end
+				end,
+				mode = { "n" },
+				silent = true,
+				expr = true,
+			},
+		},
 		opts = {
 			popupmenu = {
 				enabled = false, -- enables the Noice popupmenu UI
@@ -520,6 +546,12 @@ return {
 			lsp = {
 				progress = {
 					enabled = false,
+				},
+				signature = {
+					enabled = true,
+					auto_open = {
+						enabled = false,
+					},
 				},
 				override = {
 					-- override the default lsp markdown formatter with Noice
