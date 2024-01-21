@@ -213,6 +213,10 @@ set("n", "<S-cr>", function() -- Pad with newlines
 	api.nvim_buf_set_lines(0, row - 1, row - 1, true, { "" })
 	api.nvim_win_set_cursor(0, { row + 1, col })
 end)
+set("n", "<C-cr>", function() -- insert mode with padded newlines
+	api.nvim_feedkeys(vim.keycode("<S-cr>") .. "i", "m", false)
+end)
+
 set("o", "L", function() -- select line from first char to end
 	vim.cmd.normal({ "vg_o^", bang = true })
 end)
