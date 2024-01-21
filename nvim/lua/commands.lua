@@ -102,6 +102,18 @@ api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
+api.nvim_create_augroup("lsp_warmup", {})
+api.nvim_create_autocmd("LspProgress", {
+	pattern = "end",
+	group = "lsp_warmup",
+	callback = function(arg)
+		if arg.data.result.value.title == "Diagnosing" then
+			api.nvim_del_augroup_by_name("lsp_warmup")
+			vim.cmd("redrawstatus")
+		end
+	end,
+})
+
 api.nvim_create_autocmd("BufAdd", {
 	callback = function()
 		api.nvim_create_autocmd("BufEnter", {
