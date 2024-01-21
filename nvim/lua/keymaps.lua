@@ -80,6 +80,12 @@ end)
 set("n", "<leader>o", function() -- open files returned by input command
 	local current_file = call("expand", { "%:p" })
 	local input = vim.fn.input("Command (cwd is " .. vim.fn.getcwd() .. "): ")
+
+	if input == 27 then
+		utils.abort()
+		return
+	end
+
 	local command = vim.system(vim.split(input, " "), { text = true }):wait()
 
 	local files = vim.split(command.stdout, "\n", { trimempty = true })
