@@ -448,22 +448,54 @@ c.keys = {
 	{
 		key = "LeftArrow",
 		mods = "SUPER",
-		action = act.ActivatePaneDirection("Left"),
+		action = wezterm.action_callback(function(window, pane)
+			local direction = "Left"
+			local mux_pane = pane:tab():get_pane_direction(direction)
+			if mux_pane == nil then
+				direction = "Prev"
+			end
+
+			window:perform_action(act.ActivatePaneDirection(direction), pane)
+		end),
 	},
 	{
 		key = "RightArrow",
 		mods = "SUPER",
-		action = act.ActivatePaneDirection("Right"),
+		action = wezterm.action_callback(function(window, pane)
+			local direction = "Right"
+			local mux_pane = pane:tab():get_pane_direction(direction)
+			if mux_pane == nil then
+				direction = "Next"
+			end
+
+			window:perform_action(act.ActivatePaneDirection(direction), pane)
+		end),
 	},
 	{
 		key = "UpArrow",
 		mods = "SUPER",
-		action = act.ActivatePaneDirection("Up"),
+		action = wezterm.action_callback(function(window, pane)
+			local direction = "Up"
+			local mux_pane = pane:tab():get_pane_direction(direction)
+			if mux_pane == nil then
+				direction = "Prev"
+			end
+
+			window:perform_action(act.ActivatePaneDirection(direction), pane)
+		end),
 	},
 	{
 		key = "DownArrow",
 		mods = "SUPER",
-		action = act.ActivatePaneDirection("Down"),
+		action = wezterm.action_callback(function(window, pane)
+			local direction = "Down"
+			local mux_pane = pane:tab():get_pane_direction(direction)
+			if mux_pane == nil then
+				direction = "Next"
+			end
+
+			window:perform_action(act.ActivatePaneDirection(direction), pane)
+		end),
 	},
 	{
 		key = "LeftArrow",
