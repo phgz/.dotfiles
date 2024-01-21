@@ -22,6 +22,7 @@ vim.g.gruvbox_baby_highlights = {
 	LspInlayHint = { fg = "teal" },
 
 	LspSignatureActiveParameter = { style = "italic", fg = colors.soft_green },
+	SignatureHelpVirtual = { fg = "teal" },
 
 	GitSignsDelete = { bg = "None", fg = colors.red },
 	GitSignsAdd = { bg = "None", fg = colors.forest_green },

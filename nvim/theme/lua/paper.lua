@@ -12,6 +12,7 @@ vim.g.nvim_paper_highlights = {
 	LspInlayHint = { fg = "teal" },
 
 	LspSignatureActiveParameter = { fg = colors.green, italic = true },
+	SignatureHelpVirtual = { fg = "teal" },
 
 	GitSignsDelete = { bg = "None", fg = colors.red },
 	GitSignsAdd = { bg = "None", fg = colors.green },

@@ -32,6 +32,7 @@ require("github-theme").setup({
 	},
 	groups = {
 		all = {
+			["@text.literal"] = { fg = "#0366d6" },
 			WrappedLineNr = { fg = "#B3B4B6" },
 
 			IlluminatedWordText = { style = "bold" },
@@ -49,6 +50,7 @@ require("github-theme").setup({
 			NormalFloat = { bg = "bg1" },
 			TelescopePromptTitle = { fg = "#4C92E1" },
 			LspSignatureActiveParameter = { fg = "palette.green.bright", style = "italic" },
+			SignatureHelpVirtual = { fg = "teal" },
 
 			DiagnosticLineNrError = { fg = "diag.error", style = "bold" },
 			DiagnosticLineNrWarn = { fg = "diag.warn", style = "bold" },

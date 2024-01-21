@@ -25,6 +25,7 @@ require("ayu").setup({
 		IlluminatedWordWrite = { bold = true },
 
 		LspSignatureActiveParameter = { italic = true, fg = green },
+		SignatureHelpVirtual = { fg = "teal" },
 
 		MatchParen = { fg = "None", bg = light_grey },
 		MatchWord = { bold = true },
@@ -53,6 +54,8 @@ require("ayu").setup({
 		GreenStatusLine = { fg = green, bg = statusline_bg },
 		BlueStatusLine = { fg = blue, bg = statusline_bg },
 		GreyStatusLine = { fg = grey, bg = statusline_bg },
+
+		TelescopeSelection = { link = "Visual" },
 
 		LazyDimmed = { fg = grey },
 		LazyProp = { fg = grey },
