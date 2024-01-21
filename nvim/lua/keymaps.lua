@@ -486,6 +486,9 @@ set("i", "<C-space>", function() -- Pad with space
 	api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { "  " })
 	api.nvim_win_set_cursor(0, { row, col + 1 })
 end)
+set("n", "g<C-space>", function() -- Goto prev space and start insert mode between words
+	api.nvim_feedkeys("F i ", "n", false)
+end)
 set("n", "<C-space>", function() -- Goto next space and start insert mode between words
 	api.nvim_feedkeys("f i ", "n", false)
 end)
