@@ -409,7 +409,12 @@ return {
 					eol = "KA",
 				},
 			})
-			vim.keymap.set("n", "KD", "<cmd>lua require'utils'.yank_comment_paste()<cr>", { silent = true })
+			vim.keymap.set(
+				"n",
+				"KD",
+				[[<cmd>lua require'utils'.set_position_registry(vim.fn.getpos("."))<cr><cmd>let &operatorfunc = "v:lua.require'utils'.yank_comment_paste"<cr>g@]],
+				{ silent = true }
+			)
 
 			vim.keymap.set(
 				"o",
