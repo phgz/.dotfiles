@@ -126,14 +126,14 @@ local get_tab_title = function(tab, reserved)
 	end
 	local config = tab:window():gui_window():effective_config()
 	if reserved then
-	local path_max_width = config.tab_max_width - reserved
-	local too_large = #formatted_path > path_max_width
-	if too_large then
-		while #formatted_path + 4 > path_max_width do
-			formatted_path = formatted_path:match("(.*)/")
+		local path_max_width = config.tab_max_width - reserved
+		local too_large = #formatted_path > path_max_width
+		if too_large then
+			while #formatted_path + 4 > path_max_width do
+				formatted_path = formatted_path:match("(.*)/")
+			end
+			formatted_path = formatted_path .. "/..."
 		end
-		formatted_path = formatted_path .. "/..."
-	end
 	end
 	return formatted_path
 end
