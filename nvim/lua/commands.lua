@@ -2,6 +2,9 @@ local api = vim.api
 local call = api.nvim_call_function
 local esc = vim.keycode("<esc>")
 
+M = {}
+M.is_i_ctrl_o = false
+
 call("matchadd", { "DiffText", "\\%97v" })
 
 api.nvim_create_autocmd("FileType", {
@@ -30,7 +33,7 @@ api.nvim_create_autocmd("TextYankPost", {
 	callback = function()
 		vim.highlight.on_yank()
 		local event_info = vim.v.event
-		if event_info.operator ~= "y" then
+		if event_info.operator ~= "y" or M.is_i_ctrl_o then
 			return
 		end
 
@@ -93,3 +96,18 @@ api.nvim_create_autocmd("WinScrolled", {
 		vim.wo.statuscolumn = vim.wo.statuscolumn
 	end,
 })
+
+api.nvim_create_autocmd("ModeChanged", {
+	pattern = "i:niI",
+	callback = function()
+		M.is_i_ctrl_o = true
+	end,
+})
+api.nvim_create_autocmd("ModeChanged", {
+	pattern = { "niI:i", "niI:n" },
+	callback = function()
+		M.is_i_ctrl_o = false
+	end,
+})
+
+return M
