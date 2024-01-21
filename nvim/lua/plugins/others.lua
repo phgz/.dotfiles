@@ -93,6 +93,14 @@ return {
 		end,
 	},
 	{
+		"https://github.com/atusy/treemonkey.nvim",
+		init = function()
+			vim.keymap.set({ "x", "o" }, "n", function()
+				require("treemonkey").select({ ignore_injections = false })
+			end)
+		end,
+	},
+	{
 		"HiPhish/rainbow-delimiters.nvim", -- "Enclosers" coloring
 		config = function()
 			-- local strategy = function()
@@ -426,13 +434,6 @@ return {
 			},
 		},
 		keys = {
-			{
-				"<leader>m",
-				mode = { "n", "o", "x" },
-				function()
-					require("flash").treesitter_search()
-				end,
-			},
 			{
 				"<leader>n",
 				mode = { "n", "o", "x" },
