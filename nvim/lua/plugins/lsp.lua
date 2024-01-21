@@ -115,6 +115,7 @@ return {
 				vim.keymap.set("n", "<localleader>h", function()
 					vim.lsp.inlay_hint.enable(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr))
 				end, opts)
+				vim.keymap.set("n", "<localleader>r", vim.lsp.buf.rename)
 				vim.keymap.set("n", "H", function()
 					local captures = vim.treesitter.get_captures_at_cursor()
 					if vim.list_contains(captures, "function.call") or vim.list_contains(captures, "method.call") then
@@ -173,7 +174,7 @@ return {
 							if not venv then
 								local is_poetry = vim.fs.find(
 									{ "poetry.lock" },
-									{ upward = true, path = config.root_dir }
+									{ upward = true, path = config.root_dir, type = "file", stop = vim.env.HOME }
 								)[1] ~= nil
 
 								if is_poetry then
