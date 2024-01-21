@@ -122,6 +122,10 @@ symbol = "󰍛 "
 
 [lua]
 symbol = " "
+format = "[$symbol($version) ]($style)"
+
+[nodejs]
+format = "[$symbol($version) ]($style)"
 
 [nim]
 symbol = "󰆥 "
@@ -185,14 +189,14 @@ format = "[$time](bold)"
 format = " \\([$duration](white)\\)"
 
 # GIT STATUS
-# conflicted "=" 
-# ahead 	 "⇡" 	
-# behind 	 "⇣" 	
-# diverged 	 "⇕" 	
-# up_to_date "" 	
-# untracked  "?" 
-# stashed 	 "$" 	
-# modified 	 "!" 	
-# staged 	 "+" 	
-# renamed 	 "»" 	
-# deleted 	 "X"
+# conflicted "="
+# ahead      "⇡"
+# behind     "⇣"
+# diverged   "⇕"
+# up_to_date ""
+# untracked  "?"
+# stashed    "$"
+# modified   "!"
+# staged     "+"
+# renamed    "»"
+# deleted    "X"
