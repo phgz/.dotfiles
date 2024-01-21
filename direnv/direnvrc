@@ -6,7 +6,8 @@ layout_poetry() {
         exit 2
     fi
 
-    export VIRTUAL_ENV=$(python3.11 << EOF
+    VIRTUAL_ENV=$(
+        python3.11 <<EOF
 import base64, hashlib, pathlib, tomllib
 
 h = base64.urlsafe_b64encode(hashlib.sha256(bytes(pathlib.Path.cwd())).digest()).decode()[:8]
@@ -15,7 +16,9 @@ cache = ".cache" if "$(uname -s)" == "Linux" else "Library/Caches"
 virtualenvs = (pathlib.Path.home() / cache / "pypoetry/virtualenvs").iterdir()
 env_name = next(dir for dir in virtualenvs if str(dir.name).startswith(p + "-" + h))
 print(env_name)
-EOF)
+EOF
+    )
+    export VIRTUAL_ENV
     export POETRY_ACTIVE=1
     PATH_add "$VIRTUAL_ENV/bin"
 }
