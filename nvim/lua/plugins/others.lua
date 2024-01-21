@@ -502,15 +502,54 @@ return {
 	},
 	{
 		"ckolkey/ts-node-action", -- Treesitter based node transformer (quote, bool, etc.)
-		dependencies = { "nvim-treesitter" },
+		dependencies = {
+			"nvim-treesitter",
+			{
+				"Wansmer/treesj",
+				config = function()
+					require("treesj").setup({
+						use_default_keymaps = false,
+					})
+				end,
+			},
+		},
 		keys = "<leader>k",
 		config = function()
-			vim.keymap.set(
-				{ "n" },
-				"<leader>k",
-				require("ts-node-action").node_action,
-				{ desc = "Trigger Node Action" }
-			)
+			local ts_node_action = require("ts-node-action")
+			local actions = require("ts-node-action.actions")
+			-- to get the node type under cursor: `vim.treesitter.get_node({ bufnr = 0 }):type()`
+			ts_node_action.setup({
+				lua = {
+					["binary_expression"] = actions.toggle_operator({
+						["=="] = "~=",
+						["~="] = "==",
+						["+"] = "-",
+						["-"] = "+",
+						["and"] = "or",
+						["or"] = "and",
+					}),
+				},
+				python = {
+					["boolean_operator"] = actions.toggle_operator({
+						["and"] = "or",
+						["or"] = "and",
+					}),
+					["binary_operator"] = actions.toggle_operator({
+						["+"] = "-",
+						["-"] = "+",
+					}),
+				},
+			})
+			vim.keymap.set({ "n" }, "<leader>k", function()
+				local is_markup_lang = vim.list_contains({ "json", "toml", "yaml" }, vim.bo.ft)
+				local is_yaml_bool_scalar = vim.bo.ft == "yaml"
+					and vim.treesitter.get_node({ bufnr = 0 }):type() == "boolean_scalar"
+				if is_markup_lang and not is_yaml_bool_scalar then
+					require("treesj").toggle()
+				else
+					ts_node_action.node_action()
+				end
+			end, { desc = "Trigger Node Action" })
 		end,
 	},
 	{
