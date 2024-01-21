@@ -32,7 +32,7 @@ require("github-theme").setup({
 	},
 	groups = {
 		all = {
-			["@text.literal"] = { fg = "#0366d6" },
+			["@markup.raw"] = { fg = "#0366d6" },
 			WrappedLineNr = { fg = "#B3B4B6" },
 
 			IlluminatedWordText = { style = "bold" },
