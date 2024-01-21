@@ -142,7 +142,8 @@ return {
 				)
 			end)
 
-			local post_action_fn = function(prefix)
+			local post_action_fn = function(prefix, is_equal)
+				is_equal = is_equal == nil and true or is_equal
 				local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
 				local jumps = call("msgpackparse", { context["jumps"] })
 				local listed_bufs = vim.iter.map(function(buf)
@@ -151,7 +152,7 @@ return {
 				local to_edit
 				for i = #jumps, 1, -4 do
 					local file = jumps[i]["f"]
-					if vim.startswith(file, prefix) and vim.list_contains(listed_bufs, file) then
+					if is_equal == vim.startswith(file, prefix) and vim.list_contains(listed_bufs, file) then
 						to_edit = file
 						break
 					end
@@ -159,7 +160,7 @@ return {
 				vim.cmd.edit(to_edit)
 			end
 
-			vim.keymap.set("n", "<leader>s", function() --
+			local get_opened_projects = function()
 				local project_paths = require("telescope._extensions.repo.autocmd_lcd").get_project_paths()
 				local context = api.nvim_get_context({ types = { "bufs" } })
 				local bufs = call("msgpackparse", { context["bufs"] })[4]
@@ -171,11 +172,28 @@ return {
 					return found or false
 				end, project_paths)
 
+				return open_projects
+			end
+
+			vim.keymap.set("n", "<leader>s", function() --
+				local open_projects = get_opened_projects()
+
 				require("telescope").extensions.repo.list(vim.tbl_extend("error", dropdown_theme, {
 					search_dirs = vim.tbl_isempty(open_projects) and { "" } or open_projects,
 					post_action = post_action_fn,
 					prompt = " (opened projects)",
 				}))
+			end)
+
+			vim.keymap.set("n", "<leader>S", function() -- Toggle with last opened project
+				local opened_projects = get_opened_projects()
+
+				local current_buffer_path = vim.fn.expand("%:p")
+				local current_project_path = vim.iter(opened_projects):find(function(project_path)
+					return vim.startswith(current_buffer_path, project_path)
+				end)
+
+				post_action_fn(current_project_path, false)
 			end)
 
 			vim.keymap.set("n", "<leader>R", function() --
