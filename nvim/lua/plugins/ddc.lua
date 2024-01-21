@@ -26,56 +26,52 @@ return {
 				}
 			end,
 		},
-		-- "matsui54/ddc-ultisnips",
-		"LumaKernel/ddc-file",
 		"Shougo/ddc-converter_remove_overlap",
-		"Shougo/ddc-source-lsp",
-		"Shougo/ddc-source-around",
 		"Shougo/ddc-filter-sorter_rank",
+		"Shougo/ddc-source-around",
+		"Shougo/ddc-source-lsp",
 		"Shougo/ddc-ui-inline",
 		"Shougo/ddc-ui-native",
-		"matsui54/ddc-postfilter_score",
+		"octaltree/cmp-look",
 		"tani/ddc-fuzzy",
-		"tani/ddc-path",
-		-- "SirVer/ultisnips",
-		"onsails/lspkind-nvim", -- LSP pictograms
-		-- {
-		-- 	"SirVer/ultisnips",
-		-- 	dependencies = { "honza/vim-snippets" },
-		-- 	config = function()
-		-- 		vim.g.UltiSnipsSnippetDirectories =
-		-- 			{ os.getenv("HOME") .. "/.local/share/nvim/site/pack/packer/start/vim-snippets/UltiSnips" }
-		--
-		-- 		vim.g.UltiSnipsExpandTrigger = "`<nop>`"
-		-- 		vim.g.UltiSnipsJumpForwardTrigger = "<tab>"
-		-- 		vim.g.UltiSnipsJumpBackwardTrigger = "<s-tab>"
-		-- 		vim.g.ultisnips_python_style = "numpy"
-		-- 	end,
-		-- },
 	},
 
 	config = function()
 		local api = vim.api
 		local call = api.nvim_call_function
 		local npairs = require("nvim-autopairs")
-		local gkr = require("utils").get_keymap_register
-		local skr = require("utils").set_keymap_register
 
-		local insert_snippet_or_tab = function()
-			-- if call("UltiSnips#CanExpandSnippet", {}) == 1 then
-			-- 	call("UltiSnips#ExpandSnippet", {})
-			-- else
-			api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
-			-- end
+		local get_snippet = function(item)
+			local lsp_item = vim.json.decode(vim.tbl_get(item, "user_data", "lspitem"))
+			if
+				lsp_item
+				and lsp_item.insertTextFormat
+				and lsp_item.insertTextFormat == 2
+				and lsp_item.kind == vim.lsp.protocol.CompletionItemKind.Snippet
+			then
+				local snippet_text = lsp_item.insertText:gsub("${(%d).-}", "$%1")
+				assert(snippet_text, "Language server indicated it had a snippet, but no snippet text could be found!")
+				return snippet_text
+			else
+				return nil
+			end
+		end
+
+		local jump_inside_snippet = function(direction)
+			if vim.snippet.jumpable(direction) then
+				return "<cmd>lua vim.snippet.jump(" .. direction .. ")<cr>"
+			else
+				return ""
+			end
 		end
 
 		local get_wuc_start_col = function()
 			local word_under_cursor = call("expand", { "<cword>" })
-			-- print(word_under_cursor)
 			return call("searchpos", { word_under_cursor, "Wcnb" })[2] - 1
 		end
+
 		-- TextChangedP
-		local insert_suggestion = function(suggestion)
+		local insert_suggestion = function(suggestion, is_snippet)
 			local row, col = unpack(api.nvim_win_get_cursor(0))
 			api.nvim_win_set_cursor(0, { row, col - 1 })
 			local captures = vim.treesitter.get_captures_at_cursor()
@@ -84,16 +80,19 @@ return {
 				return capture:match("^punctuation%.")
 			end)
 
-			-- print(api.nvim_get_current_line():sub(col, col))
 			local word_under_cursor_start_col = (is_punctuation or api.nvim_get_current_line():sub(col, col) == "/")
 					and col
 				or get_wuc_start_col()
-			-- print(is_punctuation, col)
-			-- print(word_under_cursor_start_col)
 			api.nvim_win_set_cursor(0, { row, col })
-			local construct = string.rep(vim.keycode("<BS>"), col - word_under_cursor_start_col)
 
+			if is_snippet then
+				api.nvim_buf_set_text(0, row - 1, word_under_cursor_start_col, row - 1, col, {})
+				vim.snippet.expand(suggestion)
+				assert(vim.snippet.active(), "Snippet did not expand.")
+			else
+				local construct = string.rep(vim.keycode("<BS>"), col - word_under_cursor_start_col)
 			api.nvim_feedkeys(construct .. suggestion, "n", false)
+		end
 		end
 
 		local wise_tab = function()
@@ -106,12 +105,17 @@ return {
 				local suggestion = item["word"]
 
 				if vim.endswith(prev_input, suggestion) then
-					insert_snippet_or_tab()
+					local snippet_text = get_snippet(item)
+					if snippet_text then
+						insert_suggestion(snippet_text, true)
+					else
+						api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
+					end
 				else
 					call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
 					vim.v.completed_item = item
 					vim.g["ddc#_skip_next_complete"] = vim.g["ddc#_skip_next_complete"] + 1
-					insert_suggestion(suggestion)
+					insert_suggestion(suggestion, false)
 					call("ddc#on_complete_done", { item })
 				end
 			else
@@ -167,6 +171,13 @@ return {
 				return "<ESC>"
 			end
 		end, opts_expr)
+
+		vim.keymap.set("i", "<C-[>", function()
+			return jump_inside_snippet(-1)
+		end, { expr = true })
+		vim.keymap.set("i", "<C-]>", function()
+			return jump_inside_snippet(1)
+		end, { expr = true })
 
 		vim.cmd([[
 			call ddc#custom#load_config(expand('$HOME') . "/.dotfiles/nvim/ddc.ts")
