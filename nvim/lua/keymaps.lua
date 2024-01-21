@@ -331,7 +331,7 @@ set("v", "+", function() -- get tabular stats
 		local raw_line = api.nvim_buf_get_text(0, sr + i - 1, sc, sr + i - 1, ec + 1, {})[1]
 		table.insert(tbl, vim.split(raw_line, " "))
 	end
-	tbl = vim.tbl_flatten(tbl)
+	tbl = vim.iter(tbl):flatten():totable()
 	local stat_fns = {
 		sum = function(numbers)
 			return vim.iter(numbers):fold(0, function(s, number)
