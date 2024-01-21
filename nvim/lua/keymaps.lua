@@ -163,6 +163,10 @@ end)
 set("n", "mm", function()
 	api.nvim_feedkeys("mVL", "", false)
 end)
+set("n", "mM", function()
+	api.nvim_feedkeys("mVL", "", false)
+	api.nvim_feedkeys("k", "n", false)
+end)
 set(
 	"n",
 	"m",
