@@ -8,8 +8,15 @@ M.is_i_ctrl_o = false
 call("matchadd", { "DiffText", "\\%97v" })
 
 api.nvim_create_autocmd("FileType", {
-	pattern = { "help", "startuptime", "qf", "lspinfo", "noice" },
-	command = [[nnoremap <buffer><silent> q :close<cr> | let &stc=""]],
+	pattern = { "help", "startuptime", "qf", "lspinfo", "noice", "" },
+	-- Not using `command` because for whatever reason, the cursor gets moved 1 char to the right
+	-- after closing
+	-- command = [[nnoremap <buffer><silent> q :close<cr> | let &stc=""]],
+
+	callback = function()
+		vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = true })
+		vim.wo.stc = ""
+	end,
 })
 
 api.nvim_del_augroup_by_name("nvim_swapfile")
