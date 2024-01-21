@@ -1,9 +1,10 @@
 local status_line = function()
 	local git = "%{exists('b:gitsigns_status')?'  ': ''}%{%get(b:,'gitsigns_status','')%}"
+	local diagnostics = [[%{%luaeval("require'utils'.diagnostics_status_line()")%}]]
 	local flags = "%{&modified || &readonly?' ': ''}%#GreenStatusLine#%h%#YellowStatusLine#%r%#RedStatusLine#%m"
 	local message =
 		[[%#GreyStatusLine#%{%luaeval('require("noice.api.status").search.get() or require("noice.api.status").message.get() or ""')%}]]
-	return "%F" .. git .. flags .. "%=" .. message
+	return "%F" .. git .. diagnostics .. flags .. "%=" .. message
 end
 
 vim.go.statusline = status_line()
