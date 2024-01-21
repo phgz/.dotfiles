@@ -8,10 +8,15 @@ return {
 		},
 
 		config = function()
-			local actions = require("telescope.actions")
-			local builtin = require("telescope.builtin")
 			local api = vim.api
 			local call = api.nvim_call_function
+
+			local actions = require("telescope.actions")
+			local builtin = require("telescope.builtin")
+			local pickers = require("telescope.pickers")
+			local finders = require("telescope.finders")
+			local make_entry = require("telescope.make_entry")
+			local entry_display = require("telescope.pickers.entry_display")
 
 			require("telescope").setup({
 				defaults = {
@@ -19,6 +24,13 @@ return {
 						i = {
 							["<esc>"] = actions.close,
 							["<C-u>"] = false,
+							["<C-n>"] = actions.cycle_history_next,
+							["<C-p>"] = actions.cycle_history_prev,
+							["<C-b>"] = actions.preview_scrolling_up,
+							["<C-f>"] = actions.preview_scrolling_down,
+							["<c-d>"] = actions.delete_buffer + actions.move_to_top,
+							["<tab>"] = actions.move_selection_next,
+							["<S-tab>"] = actions.move_selection_previous,
 						},
 					},
 				},
@@ -182,6 +194,102 @@ return {
 			end)
 			vim.keymap.set("n", "<leader>u", function()
 				require("telescope").extensions.undo.undo(dropdown_theme)
+			end)
+
+			--------------------------------------------------------------------------------
+			--                      Fuzzy search among YAML objects                       --
+			--------------------------------------------------------------------------------
+
+			local function visit_yaml_node(node, yaml_path, result, file_path, bufnr)
+				local key = ""
+				if node:type() == "block_mapping_pair" then
+					local field_key = node:field("key")[1]
+					key = vim.treesitter.get_node_text(field_key, bufnr)
+				end
+
+				if key ~= nil and string.len(key) > 0 then
+					table.insert(yaml_path, key)
+					local line, col = node:start()
+					table.insert(result, {
+						lnum = line + 1,
+						col = col + 1,
+						bufnr = bufnr,
+						filename = file_path,
+						text = table.concat(yaml_path, "."),
+					})
+				end
+
+				for child_node, _ in node:iter_children() do
+					visit_yaml_node(child_node, yaml_path, result, file_path, bufnr)
+				end
+
+				if key ~= nil and string.len(key) > 0 then
+					table.remove(yaml_path, table.maxn(yaml_path))
+				end
+			end
+
+			local function gen_from_yaml_nodes(opts)
+				local displayer = entry_display.create({
+					separator = " │ ",
+					items = {
+						{ width = 5 },
+						{ remaining = true },
+					},
+				})
+
+				local make_display = function(entry)
+					return displayer({
+						{ entry.lnum, "TelescopeResultsSpecialComment" },
+						{
+							entry.text,
+							function()
+								return {}
+							end,
+						},
+					})
+				end
+
+				return function(entry)
+					return make_entry.set_default_entry_mt({
+						ordinal = entry.text,
+						display = make_display,
+						filename = entry.filename,
+						lnum = entry.lnum,
+						text = entry.text,
+						col = entry.col,
+					}, opts)
+				end
+			end
+
+			local yaml_symbols = function(opts)
+				local conf = require("telescope.config").values
+				local yaml_path = {}
+				local result = {}
+				local bufnr = vim.api.nvim_get_current_buf()
+				local ft = vim.api.nvim_get_option_value("ft", { buf = bufnr })
+				local tree = vim.treesitter.get_parser(bufnr, ft):parse()[1]
+				local file_path = vim.api.nvim_buf_get_name(bufnr)
+				local root = tree:root()
+				for child_node, _ in root:iter_children() do
+					visit_yaml_node(child_node, yaml_path, result, file_path, bufnr)
+				end
+
+				-- return result
+				pickers
+					.new(opts, {
+						prompt_title = "YAML symbols",
+						finder = finders.new_table({
+							results = result,
+							entry_maker = gen_from_yaml_nodes(opts),
+						}),
+						sorter = conf.generic_sorter(opts),
+						previewer = conf.grep_previewer(opts),
+					})
+					:find()
+			end
+
+			vim.keymap.set("n", "<leader>m", function()
+				yaml_symbols(dropdown_theme)
 			end)
 		end,
 	},
