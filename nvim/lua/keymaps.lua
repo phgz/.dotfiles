@@ -479,8 +479,22 @@ end)
 -- --Modifiers keys
 set("n", "<M-s>", "r<CR>") -- Split below
 set("n", "<M-S-s>", "r<CR><cmd>move .-2<cr>") -- Split up
-set("!", "<M-left>", "<S-left>") -- Move one word left
-set("!", "<M-right>", "<S-right>") -- Move one word right
+set("i", "<M-left>", "<S-left>") -- Move one word left
+set("i", "<M-right>", "<S-right>") -- Move one word right
+set("c", "<C-a>", "<C-b>") -- Goto beginning of line
+set("c", "<M-left>", function()
+	local pos = vim.fn.getcmdpos()
+	local content_till_cursor = vim.fn.getcmdline():sub(1, pos - 1)
+	local rev_content = content_till_cursor:reverse()
+	local punct_or_space_pos = #content_till_cursor - (rev_content:find("[%c%z%s%p]") or 0) + 1
+	return string.rep("<left>", pos - punct_or_space_pos)
+end, { expr = true }) -- Move one word left
+set("c", "<M-right>", function()
+	local pos = vim.fn.getcmdpos()
+	local content_after_cursor = vim.fn.getcmdline():sub(pos + 1)
+	local punct_or_space_pos = content_after_cursor:find("[%s%p]") or 0
+	return string.rep("<right>", punct_or_space_pos)
+end, { expr = true }) -- Move one word right
 set("i", "<C-space>", function() -- Pad with space
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { "  " })
