@@ -53,6 +53,7 @@ go.splitkeep = "screen"
 go.termguicolors = true
 go.timeoutlen = 4000
 go.wildmode = "list:longest"
+go.wrapscan = false
 go.incsearch = true
 go.cpoptions = go.cpoptions .. "y"
 
