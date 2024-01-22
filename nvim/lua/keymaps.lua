@@ -425,6 +425,7 @@ set("o", "\\", function()
 	end
 	api.nvim_feedkeys("p", "", false)
 	vim.defer_fn(function()
+		vim.cmd.undojoin()
 		api.nvim_feedkeys("==_", "n", false)
 	end, 0)
 end)
@@ -432,11 +433,21 @@ end)
 -- {motion} linewise range remote
 set("o", "R", function()
 	local operator = vim.v.operator
+	if operator ~= "y" and operator ~= "d" then
+		return
+	end
+
 	local first_line_offset = utils.get_linechars_offset_from_cursor(nil, true)
+
+	if not first_line_offset then
+		return
+	end
+
 	vim.cmd("redrawstatus")
+
 	local second_line_offset = utils.get_linechars_offset_from_cursor()
 
-	if not (first_line_offset and second_line_offset) then
+	if not second_line_offset then
 		return
 	end
 
@@ -462,7 +473,9 @@ set("o", "R", function()
 		api.nvim_win_set_cursor(0, { row, col })
 	end
 	api.nvim_feedkeys("p", "", false)
+	utils.abort()
 	vim.defer_fn(function()
+		vim.cmd.undojoin()
 		api.nvim_feedkeys("gv=_", "n", false)
 	end, 0)
 end)
