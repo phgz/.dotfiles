@@ -69,6 +69,9 @@ return {
 
 						keymaps = {
 							-- You can use the capture groups defined in textobjects.scm
+							["ibe"] = "@binary.outer",
+							["ibl"] = "@binary.lhs",
+							["ibr"] = "@binary.rhs",
 							["aa"] = "@assignment.lhs",
 							["ia"] = "@assignment.lhs",
 							["av"] = "@assignment.rhs",
@@ -87,9 +90,6 @@ return {
 							["il"] = "@loop.inner",
 							["an"] = "@number.inner",
 							["in"] = "@number.inner",
-							["ibe"] = "@binary.outer",
-							["ibl"] = "@binary.lhs",
-							["ibr"] = "@binary.rhs",
 							["ap"] = "@parameter.outer",
 							["ip"] = "@parameter.inner",
 							["ar"] = "@return.outer",
@@ -111,6 +111,9 @@ return {
 						enable = true,
 						set_jumps = true, -- whether to set jumps in the jumplist
 						goto_next_start = {
+							["]be"] = "@binary.outer",
+							["]bl"] = "@binary.lhs",
+							["]br"] = "@binary.rhs",
 							["]a"] = "@assignment.lhs",
 							["]v"] = "@assignment.rhs",
 							["]k"] = "@call.outer",
@@ -125,6 +128,9 @@ return {
 							["]s"] = "@statement.outer",
 						},
 						goto_next_end = {
+							["]gbe"] = "@binary.outer",
+							["]gbl"] = "@binary.lhs",
+							["]gbr"] = "@binary.rhs",
 							["]ga"] = "@assignment.lhs",
 							["]gv"] = "@assignment.rhs",
 							["]gk"] = "@call.outer",
@@ -139,6 +145,9 @@ return {
 							["]gs"] = "@statement.outer",
 						},
 						goto_previous_start = {
+							["[be"] = "@binary.outer",
+							["[bl"] = "@binary.lhs",
+							["[br"] = "@binary.rhs",
 							["[a"] = "@assignment.lhs",
 							["[v"] = "@assignment.rhs",
 							["[k"] = "@call.outer",
@@ -153,6 +162,9 @@ return {
 							["[s"] = "@statement.outer",
 						},
 						goto_previous_end = {
+							["[gbe"] = "@binary.outer",
+							["[gbl"] = "@binary.lhs",
+							["[gbr"] = "@binary.rhs",
 							["[ga"] = "@assignment.lhs",
 							["[gv"] = "@assignment.rhs",
 							["[gk"] = "@call.outer",
