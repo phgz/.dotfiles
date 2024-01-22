@@ -125,7 +125,6 @@ set("n", "<up>", "<nop>") -- do nothing with arrows
 set("n", "<down>", "<nop>") -- do nothing with arrows
 set("", "gh", "h") -- move left
 set("", "gl", "l") -- move right
--- set({ "n" }, "m", function() end) -- ...
 set("o", "iB", function() -- scroll  left
 	local view = vim.fn.winsaveview()
 	api.nvim_win_set_cursor(0, { 1, 0 })
