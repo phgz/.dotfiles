@@ -4,6 +4,7 @@ local esc = vim.keycode("<esc>")
 
 M = {}
 M.is_i_ctrl_o = false
+M.insert_mode_col = 0
 
 call("matchadd", { "DiffText", "\\%97v" })
 
@@ -128,6 +129,12 @@ api.nvim_create_autocmd("BufAdd", {
 api.nvim_create_autocmd("WinScrolled", {
 	callback = function()
 		vim.wo.statuscolumn = vim.wo.statuscolumn
+	end,
+})
+
+api.nvim_create_autocmd("InsertLeavePre", {
+	callback = function()
+		M.insert_mode_col = vim.fn.col(".")
 	end,
 })
 
