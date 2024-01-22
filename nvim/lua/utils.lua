@@ -80,6 +80,39 @@ function M.get_operator_pending_state()
 	return { is_active = is_active, forced_motion = is_active and forced_motion or nil }
 end
 
+local motion_back_char = "b"
+function M.motion_back(lowercase)
+	local char = lowercase and "b" or "B"
+	motion_back_char = char
+	local operator
+	if vim.v.operator == "g@" and vim.go.operatorfunc == "v:lua.require'utils'.motion_back" then
+		operator = M.operator_pending_registry
+	else
+		operator = vim.v.operator
+	end
+	M.operator_pending_registry = operator
+	vim.print({
+		char = char,
+		operator = operator,
+		operator_pending_registry = M.operator_pending_registry,
+		motion_back_char = motion_back_char,
+	})
+	M.abort()
+	local col = vim.fn.col(".")
+	local chars_after_cursor = api.nvim_get_current_line():sub(col, col + 1)
+	if #chars_after_cursor == 1 or chars_after_cursor:match("[^%w_]") then
+		api.nvim_feedkeys(motion_back_char .. operator .. (operator == "y" and "e" or "w"), "n", false)
+	else
+		vim.cmd.normal({ operator .. motion_back_char, bang = true })
+	end
+	vim.go.operatorfunc = "{_ -> v:true}"
+	api.nvim_feedkeys("g@l", "n", false)
+	vim.defer_fn(function()
+		vim.go.operatorfunc = "v:lua.require'utils'.motion_back"
+	end, 100)
+end
+
+---@deprecated
 function M.get_modes()
 	local modes = { normal = false, operator_pending = false, visual = "v" }
 	local str_mode = api.nvim_get_mode().mode
