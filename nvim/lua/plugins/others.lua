@@ -452,17 +452,21 @@ return {
 				"r",
 				mode = "o",
 				function()
-					local feed = "p"
-					if require("commands").is_i_ctrl_o then
-						-- Cannot differentiate between eol and eol -1 since cursor cannot go past the line
-						local is_eol = vim.fn.col(".") == vim.fn.col("$") - 1
-						feed = (is_eol and feed or "P") .. "a"
-					end
+					local is_i_ctrl_o = require("commands").is_i_ctrl_o
+					local is_eol = require("commands").insert_mode_col == vim.fn.col("$")
 					local ret = require("flash").remote({ motion = true, restore = true })
 					if not vim.deep_equal(ret.results, {}) and (vim.v.operator == "y" or vim.v.operator == "d") then
 						vim.defer_fn(function()
-							vim.api.nvim_feedkeys(feed, "n", false)
-						end, 1)
+							if is_i_ctrl_o then
+								vim.api.nvim_feedkeys(
+									(is_eol and "a" or "i") .. vim.keycode("<C-r>") .. '"',
+									"n",
+									false
+								)
+							else
+								vim.api.nvim_feedkeys("p", "", false)
+							end
+						end, 0)
 					end
 				end,
 				desc = "Remote Flash",
