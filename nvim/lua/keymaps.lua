@@ -127,21 +127,25 @@ set("", "gh", "h") -- move left
 set("", "gl", "l") -- move right
 -- set({ "n" }, "m", function() end) -- ...
 set("o", "iB", function() -- scroll  left
-	vim.cmd.normal({ "m`", bang = true })
+	local view = vim.fn.winsaveview()
 	api.nvim_win_set_cursor(0, { 1, 0 })
 	vim.cmd.normal({ "Vo", bang = true })
 	api.nvim_win_set_cursor(0, { api.nvim_buf_line_count(0), 0 })
 	if vim.v.operator == "y" then
-		api.nvim_feedkeys(vim.keycode("<C-o>"), "n", false)
+		vim.defer_fn(function()
+			vim.fn.winrestview(view)
+		end, 0)
 	end
 end) -- buffer motion
 set("o", "aB", function() -- scroll  left
-	vim.cmd.normal({ "m`", bang = true })
+	local view = vim.fn.winsaveview()
 	api.nvim_win_set_cursor(0, { 1, 0 })
 	vim.cmd.normal({ "Vo", bang = true })
 	api.nvim_win_set_cursor(0, { api.nvim_buf_line_count(0), 0 })
 	if vim.v.operator == "y" then
-		api.nvim_feedkeys(vim.keycode("<C-o>"), "n", false)
+		vim.defer_fn(function()
+			vim.fn.winrestview(view)
+		end, 0)
 	end
 end) -- buffer motion
 set("", "zJ", function() -- scroll  left
