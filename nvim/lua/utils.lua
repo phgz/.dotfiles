@@ -3,19 +3,23 @@ local call = api.nvim_call_function
 
 local M = {}
 
-local keymaps_register = {}
-M.get_keymap_register = function()
-	return keymaps_register
+M.operator_pending_registry = nil
+
+local position_registry = {}
+M.set_position_registry = function(pos)
+	-- We check the length of pos, as getpos() returns a 4 elements table.
+	-- If it's the case, we also readjust to be neovim API o-based
+	position_registry = #pos == 4 and { pos[2], pos[3] - 1 } or pos
 end
-M.set_keymap_register = function(keymaps)
-	keymaps_register = keymaps
+M.get_position_registry = function()
+	return position_registry
 end
 
 local esc = vim.keycode("<esc>")
 
 function M.abort()
-	api.nvim_feedkeys(esc, "x", true)
-	api.nvim_feedkeys(esc, "n", true)
+	api.nvim_feedkeys(esc, "x", false)
+	api.nvim_feedkeys(esc, "n", false)
 end
 
 function M.update_selection(use_gv, requested_visual_mode, start_row, start_col, end_row, end_col)
