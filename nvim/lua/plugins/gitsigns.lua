@@ -73,8 +73,16 @@ return {
 				end)
 
 				-- Text objects
-				map({ "o", "x" }, "ih", gs.select_hunk)
-				map({ "o", "x" }, "ah", gs.select_hunk)
+				map("o", "ih", gs.select_hunk)
+				map("o", "ah", gs.select_hunk)
+				map("x", "ih", function()
+					vim.api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
+					gs.select_hunk()
+				end)
+				map("x", "ah", function()
+					vim.api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
+					gs.select_hunk()
+				end)
 			end,
 			status_formatter = function(status)
 				local head = status.head

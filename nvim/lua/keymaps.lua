@@ -117,8 +117,8 @@ set("n", "<localleader>b", function() -- Set breakpoint
 end)
 
 --Normal key
-set({ "v" }, "ab", "apk") -- a block is a paragraph
-set({ "o" }, "ab", "ap") -- a block is a paragraph
+set("v", "ab", "apk") -- a block is a paragraph
+set("o", "ab", "ap") -- a block is a paragraph
 set("n", "<left>", "<nop>") -- do nothing with arrows
 set("n", "<right>", "<nop>") -- do nothing with arrows
 set("n", "<up>", "<nop>") -- do nothing with arrows
