@@ -32,8 +32,7 @@ function M.update_selection(use_gv, requested_visual_mode, start_row, start_col,
 	-- Normalise selection_mode
 	requested_visual_mode = v_table[requested_visual_mode] or requested_visual_mode
 
-	-- Call to `nvim_replace_termcodes()` is needed for sending appropriate command to enter blockwise mode
-	requested_visual_mode = vim.api.nvim_replace_termcodes(requested_visual_mode, true, true, true)
+	requested_visual_mode = vim.keycode(requested_visual_mode)
 	if use_gv then
 		local previous_mode = call("visualmode", {})
 
@@ -52,12 +51,33 @@ function M.update_selection(use_gv, requested_visual_mode, start_row, start_col,
 	else
 		api.nvim_win_set_cursor(0, { start_row, start_col })
 
-		if M.get_modes().normal then
+		if M.get_normal_state().is_active then
 			vim.cmd.normal({ requested_visual_mode, bang = true })
 		end
 
 		api.nvim_win_set_cursor(0, { end_row, end_col })
 	end
+end
+
+function M.get_normal_state()
+	local mode = api.nvim_get_mode().mode
+	return { is_active = mode == "n" }
+end
+
+function M.get_visual_state()
+	local mode = api.nvim_get_mode().mode
+	local is_active = vim.list_contains({ "v", "V", vim.keycode("<C-v>") }, mode)
+
+	return { is_active = is_active, char = is_active and mode or nil }
+end
+
+function M.get_operator_pending_state()
+	local mode = api.nvim_get_mode().mode
+	local is_active = mode:sub(1, 2) == "no"
+	local forced_motion = mode:sub(3, 3)
+	forced_motion = forced_motion ~= "" and forced_motion or nil
+
+	return { is_active = is_active, forced_motion = is_active and forced_motion or nil }
 end
 
 function M.get_modes()
