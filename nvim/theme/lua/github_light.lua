@@ -57,6 +57,10 @@ require("github-theme").setup({
 			DiagnosticLineNrInfo = { fg = "diag.info", style = "bold" },
 			DiagnosticLineNrHint = { fg = "diag.hint", style = "bold" },
 
+			diffAdded = { bg = "diff.add" },
+			diffRemoved = { bg = "diff.delete" },
+			diffChanged = { bg = "diff.change" },
+
 			CursorLine = { bg = "#DEE9F6" },
 			CursorLineNr = { fg = "fg2", style = "bold" },
 			StatusLine = { fg = "#4C92E1", bg = "bg3" },
