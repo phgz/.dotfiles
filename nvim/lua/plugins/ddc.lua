@@ -169,7 +169,15 @@ return {
 		vim.keymap.set("i", "<CR>", function()
 			if call("pumvisible", {}) == 1 then
 				unregister_scroll_preview_keymaps()
-				return "<C-y>"
+				local col = vim.api.nvim_win_get_cursor(0)[2]
+				local wuc_start_col = get_wuc_start_col()
+				local is_eow = api.nvim_get_current_line():sub(col + 1, col + 1):match("[^%w_]")
+				if is_eow then
+					return "<C-y>"
+				else
+					local del = string.rep("<DEL>", wuc_start_col + #vim.fn.expand("<cword>") - col)
+					return "<C-y>" .. del
+				end
 			else
 				return vim.api.nvim_feedkeys(npairs.autopairs_cr(), "n", false)
 			end
