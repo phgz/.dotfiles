@@ -548,6 +548,16 @@ c.keys = {
 			mode = "SwapWithActive",
 		}),
 	},
+	{ key = "j", mods = "SUPER", action = act.ScrollByPage(-0.3) },
+	{ key = "k", mods = "SUPER", action = act.ScrollByPage(0.3) },
+	{
+		key = "l",
+		mods = "SUPER",
+		action = act.Multiple({
+			act.ClearScrollback("ScrollbackAndViewport"),
+			act.SendKey({ key = "L", mods = "CTRL" }),
+		}),
+	},
 }
 
 return c
