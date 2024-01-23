@@ -100,6 +100,7 @@ end)
 
 -- localleader key
 set("n", "<localleader>d", "<cmd>:windo :diffthis<cr>") -- Diff
+set({ "n", "x" }, "<localleader>g", [[:g/./ exe "norm " | s//&]] .. string.rep("<left>", 8)) -- global normal substitute
 set("n", "<localleader><esc>", function() -- Do nothing
 end)
 set("n", "<localleader>q", function() -- Remove breakpoints
