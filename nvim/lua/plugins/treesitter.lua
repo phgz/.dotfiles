@@ -314,14 +314,17 @@ return {
 					local is_on_hunk_edge_or_outside = true
 					if is_inside_hunk then
 						local selection_start, selection_end = vim.fn.line("v"), vim.fn.line(".")
-						is_on_hunk_edge_or_outside = (
-							utils.compare_pos(
-								cursor_pos,
-								{ selection_start, vim.fn.col({ selection_start, "$" }) - 1 },
-								{ gt = false, eq = prev }
-							)
-							or utils.compare_pos(cursor_pos, { selection_end, 0 }, { gt = true, eq = not prev })
-						) or selection_start == selection_end
+						local col_range_lt = prev and vim.fn.col({ selection_start, "$" }) - 1 or 0
+						local col_range_gt = prev and vim.fn.col("$") - 1 or 0
+						is_on_hunk_edge_or_outside = utils.compare_pos(
+							cursor_pos,
+							{ selection_start, col_range_lt },
+							{ gt = false, eq = prev }
+						) or utils.compare_pos(
+							cursor_pos,
+							{ selection_end, col_range_gt },
+							{ gt = true, eq = not prev }
+						)
 						vim.api.nvim_feedkeys(esc, "n", false)
 					end
 
