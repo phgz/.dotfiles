@@ -4,6 +4,13 @@ local set = vim.keymap.set
 local api = vim.api
 local call = api.nvim_call_function
 
+set("n", "<C-o>", function()
+	utils.jump_within_buffer(true)
+end)
+set("n", "<C-i>", function()
+	utils.jump_within_buffer(false)
+end)
+
 -- leader key
 set("n", "<leader><esc>", function() -- Do nothing
 end)

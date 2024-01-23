@@ -112,6 +112,23 @@ function M.motion_back(lowercase)
 	end, 100)
 end
 
+function M.jump_within_buffer(older)
+	local jumplist, current_jump_position = unpack(vim.fn.getjumplist())
+	local current_bufnr = vim.api.nvim_win_get_buf(0)
+	local start = older and current_jump_position or current_jump_position + 2
+	local step = older and -1 or 1
+	local stop = older and 1 or #jumplist
+	local n = 0
+	local action = vim.keycode(older and "<C-o>" or "<C-i>")
+
+	for i = start, stop, step do
+		n = n + 1
+		if jumplist[i].bufnr == current_bufnr then
+			vim.api.nvim_feedkeys(n .. action, "n", false)
+			return
+		end
+	end
+end
 ---@deprecated
 function M.get_modes()
 	local modes = { normal = false, operator_pending = false, visual = "v" }
