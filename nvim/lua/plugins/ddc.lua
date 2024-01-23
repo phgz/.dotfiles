@@ -197,6 +197,7 @@ return {
 			return jump_inside_snippet(-1)
 		end, { expr = true })
 		vim.keymap.set("i", "<C-]>", function()
+			call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
 			return jump_inside_snippet(1)
 		end, { expr = true })
 
