@@ -508,8 +508,6 @@ end)
 -- --Modifiers keys
 set("n", "<M-s>", "r<CR>") -- Split below
 set("n", "<M-S-s>", "r<CR><cmd>move .-2<cr>") -- Split up
-set("i", "<M-left>", "<S-left>") -- Move one word left
-set("i", "<M-right>", "<S-right>") -- Move one word right
 set("c", "<C-a>", "<C-b>") -- Goto beginning of line
 set("c", "<M-left>", function()
 	local pos = vim.fn.getcmdpos()
@@ -643,16 +641,6 @@ end)
 
 set("n", "<M-S-o>", function() -- New line up
 	utils.new_lines(false, vim.v.count1)
-end)
-
-set("i", "<C-f>", function() -- Go one character right
-	local row, col = unpack(api.nvim_win_get_cursor(0))
-	api.nvim_win_set_cursor(0, { row, col + 1 })
-end)
-
-set("i", "<C-b>", function() -- Go one character left
-	local row, col = unpack(api.nvim_win_get_cursor(0))
-	api.nvim_win_set_cursor(0, { row, col - 1 })
 end)
 
 set("i", "<C-esc>", function() -- Go to normal mode one char right

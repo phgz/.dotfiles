@@ -193,13 +193,65 @@ return {
 			end
 		end, opts_expr)
 
-		vim.keymap.set("i", "<C-[>", function()
-			return jump_inside_snippet(-1)
-		end, { expr = true })
-		vim.keymap.set("i", "<C-]>", function()
-			call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
-			return jump_inside_snippet(1)
-		end, { expr = true })
+		local hide_wrapper = function(fn)
+			return function()
+				call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
+				return fn()
+			end
+		end
+
+		vim.keymap.set(
+			"i",
+			"<C-[>",
+			hide_wrapper(function()
+				return jump_inside_snippet(-1)
+			end),
+			{ expr = true }
+		)
+		vim.keymap.set(
+			"i",
+			"<C-]>",
+			hide_wrapper(function()
+				return jump_inside_snippet(1)
+			end),
+			{ expr = true }
+		)
+
+		vim.keymap.set(
+			"i",
+			"<C-f>",
+			hide_wrapper(function() -- Go one character right
+				return "<right>"
+			end),
+			{ expr = true }
+		)
+
+		vim.keymap.set(
+			"i",
+			"<C-b>",
+			hide_wrapper(function() -- Go one character left
+				return "<left>"
+			end),
+			{ expr = true }
+		)
+
+		vim.keymap.set(
+			"i",
+			"<M-left>",
+			hide_wrapper(function() -- Go one character left
+				return "<S-left>"
+			end),
+			{ expr = true }
+		)
+
+		vim.keymap.set(
+			"i",
+			"<M-right>",
+			hide_wrapper(function() -- Go one character left
+				return "<S-right>"
+			end),
+			{ expr = true }
+		)
 
 		vim.cmd([[
 			call ddc#custom#load_config(expand('$HOME') . "/.dotfiles/nvim/ddc.ts")
