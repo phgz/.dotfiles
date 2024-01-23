@@ -26,11 +26,12 @@
 :s/\_./b                  => any single character including newline
 :s/\(a\)/\=f(submatch(1)) => apply function `f` to submatch
 :s/\d\+/\=submatch(0)+1   => increment match of 1 unit
+:s/p/\=submatch(0) ==# "p" ? "b" : "B" => check case of original match
 :g/p/s/a/b                => apply substitution only where `p` pattern appears
 :g!/p/s/a/b               => apply substitution only where `p` pattern does not appears
 :'<,'>g!/^$/exe "norm! f{vi}^[" | s/\%V\S\+/&, => apply to non-empty lines, chain commands with |
 :'<,'>g/./exe "norm! yf(" | %s//utils.& => for each line in range, yank a part, then global substitute that selection
-:s/p/\=submatch(0) ==# "p" ? "b" : "B" => check case of original match
+:'<,'>g/./if line(".") % 2 == 0 | {cmd} => apply command only to even lines
 :<C-v>                    => insert literal
 :<C-f>                    => expand command line
 :cd %:h                   => change to the directory of the current file
