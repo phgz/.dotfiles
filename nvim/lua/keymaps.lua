@@ -684,6 +684,15 @@ set("i", "<C-l>", function() -- Add new string parameter
 	api.nvim_win_set_cursor(0, { row, col + 4 })
 end)
 
+set("x", "<C-g>", function() -- Show rows/cols stats
+	local start_row, end_row = vim.fn.line("v"), vim.fn.line(".")
+	local start_col, end_col = vim.fn.col("v"), vim.fn.col(".")
+	local row_range = math.abs(start_row - end_row) + 1
+	local col_range = math.abs(start_col - end_col) + 1
+	vim.notify(row_range > 1 and (row_range .. " selected rows.") or (col_range .. " selected cols."))
+	vim.cmd("redrawstatus")
+end)
+
 set("", "<M-x>", function() -- Delete character after cursor
 	local content = api.nvim_get_current_line()
 	local col = api.nvim_win_get_cursor(0)[2]

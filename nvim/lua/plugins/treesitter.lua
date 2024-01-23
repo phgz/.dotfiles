@@ -273,9 +273,17 @@ return {
 				vim.diagnostic.goto_prev({ float = { border = "none" }, wrap = false })
 			end)
 
+			local diagnostic_wrapper = function(fn)
+				return function()
+					fn()
+					vim.cmd("redrawstatus")
+				end
+			end
+
 			local hunk_wrapper = function(fn)
 				return function()
 					fn()
+					vim.cmd("redrawstatus")
 					vim.defer_fn(function()
 						local winid = gs_is_open("hunk")
 						if winid then
@@ -305,15 +313,15 @@ return {
 					local is_inside_hunk = vim.list_contains({ "v", "V", vim.keycode("<C-v>") }, vim.fn.mode())
 					local is_on_hunk_edge_or_outside = true
 					if is_inside_hunk then
-						is_on_hunk_edge_or_outside = utils.compare_pos(
-							cursor_pos,
-							{ vim.fn.line("v"), 0 },
-							{ gt = false, eq = prev }
-						) or utils.compare_pos(
-							cursor_pos,
-							{ vim.fn.line("."), vim.fn.col(".") - 1 },
-							{ gt = true, eq = not prev }
-						)
+						local selection_start, selection_end = vim.fn.line("v"), vim.fn.line(".")
+						is_on_hunk_edge_or_outside = (
+							utils.compare_pos(
+								cursor_pos,
+								{ selection_start, vim.fn.col({ selection_start, "$" }) - 1 },
+								{ gt = false, eq = prev }
+							)
+							or utils.compare_pos(cursor_pos, { selection_end, 0 }, { gt = true, eq = not prev })
+						) or selection_start == selection_end
 						vim.api.nvim_feedkeys(esc, "n", false)
 					end
 
@@ -321,7 +329,15 @@ return {
 					local wrap_opts = vim.tbl_extend("error", opts, { wrap = true })
 					if is_on_hunk_edge_or_outside then
 						if prev then
+							local row_before_jump = vim.api.nvim_win_get_cursor(0)[1]
 							gs.prev_hunk(opts)
+
+							-- No prev hunk. We do not want to wrap and go to the first hunk. We want to stay still
+							if vim.api.nvim_win_get_cursor(0)[1] == row_before_jump then
+								gs.prev_hunk()
+								vim.fn.winrestview(view)
+								return
+							end
 						else
 							gs.next_hunk(opts)
 						end
@@ -389,10 +405,10 @@ return {
 			vim.keymap.set({ "n", "x", "o" }, "[h", hunk_wrapper(prev_hunk_start))
 			vim.keymap.set({ "n", "x", "o" }, "]gh", hunk_wrapper(next_hunk_end))
 			vim.keymap.set({ "n", "x", "o" }, "[gh", hunk_wrapper(prev_hunk_end))
-			vim.keymap.set({ "n", "x", "o" }, "]d", next_diagnostic_start)
-			vim.keymap.set({ "n", "x", "o" }, "[d", prev_diagnostic_start)
-			vim.keymap.set({ "n", "x", "o" }, "]gd", next_diagnostic_end)
-			vim.keymap.set({ "n", "x", "o" }, "[gd", prev_diagnostic_end)
+			vim.keymap.set({ "n", "x", "o" }, "]d", diagnostic_wrapper(next_diagnostic_start))
+			vim.keymap.set({ "n", "x", "o" }, "[d", diagnostic_wrapper(prev_diagnostic_start))
+			vim.keymap.set({ "n", "x", "o" }, "]gd", diagnostic_wrapper(next_diagnostic_end))
+			vim.keymap.set({ "n", "x", "o" }, "[gd", diagnostic_wrapper(prev_diagnostic_end))
 			vim.keymap.set({ "n", "x", "o" }, "]q", next_quote)
 			vim.keymap.set({ "n", "x", "o" }, "[q", prev_quote)
 			vim.keymap.set({ "n", "x", "o" }, "]z", next_fold)
