@@ -112,6 +112,14 @@ function M.motion_back(lowercase)
 	end, 100)
 end
 
+function M.get_listed_buffers(as_filenames)
+	local raw_listed_buffers = vim.split(vim.api.nvim_exec2("buffers", { output = true }).output, "\n")
+	return vim.iter.map(function(raw_buffer)
+		local bufnr = raw_buffer:match("%s*(%d+)")
+		return as_filenames and vim.fn.expand("#" .. bufnr .. ":p") or tonumber(bufnr)
+	end, raw_listed_buffers)
+end
+
 function M.jump_within_buffer(older)
 	local jumplist, current_jump_position = unpack(vim.fn.getjumplist())
 	local current_bufnr = vim.api.nvim_win_get_buf(0)
