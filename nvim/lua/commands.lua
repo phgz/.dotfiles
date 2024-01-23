@@ -20,6 +20,12 @@ api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+api.nvim_create_autocmd("CmdwinEnter", {
+	callback = function()
+		vim.keymap.set("n", "q", "<C-c>", { buffer = true })
+	end,
+})
+
 api.nvim_del_augroup_by_name("nvim_swapfile")
 api.nvim_create_autocmd("SwapExists", {
 	callback = function()
