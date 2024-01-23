@@ -17,6 +17,10 @@ vim.g.nvim_paper_highlights = {
 	GitSignsDelete = { bg = "None", fg = colors.red },
 	GitSignsAdd = { bg = "None", fg = colors.green },
 	GitSignsChange = { bg = "None", fg = colors.yellow },
+	GitSignsAddInline = { bg = colors.lgrey2 },
+	GitSignsDeleteInline = { bg = colors.lgrey2 },
+	GitSignsChangeInline = { bg = colors.lgrey2 },
+
 	DiffDelete = { bg = "#EACCCC" },
 	PmenuThumb = { bg = colors.grey },
 	PmenuSbar = { bg = colors.dgrey },

@@ -27,6 +27,9 @@ vim.g.gruvbox_baby_highlights = {
 	GitSignsDelete = { bg = "None", fg = colors.red },
 	GitSignsAdd = { bg = "None", fg = colors.forest_green },
 	GitSignsChange = { bg = "None", fg = colors.soft_yellow },
+	GitSignsAddInline = { bg = colors.diff.change },
+	GitSignsDeleteInline = { bg = colors.diff.change },
+	GitSignsChangeInline = { bg = colors.diff.change },
 
 	EndOfBuffer = { fg = colors.medium_gray },
 

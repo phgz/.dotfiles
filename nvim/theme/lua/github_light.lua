@@ -57,9 +57,11 @@ require("github-theme").setup({
 			DiagnosticLineNrInfo = { fg = "diag.info", style = "bold" },
 			DiagnosticLineNrHint = { fg = "diag.hint", style = "bold" },
 
-			diffAdded = { bg = "diff.add" },
-			diffRemoved = { bg = "diff.delete" },
-			diffChanged = { bg = "diff.change" },
+			GitSignsAddInline = { bg = "sel1" },
+			GitSignsDeleteInline = { bg = "sel1" },
+			GitSignsChangeInline = { bg = "sel1" },
+			GitSignsAddPreview = { bg = "diff.add" },
+			GitSignsDeletePreview = { bg = "diff.delete" },
 
 			CursorLine = { bg = "#DEE9F6" },
 			CursorLineNr = { fg = "fg2", style = "bold" },

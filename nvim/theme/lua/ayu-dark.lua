@@ -45,6 +45,10 @@ require("ayu").setup({
 		DiagnosticInfo = { bg = "None", fg = blue },
 		DiagnosticError = { bg = "None", fg = red },
 
+		GitSignsAddInline = { bg = light_grey },
+		GitSignsDeleteInline = { bg = light_grey },
+		GitSignsChangeInline = { bg = light_grey },
+
 		CursorLineNr = { fg = accent, bg = "None" },
 		WrappedLineNr = { bg = "None", fg = black },
 
