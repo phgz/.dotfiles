@@ -33,11 +33,10 @@
 :'<,'>g/./exe "norm! yf(" | %s//utils.& => for each line in range, yank a part, then global substitute that selection
 :'<,'>g/./if line(".") % 2 == 0 | {cmd} => apply command only to even lines
 :<C-v>                    => insert literal
-:<C-f>                    => expand command line
 :cd %:h                   => change to the directory of the current file
 :write ++p                => creates parent directories
 :<C-R>_<C-W>              => insert the Word under the cursor.
-:<C-f>                    => search cmdline history
+:<C-f>                    => open command-line window
 :ascii                    => print ascii value of char under cursor
 
 cgn                       => changes the text of the next match
