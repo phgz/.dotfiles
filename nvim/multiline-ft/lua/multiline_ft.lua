@@ -1,9 +1,11 @@
 local M = {}
 local api = vim.api
-local call = api.nvim_call_function
+local fn = vim.fn
+local cmd = vim.cmd
 local esc = vim.keycode("<esc>")
 local dummy_fn = "{_ -> v:true}"
 local global_repeat_fn = "v:lua.require'multiline_ft'.multiline_find_repeat"
+local utils = require("utils")
 local registry = {}
 
 local case_functions = {
@@ -19,8 +21,8 @@ local case_functions = {
 }
 
 local function get_escaped_char()
-	local char = call("escape", { call("getcharstr", {}), "^$.*~" })
-	if char == vim.fn.nr2char(27) then
+	local char = fn.escape(fn.getcharstr(), "^$.*~")
+	if char == fn.nr2char(27) then
 		-- escape
 		return nil
 	else
@@ -51,9 +53,9 @@ local function get_text_or_lines(visual_mode, sr, sc, er, ec)
 	local text_as_table
 
 	if visual_mode == "v" then
-		text_as_table = vim.api.nvim_buf_get_text(0, sr - 1, sc, er - 1, ec + 1, {})
+		text_as_table = api.nvim_buf_get_text(0, sr - 1, sc, er - 1, ec + 1, {})
 	else
-		text_as_table = vim.api.nvim_buf_get_lines(0, sr - 1, er, true)
+		text_as_table = api.nvim_buf_get_lines(0, sr - 1, er, true)
 		table.insert(text_as_table, "")
 	end
 
@@ -66,10 +68,10 @@ local function yank(sr, sc, er, ec, visual_mode, register, highlight)
 		sc, ec = 0, #text_as_table[#text_as_table]
 	end
 
-	call("setreg", { register, table.concat(text_as_table, "\n") })
+	fn.setreg(register, table.concat(text_as_table, "\n"))
 
 	if highlight then
-		local yank_ns = vim.api.nvim_create_namespace("hlyank")
+		local yank_ns = api.nvim_create_namespace("hlyank")
 
 		vim.highlight.range(0, yank_ns, "IncSearch", { sr - 1, sc }, { er - 1, ec + 1 }, {
 			regtype = visual_mode,
@@ -87,7 +89,7 @@ end
 
 local function repeat_change_callback(opts)
 	opts.operator = "repeat-change"
-	local dot_register = call("getreg", { "." })
+	local dot_register = fn.getreg(".")
 	M.set_registry(opts)
 	vim.go.operatorfunc = dummy_fn
 	api.nvim_feedkeys("g@l", "n", false)
@@ -95,7 +97,7 @@ local function repeat_change_callback(opts)
 	vim.keymap.set("n", ".", function()
 		reset_keymaps()
 
-		if vim.v.operator == "g@" and vim.go.operatorfunc == dummy_fn and call("getreg", { "." }) == dot_register then
+		if vim.v.operator == "g@" and vim.go.operatorfunc == dummy_fn and fn.getreg(".") == dot_register then
 			vim.go.operatorfunc = global_repeat_fn
 			api.nvim_feedkeys("g@l", "n", false)
 		else
@@ -125,11 +127,11 @@ local function operate_func(pos)
 				repeat_change_callback(opts)
 			end,
 		})
-		require("utils").update_selection(false, modes.visual, orig_row, orig_col, new_row, new_col)
+		utils.update_selection(false, modes.visual, orig_row, orig_col, new_row, new_col)
 		return
 	end
 
-	local start_row, start_col, end_row, end_col = require("utils").get_range({
+	local start_row, start_col, end_row, end_col = utils.get_range({
 		start_row = orig_row,
 		start_col = orig_col,
 		end_row = new_row,
@@ -158,7 +160,7 @@ local function operate_func(pos)
 	if operator == "y" then
 		yank(start_row, start_col, end_row, end_col, modes.visual, opts.register, true)
 	elseif operator == "repeat-change" then
-		local dot_reg = call("getreg", { "." })
+		local dot_reg = fn.getreg(".")
 		local chars = vim.iter(dot_reg:gmatch("."))
 
 		local acc = chars:fold({ stack = {}, bs_shift = 0 }, function(t, c)
@@ -212,7 +214,7 @@ function M.goto_pos_multiline(opts)
 	searchpos_opts = opts.forward and searchpos_opts or searchpos_opts .. "b"
 	local count = vim.v.count == 0 and opts.count or vim.v.count
 	local orig_row, orig_col = unpack(api.nvim_win_get_cursor(0))
-	vim.cmd.normal({ "m'", bang = true })
+	cmd.normal({ "m'", bang = true })
 	local new_row, new_col
 
 	if opts.repeat_motion and opts.exclusive then
@@ -220,7 +222,7 @@ function M.goto_pos_multiline(opts)
 	end
 
 	for _ = 1, count do
-		new_row, new_col = unpack(call("searchpos", { opts.char, searchpos_opts }))
+		new_row, new_col = unpack(fn.searchpos(opts.char, searchpos_opts))
 		if new_row == 0 then
 			api.nvim_win_set_cursor(0, { orig_row, orig_col })
 			return
@@ -254,7 +256,7 @@ function M.multiline_find(forward, exclusive, repeat_module)
 		return
 	end
 
-	-- local modes = require("utils").get_modes()
+	-- local modes = utils.get_modes()
 	-- local operator = vim.v.operator
 	local operator_count = M.get_registry().operator_count or 0
 	-- local is_repeating = vim.go.operatorfunc == global_repeat_fn

@@ -1,3 +1,8 @@
+local api = vim.api
+local cmd = vim.cmd
+local keymap = vim.keymap
+local fn = vim.fn
+
 return {
 	{
 		"nvim-telescope/telescope.nvim",
@@ -8,9 +13,6 @@ return {
 		},
 
 		config = function()
-			local api = vim.api
-			local call = api.nvim_call_function
-
 			local actions = require("telescope.actions")
 			local builtin = require("telescope.builtin")
 			local pickers = require("telescope.pickers")
@@ -58,7 +60,7 @@ return {
 			require("telescope").load_extension("noice")
 			require("telescope").load_extension("ui-select")
 
-			vim.api.nvim_create_autocmd("User", {
+			api.nvim_create_autocmd("User", {
 				pattern = "TelescopePreviewerLoaded",
 				callback = function()
 					if api.nvim_win_get_config(0).relative ~= "" then
@@ -67,16 +69,16 @@ return {
 				end,
 			})
 
-			vim.api.nvim_create_autocmd("FileType", {
+			api.nvim_create_autocmd("FileType", {
 				pattern = "TelescopePrompt",
 				callback = function()
-					local is_modifiable = vim.fn.getbufvar(vim.fn.bufnr("#"), "&modifiable") == 1
-					local is_modified = vim.fn.getbufvar(vim.fn.bufnr("#"), "&modified") == 1
-					local is_read_only = vim.fn.getbufvar(vim.fn.bufnr("#"), "&readonly") == 1
+					local is_modifiable = fn.getbufvar(fn.bufnr("#"), "&modifiable") == 1
+					local is_modified = fn.getbufvar(fn.bufnr("#"), "&modified") == 1
+					local is_read_only = fn.getbufvar(fn.bufnr("#"), "&readonly") == 1
 					local modified = is_modifiable and (is_modified and "[+]" or "") or "[-]"
 					local read_only = is_read_only and "[RO]" or ""
-					local help = vim.fn.getbufvar(vim.fn.bufnr("#"), "&buftype") == "help" and "[Help]" or ""
-					local git_status = vim.fn.getbufvar(vim.fn.bufnr("#"), "gitsigns_status")
+					local help = fn.getbufvar(fn.bufnr("#"), "&buftype") == "help" and "[Help]" or ""
+					local git_status = fn.getbufvar(fn.bufnr("#"), "gitsigns_status")
 					if git_status ~= "" then
 						git_status = "  " .. git_status
 					end
@@ -104,48 +106,48 @@ return {
 				},
 			})
 
-			vim.keymap.set("n", "<leader>F", function()
-				local _, _, p_root = vim.fn.expand("%:p"):find(string.format("(%s", os.getenv("HOME")) .. "/[^/]+/)")
+			keymap.set("n", "<leader>F", function()
+				local _, _, p_root = fn.expand("%:p"):find(string.format("(%s", os.getenv("HOME")) .. "/[^/]+/)")
 				builtin.find_files(vim.tbl_extend("error", dropdown_theme, { cwd = p_root }))
 			end)
-			vim.keymap.set("n", "<leader>f", function()
+			keymap.set("n", "<leader>f", function()
 				builtin.git_files(dropdown_theme)
 			end)
-			vim.keymap.set("n", "<leader>g", function()
+			keymap.set("n", "<leader>g", function()
 				builtin.live_grep(dropdown_theme)
 			end)
-			vim.keymap.set("n", "<leader>G", function()
+			keymap.set("n", "<leader>G", function()
 				builtin.grep_string(dropdown_theme)
 			end)
-			vim.keymap.set("n", "<leader>b", function()
+			keymap.set("n", "<leader>b", function()
 				builtin.buffers(vim.tbl_extend("error", dropdown_theme, {
 					cwd_only = true,
 					sort_buffers = function(bufnr_a, bufnr_b)
-						return vim.api.nvim_buf_get_name(bufnr_a) < vim.api.nvim_buf_get_name(bufnr_b)
+						return api.nvim_buf_get_name(bufnr_a) < api.nvim_buf_get_name(bufnr_b)
 					end,
 				}))
 			end)
-			vim.keymap.set("n", "<leader>B", function()
+			keymap.set("n", "<leader>B", function()
 				builtin.buffers(vim.tbl_extend("error", dropdown_theme, {
 					sort_buffers = function(bufnr_a, bufnr_b)
-						return vim.api.nvim_buf_get_name(bufnr_a) < vim.api.nvim_buf_get_name(bufnr_b)
+						return api.nvim_buf_get_name(bufnr_a) < api.nvim_buf_get_name(bufnr_b)
 					end,
 				}))
 			end)
-			vim.keymap.set("n", "<leader>l", function()
+			keymap.set("n", "<leader>l", function()
 				builtin.lsp_document_symbols(dropdown_theme)
 			end)
-			vim.keymap.set("n", "<leader>L", function()
+			keymap.set("n", "<leader>L", function()
 				builtin.lsp_document_symbols(vim.tbl_extend("error", dropdown_theme, { symbols = "function" }))
 			end)
 
 			local post_action_fn = function(prefix, is_equal)
 				is_equal = is_equal == nil and true or is_equal
 				local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
-				local jumps = call("msgpackparse", { context["jumps"] })
+				local jumps = fn.msgpackparse(context["jumps"])
 				local listed_bufs = vim.iter.map(function(buf)
 					return buf["f"]
-				end, call("msgpackparse", { context["bufs"] })[4])
+				end, fn.msgpackparse(context["bufs"])[4])
 				local to_edit
 				for i = #jumps, 1, -4 do
 					local file = jumps[i]["f"]
@@ -154,13 +156,13 @@ return {
 						break
 					end
 				end
-				vim.cmd.edit(to_edit)
+				cmd.edit(to_edit)
 			end
 
 			local get_opened_projects = function()
 				local project_paths = require("telescope._extensions.repo.autocmd_lcd").get_project_paths()
 				local context = api.nvim_get_context({ types = { "bufs" } })
-				local bufs = call("msgpackparse", { context["bufs"] })[4]
+				local bufs = fn.msgpackparse(context["bufs"])[4]
 
 				local open_projects = vim.iter.filter(function(project_path)
 					local found = vim.iter(bufs):find(function(buf_path)
@@ -172,7 +174,7 @@ return {
 				return open_projects
 			end
 
-			vim.keymap.set("n", "<leader>s", function() --
+			keymap.set("n", "<leader>s", function() --
 				local open_projects = get_opened_projects()
 
 				require("telescope").extensions.repo.list(vim.tbl_extend("error", dropdown_theme, {
@@ -182,10 +184,10 @@ return {
 				}))
 			end)
 
-			vim.keymap.set("n", "<leader>S", function() -- Toggle with last opened project
+			keymap.set("n", "<leader>S", function() -- Toggle with last opened project
 				local opened_projects = get_opened_projects()
 
-				local current_buffer_path = vim.fn.expand("%:p")
+				local current_buffer_path = fn.expand("%:p")
 				local current_project_path = vim.iter(opened_projects):find(function(project_path)
 					return vim.startswith(current_buffer_path, project_path)
 				end)
@@ -193,21 +195,21 @@ return {
 				post_action_fn(current_project_path, false)
 			end)
 
-			vim.keymap.set("n", "<leader>R", function() --
+			keymap.set("n", "<leader>R", function() --
 				vim.go.autochdir = false
 				require("telescope").extensions.repo.list(vim.tbl_extend("error", dropdown_theme, {
 					post_action = function(prefix)
-						vim.cmd.cd(prefix)
+						cmd.cd(prefix)
 					end,
 					prompt = " (cd into a repo)",
 				}))
 			end)
 
-			vim.keymap.set("n", "<leader>r", function()
+			keymap.set("n", "<leader>r", function()
 				vim.go.autochdir = false
 				require("telescope").extensions.repo.list(dropdown_theme)
 			end)
-			vim.keymap.set("n", "<leader>u", function()
+			keymap.set("n", "<leader>u", function()
 				require("telescope").extensions.undo.undo(dropdown_theme)
 			end)
 
@@ -280,10 +282,10 @@ return {
 				local conf = require("telescope.config").values
 				local yaml_path = {}
 				local result = {}
-				local bufnr = vim.api.nvim_get_current_buf()
-				local ft = vim.api.nvim_get_option_value("ft", { buf = bufnr })
+				local bufnr = api.nvim_get_current_buf()
+				local ft = api.nvim_get_option_value("ft", { buf = bufnr })
 				local tree = vim.treesitter.get_parser(bufnr, ft):parse()[1]
-				local file_path = vim.api.nvim_buf_get_name(bufnr)
+				local file_path = api.nvim_buf_get_name(bufnr)
 				local root = tree:root()
 				for child_node, _ in root:iter_children() do
 					visit_yaml_node(child_node, yaml_path, result, file_path, bufnr)
@@ -303,7 +305,7 @@ return {
 					:find()
 			end
 
-			vim.keymap.set("n", "<leader>m", function()
+			keymap.set("n", "<leader>m", function()
 				yaml_symbols(dropdown_theme)
 			end)
 		end,

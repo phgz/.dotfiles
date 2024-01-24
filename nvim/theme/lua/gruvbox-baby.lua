@@ -80,5 +80,3 @@ vim.g.gruvbox_baby_highlights = {
 
 	FlashPrompt = { link = "StatusLine" },
 }
-
--- vim.go.background = "dark"

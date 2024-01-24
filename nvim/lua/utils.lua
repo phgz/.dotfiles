@@ -416,14 +416,14 @@ function M.new_lines(forward, count)
 	api.nvim_win_set_cursor(0, { row + cursor_offset, 0 })
 end
 
-function M.mk_repeatable(fn)
+function M.mk_repeatable(func)
 	return function(...)
 		local args = { ... }
 		local nargs = select("#", ...)
 		vim.go.operatorfunc = "v:lua.require'utils'.repeat_action"
 
 		M.repeat_action = function()
-			fn(unpack(args, 1, nargs))
+			func(unpack(args, 1, nargs))
 		end
 
 		api.nvim_feedkeys("g@l", "n", false)

@@ -1,3 +1,8 @@
+local api = vim.api
+local fn = vim.fn
+local cmd = vim.cmd
+local keymap = vim.keymap
+
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
@@ -9,8 +14,8 @@ return {
 			"nvim-treesitter/nvim-treesitter-refactor", -- Highlight definitions, Rename
 		},
 		build = function()
-			vim.cmd("TSUpdate")
-			vim.cmd("TSInstall all")
+			cmd("TSUpdate")
+			cmd("TSInstall all")
 		end,
 		config = function()
 			vim.g.matchup_matchparen_offscreen = {}
@@ -20,7 +25,6 @@ return {
 			vim.g.matchup_matchparen_pumvisible = 0
 			vim.g.matchup_matchparen_nomode = "i"
 
-			local call = vim.api.nvim_call_function
 			local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
 			local utils = require("utils")
 			local esc = vim.keycode("<esc>")
@@ -203,7 +207,7 @@ return {
 					-- include_match_words = {''},
 				},
 			})
-			vim.cmd([[
+			cmd([[
 		highlight! TSDefinition gui=underline
 		highlight! TSDefinitionUsage gui=bold
 
@@ -237,10 +241,8 @@ return {
 
 			local next_diagnostic_end, prev_diagnostic_end = ts_repeat_move.make_repeatable_move_pair(function()
 				local diagnostic_range = utils.get_diagnostic_under_cursor_range()
-				if
-					diagnostic_range and not vim.deep_equal(vim.api.nvim_win_get_cursor(0), diagnostic_range.end_pos)
-				then
-					vim.api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
+				if diagnostic_range and not vim.deep_equal(api.nvim_win_get_cursor(0), diagnostic_range.end_pos) then
+					api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
 					vim.defer_fn(function()
 						vim.diagnostic.open_float({ scope = "cursor" })
 					end, 1)
@@ -248,7 +250,7 @@ return {
 					vim.diagnostic.goto_next({ float = { border = "none" }, wrap = false })
 					diagnostic_range = utils.get_diagnostic_under_cursor_range()
 					if diagnostic_range then
-						vim.api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
+						api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
 					end
 				end
 			end, function()
@@ -264,7 +266,7 @@ return {
 
 				diagnostic_range = utils.get_diagnostic_under_cursor_range()
 				if diagnostic_range then
-					vim.api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
+					api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
 				end
 			end)
 			local next_diagnostic_start, prev_diagnostic_start = ts_repeat_move.make_repeatable_move_pair(function()
@@ -273,24 +275,24 @@ return {
 				vim.diagnostic.goto_prev({ float = { border = "none" }, wrap = false })
 			end)
 
-			local diagnostic_wrapper = function(fn)
+			local diagnostic_wrapper = function(func)
 				return function()
-					fn()
-					vim.cmd("redrawstatus")
+					func()
+					cmd("redrawstatus")
 				end
 			end
 
-			local hunk_wrapper = function(fn)
+			local hunk_wrapper = function(func)
 				return function()
-					fn()
-					vim.cmd("redrawstatus")
+					func()
+					cmd("redrawstatus")
 					vim.defer_fn(function()
 						local winid = gs_is_open("hunk")
 						if winid then
 							local filetype = vim.bo.filetype
-							vim.api.nvim_win_call(winid, function()
+							api.nvim_win_call(winid, function()
 								vim.bo.filetype = filetype
-								vim.keymap.set("n", "q", "<cmd>close<cr>", { silent = true, buffer = true })
+								keymap.set("n", "q", "<cmd>close<cr>", { silent = true, buffer = true })
 							end)
 						end
 					end, 1)
@@ -298,24 +300,24 @@ return {
 			end
 
 			-- ensure ; goes forward and , goes backward regardless of the last direction
-			-- vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next)
-			-- vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous)
+			-- keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next)
+			-- keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous)
 
 			-- vim way: ; goes to the direction you were moving.
-			vim.keymap.set({ "n", "x", "o" }, ";", hunk_wrapper(ts_repeat_move.repeat_last_move))
-			vim.keymap.set({ "n", "x", "o" }, ",", hunk_wrapper(ts_repeat_move.repeat_last_move_opposite))
+			keymap.set({ "n", "x", "o" }, ";", hunk_wrapper(ts_repeat_move.repeat_last_move))
+			keymap.set({ "n", "x", "o" }, ",", hunk_wrapper(ts_repeat_move.repeat_last_move_opposite))
 
 			local hunk_opp = function(prev)
 				return function()
-					local view = vim.fn.winsaveview()
-					local cursor_pos = vim.api.nvim_win_get_cursor(0)
+					local view = fn.winsaveview()
+					local cursor_pos = api.nvim_win_get_cursor(0)
 					gs.select_hunk()
-					local is_inside_hunk = vim.list_contains({ "v", "V", vim.keycode("<C-v>") }, vim.fn.mode())
+					local is_inside_hunk = vim.list_contains({ "v", "V", vim.keycode("<C-v>") }, fn.mode())
 					local is_on_hunk_edge_or_outside = true
 					if is_inside_hunk then
-						local selection_start, selection_end = vim.fn.line("v"), vim.fn.line(".")
-						local col_range_lt = prev and vim.fn.col({ selection_start, "$" }) - 1 or 0
-						local col_range_gt = prev and vim.fn.col("$") - 1 or 0
+						local selection_start, selection_end = fn.line("v"), fn.line(".")
+						local col_range_lt = prev and fn.col({ selection_start, "$" }) - 1 or 0
+						local col_range_gt = prev and fn.col("$") - 1 or 0
 						is_on_hunk_edge_or_outside = utils.compare_pos(
 							cursor_pos,
 							{ selection_start, col_range_lt },
@@ -325,20 +327,20 @@ return {
 							{ selection_end, col_range_gt },
 							{ gt = true, eq = not prev }
 						)
-						vim.api.nvim_feedkeys(esc, "n", false)
+						api.nvim_feedkeys(esc, "n", false)
 					end
 
 					local opts = { navigation_message = false, preview = false }
 					local wrap_opts = vim.tbl_extend("error", opts, { wrap = true })
 					if is_on_hunk_edge_or_outside then
 						if prev then
-							local row_before_jump = vim.api.nvim_win_get_cursor(0)[1]
+							local row_before_jump = api.nvim_win_get_cursor(0)[1]
 							gs.prev_hunk(opts)
 
 							-- No prev hunk. We do not want to wrap and go to the first hunk. We want to stay still
-							if vim.api.nvim_win_get_cursor(0)[1] == row_before_jump then
+							if api.nvim_win_get_cursor(0)[1] == row_before_jump then
 								gs.prev_hunk()
-								vim.fn.winrestview(view)
+								fn.winrestview(view)
 								return
 							end
 						else
@@ -350,12 +352,12 @@ return {
 						gs.next_hunk({ wrap = true })
 					else
 						gs.select_hunk()
-						vim.api.nvim_feedkeys(esc, "n", false)
+						api.nvim_feedkeys(esc, "n", false)
 					end
-					cursor_pos = vim.api.nvim_win_get_cursor(0)
+					cursor_pos = api.nvim_win_get_cursor(0)
 					view.lnum = cursor_pos[1]
 					view.col = cursor_pos[2]
-					vim.fn.winrestview(view)
+					fn.winrestview(view)
 				end
 			end
 
@@ -369,19 +371,19 @@ return {
 				utils.goto_quote(false)
 			end)
 			local next_fold, prev_fold = ts_repeat_move.make_repeatable_move_pair(function()
-				vim.cmd("norm! zj")
+				cmd("norm! zj")
 			end, function()
-				vim.cmd("norm! zk")
+				cmd("norm! zk")
 			end)
 			local next_line, prev_line = ts_repeat_move.make_repeatable_move_pair(function()
-				vim.cmd("norm! j")
+				cmd("norm! j")
 			end, function()
-				vim.cmd("norm! k")
+				cmd("norm! k")
 			end)
 			local next_col, prev_col = ts_repeat_move.make_repeatable_move_pair(function()
-				vim.cmd("norm! l")
+				cmd("norm! l")
 			end, function()
-				vim.cmd("norm! h")
+				cmd("norm! h")
 			end)
 			local next_tab, prev_tab = ts_repeat_move.make_repeatable_move_pair(function()
 				require("tabtree").next()
@@ -390,7 +392,7 @@ return {
 			end)
 			local find_unmatched = function(visual, forward)
 				return function()
-					call("matchup#motion#find_unmatched", { visual, forward })
+					fn["matchup#motion#find_unmatched"](visual, forward)
 				end
 			end
 			local nnext_match, nprev_match =
@@ -400,33 +402,33 @@ return {
 
 			local rhs =
 				"<cmd>lua require('multiline_ft').multiline_find(%s,%s,require('nvim-treesitter.textobjects.repeatable_move'))<cr>"
-			vim.keymap.set({ "n", "x" }, "f", string.format(rhs, "true", "false"))
-			vim.keymap.set({ "n", "x" }, "F", string.format(rhs, "false", "false"))
-			vim.keymap.set({ "n", "x" }, "t", string.format(rhs, "true", "true"))
-			vim.keymap.set({ "n", "x" }, "T", string.format(rhs, "false", "true"))
-			vim.keymap.set({ "n", "x", "o" }, "]h", hunk_wrapper(next_hunk_start))
-			vim.keymap.set({ "n", "x", "o" }, "[h", hunk_wrapper(prev_hunk_start))
-			vim.keymap.set({ "n", "x", "o" }, "]gh", hunk_wrapper(next_hunk_end))
-			vim.keymap.set({ "n", "x", "o" }, "[gh", hunk_wrapper(prev_hunk_end))
-			vim.keymap.set({ "n", "x", "o" }, "]d", diagnostic_wrapper(next_diagnostic_start))
-			vim.keymap.set({ "n", "x", "o" }, "[d", diagnostic_wrapper(prev_diagnostic_start))
-			vim.keymap.set({ "n", "x", "o" }, "]gd", diagnostic_wrapper(next_diagnostic_end))
-			vim.keymap.set({ "n", "x", "o" }, "[gd", diagnostic_wrapper(prev_diagnostic_end))
-			vim.keymap.set({ "n", "x", "o" }, "]q", next_quote)
-			vim.keymap.set({ "n", "x", "o" }, "[q", prev_quote)
-			vim.keymap.set({ "n", "x", "o" }, "]z", next_fold)
-			vim.keymap.set({ "n", "x", "o" }, "[z", prev_fold)
-			-- vim.keymap.set({ "n", "x", "o" }, "]<cr>", next_line)
-			-- vim.keymap.set({ "n", "x", "o" }, "[<cr>", prev_line)
-			-- vim.keymap.set({ "n", "x", "o" }, "]<space>", next_col)
-			-- vim.keymap.set({ "n", "x", "o" }, "[<space>", prev_col)
-			vim.keymap.set({ "n", "x", "o" }, "]<tab>", next_tab)
-			vim.keymap.set({ "n", "x", "o" }, "[<tab>", prev_tab)
-			vim.keymap.set({ "n" }, "]%", nnext_match)
-			vim.keymap.set({ "n" }, "[%", nprev_match)
-			vim.keymap.set({ "x" }, "]%", xnext_match)
-			vim.keymap.set({ "x" }, "[%", xprev_match)
-			vim.keymap.set(
+			keymap.set({ "n", "x" }, "f", string.format(rhs, "true", "false"))
+			keymap.set({ "n", "x" }, "F", string.format(rhs, "false", "false"))
+			keymap.set({ "n", "x" }, "t", string.format(rhs, "true", "true"))
+			keymap.set({ "n", "x" }, "T", string.format(rhs, "false", "true"))
+			keymap.set({ "n", "x", "o" }, "]h", hunk_wrapper(next_hunk_start))
+			keymap.set({ "n", "x", "o" }, "[h", hunk_wrapper(prev_hunk_start))
+			keymap.set({ "n", "x", "o" }, "]gh", hunk_wrapper(next_hunk_end))
+			keymap.set({ "n", "x", "o" }, "[gh", hunk_wrapper(prev_hunk_end))
+			keymap.set({ "n", "x", "o" }, "]d", diagnostic_wrapper(next_diagnostic_start))
+			keymap.set({ "n", "x", "o" }, "[d", diagnostic_wrapper(prev_diagnostic_start))
+			keymap.set({ "n", "x", "o" }, "]gd", diagnostic_wrapper(next_diagnostic_end))
+			keymap.set({ "n", "x", "o" }, "[gd", diagnostic_wrapper(prev_diagnostic_end))
+			keymap.set({ "n", "x", "o" }, "]q", next_quote)
+			keymap.set({ "n", "x", "o" }, "[q", prev_quote)
+			keymap.set({ "n", "x", "o" }, "]z", next_fold)
+			keymap.set({ "n", "x", "o" }, "[z", prev_fold)
+			-- keymap.set({ "n", "x", "o" }, "]<cr>", next_line)
+			-- keymap.set({ "n", "x", "o" }, "[<cr>", prev_line)
+			-- keymap.set({ "n", "x", "o" }, "]<space>", next_col)
+			-- keymap.set({ "n", "x", "o" }, "[<space>", prev_col)
+			keymap.set({ "n", "x", "o" }, "]<tab>", next_tab)
+			keymap.set({ "n", "x", "o" }, "[<tab>", prev_tab)
+			keymap.set({ "n" }, "]%", nnext_match)
+			keymap.set({ "n" }, "[%", nprev_match)
+			keymap.set({ "x" }, "]%", xnext_match)
+			keymap.set({ "x" }, "[%", xprev_match)
+			keymap.set(
 				"n",
 				"sp",
 				utils.mk_repeatable(function()
@@ -435,7 +437,7 @@ return {
 				{ silent = true }
 			)
 
-			vim.keymap.set(
+			keymap.set(
 				"n",
 				"sn",
 				utils.mk_repeatable(function()
@@ -444,8 +446,8 @@ return {
 				{ silent = true }
 			)
 
-			vim.keymap.set("n", "<localleader>t", "<cmd>Inspect<cr>")
-			vim.keymap.set("n", "<leader>i", function()
+			keymap.set("n", "<localleader>t", "<cmd>Inspect<cr>")
+			keymap.set("n", "<leader>i", function()
 				local func = require("nvim-treesitter.textobjects.lsp_interop").peek_definition_code
 				local captures = vim.treesitter.get_captures_at_cursor()
 				if vim.list_contains(captures, "constructor") or vim.list_contains(captures, "type") then

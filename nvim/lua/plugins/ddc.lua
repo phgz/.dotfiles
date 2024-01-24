@@ -38,7 +38,9 @@ return {
 
 	config = function()
 		local api = vim.api
-		local call = api.nvim_call_function
+		local fn = vim.fn
+		local cmd = vim.cmd
+		local keymap = vim.keymap
 		local npairs = require("nvim-autopairs")
 
 		local get_snippet = function(item)
@@ -66,8 +68,8 @@ return {
 		end
 
 		local get_wuc_start_col = function()
-			local word_under_cursor = call("expand", { "<cword>" })
-			return call("searchpos", { word_under_cursor, "Wcnb" })[2] - 1
+			local word_under_cursor = fn.expand("<cword>")
+			return fn.searchpos(word_under_cursor, "Wcnb")[2] - 1
 		end
 
 		-- TextChangedP
@@ -112,11 +114,11 @@ return {
 						api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
 					end
 				else
-					call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
+					fn["ddc#denops#_notify"]("hide", { "CompleteDone" })
 					vim.v.completed_item = item
 					vim.g["ddc#_skip_next_complete"] = vim.g["ddc#_skip_next_complete"] + 1
 					insert_suggestion(suggestion, false)
-					call("ddc#on_complete_done", { item })
+					fn["ddc#on_complete_done"](item)
 				end
 			else
 				api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
@@ -130,26 +132,25 @@ return {
 		local keymaps_registry = {}
 		local register_scroll_preview_keymaps = function()
 			if not has_registered_scroll_preview_keymaps then
-				keymaps_registry =
-					{ vim.fn.maparg("<C-f>", "i", false, true), vim.fn.maparg("<C-b>", "i", false, true) }
-				vim.keymap.set("i", "<C-f>", function()
-					vim.fn["popup_preview#scroll"](4)
+				keymaps_registry = { fn.maparg("<C-f>", "i", false, true), fn.maparg("<C-b>", "i", false, true) }
+				keymap.set("i", "<C-f>", function()
+					fn["popup_preview#scroll"](4)
 				end, opts_expr)
-				vim.keymap.set("i", "<C-b>", function()
-					vim.fn["popup_preview#scroll"](-4)
+				keymap.set("i", "<C-b>", function()
+					fn["popup_preview#scroll"](-4)
 				end, opts_expr)
 				has_registered_scroll_preview_keymaps = true
 			end
 		end
 		local unregister_scroll_preview_keymaps = function()
 			local keymaps = keymaps_registry
-			vim.fn.mapset("i", false, keymaps[1])
-			vim.fn.mapset("i", false, keymaps[2])
+			fn.mapset("i", false, keymaps[1])
+			fn.mapset("i", false, keymaps[2])
 			has_registered_scroll_preview_keymaps = false
 		end
 
-		vim.keymap.set("i", "<Tab>", function()
-			if call("pumvisible", {}) == 1 then
+		keymap.set("i", "<Tab>", function()
+			if fn.pumvisible() == 1 then
 				api.nvim_feedkeys(vim.keycode("<Down>"), "n", false)
 				register_scroll_preview_keymaps()
 			else
@@ -157,35 +158,35 @@ return {
 			end
 		end, opts)
 
-		vim.keymap.set("i", "<S-Tab>", function()
-			if call("pumvisible", {}) == 1 then
+		keymap.set("i", "<S-Tab>", function()
+			if fn.pumvisible() == 1 then
 				api.nvim_feedkeys(vim.keycode("<Up><Up><Down>"), "n", false)
 				register_scroll_preview_keymaps()
 			else
-				vim.fn["ddc#map#manual_complete"]({ sources = { "lsp" }, ui = "native" })
+				fn["ddc#map#manual_complete"]({ sources = { "lsp" }, ui = "native" })
 			end
 		end, opts)
 
-		vim.keymap.set("i", "<CR>", function()
-			if call("pumvisible", {}) == 1 then
+		keymap.set("i", "<CR>", function()
+			if fn.pumvisible() == 1 then
 				unregister_scroll_preview_keymaps()
-				local col = vim.api.nvim_win_get_cursor(0)[2]
+				local col = api.nvim_win_get_cursor(0)[2]
 				local wuc_start_col = get_wuc_start_col()
 				local is_eow = api.nvim_get_current_line():sub(col + 1, col + 1):match("[^%w_]")
 				if is_eow then
 					return "<C-y>"
 				else
-					local del = string.rep("<DEL>", wuc_start_col + #vim.fn.expand("<cword>") - col)
+					local del = string.rep("<DEL>", wuc_start_col + #fn.expand("<cword>") - col)
 					return "<C-y>" .. del
 				end
 			else
-				return vim.api.nvim_feedkeys(npairs.autopairs_cr(), "n", false)
+				return api.nvim_feedkeys(npairs.autopairs_cr(), "n", false)
 			end
 		end, opts_expr)
 
-		vim.keymap.set("i", "<ESC>", function()
-			if call("pumvisible", {}) == 1 then
-				call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
+		keymap.set("i", "<ESC>", function()
+			if fn.pumvisible() == 1 then
+				fn["ddc#denops#_notify"]("hide", { "CompleteDone" })
 				unregister_scroll_preview_keymaps()
 				return "<C-e>"
 			else
@@ -193,14 +194,14 @@ return {
 			end
 		end, opts_expr)
 
-		local hide_wrapper = function(fn)
+		local hide_wrapper = function(func)
 			return function()
-				call("ddc#denops#_notify", { "hide", { "CompleteDone" } })
-				return fn()
+				fn["ddc#denops#_notify"]("hide", { "CompleteDone" })
+				return func()
 			end
 		end
 
-		vim.keymap.set(
+		keymap.set(
 			"i",
 			"<C-[>",
 			hide_wrapper(function()
@@ -208,7 +209,7 @@ return {
 			end),
 			{ expr = true }
 		)
-		vim.keymap.set(
+		keymap.set(
 			"i",
 			"<C-]>",
 			hide_wrapper(function()
@@ -217,7 +218,7 @@ return {
 			{ expr = true }
 		)
 
-		vim.keymap.set(
+		keymap.set(
 			"i",
 			"<C-f>",
 			hide_wrapper(function() -- Go one character right
@@ -226,7 +227,7 @@ return {
 			{ expr = true }
 		)
 
-		vim.keymap.set(
+		keymap.set(
 			"i",
 			"<C-b>",
 			hide_wrapper(function() -- Go one character left
@@ -235,7 +236,7 @@ return {
 			{ expr = true }
 		)
 
-		vim.keymap.set(
+		keymap.set(
 			"i",
 			"<M-left>",
 			hide_wrapper(function() -- Go one character left
@@ -244,7 +245,7 @@ return {
 			{ expr = true }
 		)
 
-		vim.keymap.set(
+		keymap.set(
 			"i",
 			"<M-right>",
 			hide_wrapper(function() -- Go one character left
@@ -253,7 +254,7 @@ return {
 			{ expr = true }
 		)
 
-		vim.cmd([[
+		cmd([[
 			call ddc#custom#load_config(expand('$HOME') . "/.dotfiles/nvim/ddc.ts")
 			call popup_preview#enable()
 			call signature_help#enable()

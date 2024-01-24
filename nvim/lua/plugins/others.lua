@@ -1,5 +1,5 @@
 -- https://github.com/trimclain/builder.nvim: Simple building plugin
-
+local utils = require("utils")
 return {
 	"nvim-lua/plenary.nvim", -- Lua functions
 	"tpope/vim-repeat", -- Repeat plugins commands
@@ -481,7 +481,7 @@ return {
 					end
 					local char = vim.fn.escape(vim.fn.getcharstr(), "^$.*~")
 					if char == "h" or char == "l" or char == "M" then
-						local offset = require("utils").get_linechars_offset_from_cursor(vim.fn.char2nr(char))
+						local offset = utils.get_linechars_offset_from_cursor(vim.fn.char2nr(char))
 						if not offset then
 							return
 						end
