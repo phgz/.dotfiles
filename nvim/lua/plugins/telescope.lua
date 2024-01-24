@@ -144,13 +144,13 @@ return {
 			local post_action_fn = function(prefix, is_equal)
 				is_equal = is_equal == nil and true or is_equal
 				local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
-				local jumps = fn.msgpackparse(context["jumps"])
+				local jumps = fn.msgpackparse(context.jumps)
 				local listed_bufs = vim.iter.map(function(buf)
-					return buf["f"]
-				end, fn.msgpackparse(context["bufs"])[4])
+					return buf.f
+				end, fn.msgpackparse(context.bufs)[4])
 				local to_edit
 				for i = #jumps, 1, -4 do
-					local file = jumps[i]["f"]
+					local file = jumps[i].f
 					if is_equal == vim.startswith(file, prefix) and vim.list_contains(listed_bufs, file) then
 						to_edit = file
 						break
@@ -162,11 +162,11 @@ return {
 			local get_opened_projects = function()
 				local project_paths = require("telescope._extensions.repo.autocmd_lcd").get_project_paths()
 				local context = api.nvim_get_context({ types = { "bufs" } })
-				local bufs = fn.msgpackparse(context["bufs"])[4]
+				local bufs = fn.msgpackparse(context.bufs)[4]
 
 				local open_projects = vim.iter.filter(function(project_path)
 					local found = vim.iter(bufs):find(function(buf_path)
-						return vim.startswith(buf_path["f"], project_path)
+						return vim.startswith(buf_path.f, project_path)
 					end)
 					return found or false
 				end, project_paths)

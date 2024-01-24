@@ -31,10 +31,10 @@ keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
 	vim.cmd("bdelete")
 	local new_current_file = fn.expand("%:p")
 	local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
-	local jumps = fn.msgpackparse(context["jumps"])
+	local jumps = fn.msgpackparse(context.jumps)
 	local still_listed = vim.iter.map(function(buf)
-		return buf["f"]
-	end, fn.msgpackparse(context["bufs"])[4])
+		return buf.f
+	end, fn.msgpackparse(context.bufs)[4])
 	local possible_alternatives = vim.iter.filter(function(name)
 		return name ~= new_current_file
 	end, still_listed)
@@ -49,7 +49,7 @@ keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
 	local jumps_current_file_index
 
 	for i = #jumps, 1, -4 do
-		if jumps[i]["f"] == new_current_file then
+		if jumps[i].f == new_current_file then
 			jumps_current_file_index = i
 			break
 		end
@@ -59,14 +59,14 @@ keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
 	local found = false
 
 	for i = jumps_alternate_file_index, 1, -4 do
-		if vim.list_contains(possible_alternatives, jumps[i]["f"]) then
+		if vim.list_contains(possible_alternatives, jumps[i].f) then
 			found = true
 			jumps_alternate_file_index = i
 			break
 		end
 	end
 	if found then
-		fn.setreg("#", jumps[jumps_alternate_file_index]["f"])
+		fn.setreg("#", jumps[jumps_alternate_file_index].f)
 	else
 		-- Alternate file not found in jumplist! Picking last in possible_alternatives
 		fn.setreg("#", possible_alternatives[#possible_alternatives])

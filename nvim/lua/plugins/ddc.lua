@@ -104,7 +104,7 @@ return {
 			if not vim.tbl_isempty(items) and complete_pos >= 0 then
 				local item = items[1]
 				local prev_input = api.nvim_get_current_line():sub(1, api.nvim_win_get_cursor(0)[2])
-				local suggestion = item["word"]
+				local suggestion = item.word
 
 				if vim.endswith(prev_input, suggestion) then
 					local snippet_text = get_snippet(item)
