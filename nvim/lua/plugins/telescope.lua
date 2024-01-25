@@ -1,5 +1,4 @@
 local api = vim.api
-local cmd = vim.cmd
 local keymap = vim.keymap
 local fn = vim.fn
 
@@ -30,9 +29,16 @@ return {
 							["<C-p>"] = actions.cycle_history_prev,
 							["<C-b>"] = actions.preview_scrolling_up,
 							["<C-f>"] = actions.preview_scrolling_down,
+							["<C-j>"] = actions.results_scrolling_up,
+							["<C-k>"] = actions.results_scrolling_down,
 							["<c-d>"] = actions.delete_buffer + actions.move_to_top,
 							["<tab>"] = actions.move_selection_next,
 							["<S-tab>"] = actions.move_selection_previous,
+							["<C-o>"] = actions.toggle_all,
+							["<C-e>"] = function(p_bufnr)
+								require("telescope.actions").send_selected_to_qflist(p_bufnr)
+								vim.cmd.cfdo("edit")
+							end,
 						},
 					},
 				},
@@ -40,7 +46,7 @@ return {
 					repo = {
 						list = {
 							fd_opts = {
-								"--exclude=.*/*",
+								-- "--exclude=.*/*",
 								"--exclude=[A-Z]*",
 								"--max-depth=2",
 							},
@@ -156,7 +162,7 @@ return {
 						break
 					end
 				end
-				cmd.edit(to_edit)
+				vim.cmd.edit(to_edit)
 			end
 
 			local get_opened_projects = function()
@@ -199,7 +205,7 @@ return {
 				vim.go.autochdir = false
 				require("telescope").extensions.repo.list(vim.tbl_extend("error", dropdown_theme, {
 					post_action = function(prefix)
-						cmd.cd(prefix)
+						vim.cmd.cd(prefix)
 					end,
 					prompt = " (cd into a repo)",
 				}))

@@ -1,4 +1,5 @@
 local api = vim.api
+local fn = vim.fn
 return {
 	"lewis6991/gitsigns.nvim",
 	event = "BufReadPre",
@@ -68,7 +69,9 @@ return {
 					gs.blame_line({ ignore_whitespace = true })
 				end)
 				map("n", "gc", function()
-					gs.diffthis(fn.input("Compare to: "))
+					if fn.input("Compare to: ") ~= "" then
+						gs.diffthis()
+					end
 				end)
 
 				-- Text objects

@@ -88,7 +88,7 @@ keymap.set("n", "<leader>o", function() -- open files returned by input command
 	local current_file = fn.expand("%:p")
 	local input = fn.input("Command (cwd is " .. fn.getcwd() .. "): ")
 
-	if input == 27 then
+	if input == "" then
 		utils.abort()
 		return
 	end
@@ -662,10 +662,14 @@ end)
 
 keymap.set("i", "<C-k>", function() -- Delete next word
 	local word_under_cursor = fn.expand("<cword>")
-	-- print(word_under_cursor)
 	local row, col = unpack(api.nvim_win_get_cursor(0))
-	local end_col = fn.searchpos(word_under_cursor, "Wcnb")[2] - 1 + #word_under_cursor
-	api.nvim_buf_set_text(0, row - 1, col, row - 1, end_col, {})
+	local is_not_word = api.nvim_get_current_line():sub(col + 1, col + 1):match("[^%w_]")
+	if is_not_word then
+		api.nvim_feedkeys(vim.keycode("<DEL>"), "n", false)
+	else
+		local end_col = fn.searchpos(word_under_cursor, "Wcnb")[2] - 1 + #word_under_cursor
+		api.nvim_buf_set_text(0, row - 1, col, row - 1, end_col, {})
+	end
 end)
 
 keymap.set("n", "<C-l>", function() -- Clear message

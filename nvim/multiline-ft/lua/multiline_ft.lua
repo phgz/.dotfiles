@@ -1,6 +1,7 @@
 local M = {}
 local api = vim.api
 local fn = vim.fn
+local keymap = vim.keymap
 local esc = vim.keycode("<esc>")
 local dummy_fn = "{_ -> v:true}"
 local global_repeat_fn = "v:lua.require'multiline_ft'.multiline_find_repeat"
@@ -35,9 +36,9 @@ local function abort()
 end
 
 local function reset_keymaps()
-	vim.keymap.del("n", ".")
-	vim.keymap.del("n", "p")
-	vim.keymap.del("n", "P")
+	keymap.del("n", ".")
+	keymap.del("n", "p")
+	keymap.del("n", "P")
 end
 
 local function set_text_or_lines(text_tbl, visual_mode, sr, sc, er, ec)
@@ -93,7 +94,7 @@ local function repeat_change_callback(opts)
 	vim.go.operatorfunc = dummy_fn
 	api.nvim_feedkeys("g@l", "n", false)
 
-	vim.keymap.set("n", ".", function()
+	keymap.set("n", ".", function()
 		reset_keymaps()
 
 		if vim.v.operator == "g@" and vim.go.operatorfunc == dummy_fn and fn.getreg(".") == dot_register then
@@ -105,7 +106,7 @@ local function repeat_change_callback(opts)
 	end)
 
 	vim.iter({ "p", "P" }):each(function(action)
-		vim.keymap.set("n", action, function()
+		keymap.set("n", action, function()
 			reset_keymaps()
 			api.nvim_feedkeys(action, "n", false)
 		end)

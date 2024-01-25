@@ -1,6 +1,5 @@
 local api = vim.api
 local fn = vim.fn
-local cmd = vim.cmd
 local keymap = vim.keymap
 
 return {
@@ -14,8 +13,8 @@ return {
 			"nvim-treesitter/nvim-treesitter-refactor", -- Highlight definitions, Rename
 		},
 		build = function()
-			cmd("TSUpdate")
-			cmd("TSInstall all")
+			vim.cmd("TSUpdate")
+			vim.cmd("TSInstall all")
 		end,
 		config = function()
 			vim.g.matchup_matchparen_offscreen = {}
@@ -207,7 +206,7 @@ return {
 					-- include_match_words = {''},
 				},
 			})
-			cmd([[
+			vim.cmd([[
 		highlight! TSDefinition gui=underline
 		highlight! TSDefinitionUsage gui=bold
 
@@ -278,14 +277,14 @@ return {
 			local diagnostic_wrapper = function(func)
 				return function()
 					func()
-					cmd("redrawstatus")
+					vim.cmd("redrawstatus")
 				end
 			end
 
 			local hunk_wrapper = function(func)
 				return function()
 					func()
-					cmd("redrawstatus")
+					vim.cmd("redrawstatus")
 					vim.defer_fn(function()
 						local winid = gs_is_open("hunk")
 						if winid then
@@ -371,20 +370,20 @@ return {
 				utils.goto_quote(false)
 			end)
 			local next_fold, prev_fold = ts_repeat_move.make_repeatable_move_pair(function()
-				cmd("norm! zj")
+				vim.cmd("norm! zj")
 			end, function()
-				cmd("norm! zk")
+				vim.cmd("norm! zk")
 			end)
-			local next_line, prev_line = ts_repeat_move.make_repeatable_move_pair(function()
-				cmd("norm! j")
-			end, function()
-				cmd("norm! k")
-			end)
-			local next_col, prev_col = ts_repeat_move.make_repeatable_move_pair(function()
-				cmd("norm! l")
-			end, function()
-				cmd("norm! h")
-			end)
+			-- local next_line, prev_line = ts_repeat_move.make_repeatable_move_pair(function()
+			-- 	vim.cmd("norm! j")
+			-- end, function()
+			-- 	vim.cmd("norm! k")
+			-- end)
+			-- local next_col, prev_col = ts_repeat_move.make_repeatable_move_pair(function()
+			-- 	vim.cmd("norm! l")
+			-- end, function()
+			-- 	vim.cmd("norm! h")
+			-- end)
 			local next_tab, prev_tab = ts_repeat_move.make_repeatable_move_pair(function()
 				require("tabtree").next()
 			end, function()
