@@ -3,10 +3,68 @@ local call = api.nvim_call_function
 local esc = vim.keycode("<esc>")
 
 M = {}
-M.is_i_ctrl_o = false
-M.insert_mode_col = 0
 
-call("matchadd", { "DiffText", "\\%97v" })
+local relative_focusable = function(win)
+	local config = api.nvim_win_get_config(win)
+	return config.relative ~= "" and config.focusable
+end
+
+local fn_popups = function(func)
+	vim.iter(api.nvim_list_wins()):filter(relative_focusable):each(function(win)
+		if api.nvim_win_is_valid(win) then
+			func(win)
+		end
+	end)
+end
+
+local win_close = function(win)
+	api.nvim_set_current_win(win)
+	vim.cmd.close()
+end
+
+local popup_update_config_from_scrolling = function(win)
+	if vim.w[win].gitsigns_preview == nil then
+		local win_conf = api.nvim_win_get_config(win)
+		assert(win_conf.relative == "win", win_conf.relative)
+		local updated_conf = vim.tbl_deep_extend("force", api.nvim_win_get_config(win), {
+			row = {
+				[false] = win_conf.row[false] - vim.v.event[vim.fn.expand("<afile>")].topline,
+				[true] = win_conf.row[true],
+			},
+		})
+		api.nvim_win_set_config(win, updated_conf)
+	end
+end
+
+api.nvim_create_autocmd("BufAdd", {
+	callback = function()
+		api.nvim_create_autocmd("BufEnter", {
+			once = true,
+			callback = function()
+				vim.cmd.normal({ "zX", bang = true })
+			end,
+		})
+	end,
+})
+
+api.nvim_create_autocmd("BufReadPost", {
+	callback = function()
+		local row, col = unpack(api.nvim_buf_get_mark(0, '"'))
+		if row > 0 and row <= api.nvim_buf_line_count(0) then
+			api.nvim_win_set_cursor(0, { row, col })
+			vim.api.nvim_feedkeys("zz", "n", false)
+		end
+		vim.defer_fn(function()
+			vim.cmd("redrawstatus")
+		end, 200)
+	end,
+})
+
+api.nvim_create_autocmd("CmdwinEnter", {
+	callback = function()
+		vim.keymap.set("n", "q", "<C-c>", { buffer = true })
+	end,
+})
 
 api.nvim_create_autocmd("FileType", {
 	pattern = { "help", "startuptime", "qf", "lspinfo", "noice", "" },
@@ -20,9 +78,36 @@ api.nvim_create_autocmd("FileType", {
 	end,
 })
 
-api.nvim_create_autocmd("CmdwinEnter", {
+M.insert_mode_col = 0
+api.nvim_create_autocmd("InsertLeavePre", {
 	callback = function()
-		vim.keymap.set("n", "q", "<C-c>", { buffer = true })
+		M.insert_mode_col = vim.fn.col(".")
+	end,
+})
+
+api.nvim_create_augroup("lsp_diagnostics_warmup", {})
+api.nvim_create_autocmd("LspProgress", {
+	pattern = "end",
+	group = "lsp_diagnostics_warmup",
+	callback = function(arg)
+		if arg.data.result.value.title == "Diagnosing" then
+			api.nvim_del_augroup_by_name("lsp_diagnostics_warmup")
+			vim.cmd("redrawstatus")
+		end
+	end,
+})
+
+M.is_i_ctrl_o = false
+api.nvim_create_autocmd("ModeChanged", {
+	pattern = "i:niI",
+	callback = function()
+		M.is_i_ctrl_o = true
+	end,
+})
+api.nvim_create_autocmd("ModeChanged", {
+	pattern = { "niI:i", "niI:n" },
+	callback = function()
+		M.is_i_ctrl_o = false
 	end,
 })
 
@@ -39,7 +124,7 @@ api.nvim_create_autocmd("SwapExists", {
 
 		vim.v.swapchoice = "o" -- Choose "Read-Only".
 		vim.bo.modifiable = false
-		vim.notify("This file is already opened elsewhere. Opening in RO mode")
+		vim.notify("This file is already opened elsewhere. Opening in RO mode.")
 	end,
 })
 
@@ -70,90 +155,26 @@ api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
-local close_popups = function()
-	local relative_focusable = function(win)
-		local config = api.nvim_win_get_config(win)
-		return config.relative ~= "" and config.focusable
-	end
-	vim.iter(api.nvim_list_wins()):filter(relative_focusable):each(function(win)
-		if api.nvim_win_is_valid(win) then
-			-- api.nvim_win_close(win, false) is not consistent
-			api.nvim_set_current_win(win)
-			vim.cmd.close()
-		end
-	end)
-end
-
 api.nvim_create_autocmd("VimEnter", {
 	callback = function()
 		vim.keymap.set("n", "<esc>", function() -- Close popups
-			close_popups()
-			-- api.nvim_feedkeys(esc, "n", false)
+			-- api.nvim_win_close(win, false) is not consistent
+			fn_popups(win_close)
 		end)
 		vim.keymap.set("i", "<C-q>", function() -- Close popups in insert mode
-			close_popups()
+			fn_popups(win_close)
 		end)
 	end,
 })
 
-api.nvim_create_autocmd("BufReadPost", {
-	callback = function()
-		local row, col = unpack(api.nvim_buf_get_mark(0, '"'))
-		if row > 0 and row <= api.nvim_buf_line_count(0) then
-			api.nvim_win_set_cursor(0, { row, col })
-			vim.api.nvim_feedkeys("zz", "n", false)
-		end
-		vim.defer_fn(function()
-			vim.cmd("redrawstatus")
-		end, 200)
-	end,
-})
-
-api.nvim_create_augroup("lsp_warmup", {})
-api.nvim_create_autocmd("LspProgress", {
-	pattern = "end",
-	group = "lsp_warmup",
-	callback = function(arg)
-		if arg.data.result.value.title == "Diagnosing" then
-			api.nvim_del_augroup_by_name("lsp_warmup")
-			vim.cmd("redrawstatus")
-		end
-	end,
-})
-
-api.nvim_create_autocmd("BufAdd", {
-	callback = function()
-		api.nvim_create_autocmd("BufEnter", {
-			once = true,
-			callback = function()
-				vim.cmd.normal({ "zX", bang = true })
-			end,
-		})
-	end,
-})
-
+-- update popups position to follow the cursor when scrolling
 api.nvim_create_autocmd("WinScrolled", {
 	callback = function()
 		vim.wo.statuscolumn = vim.wo.statuscolumn
-	end,
-})
-
-api.nvim_create_autocmd("InsertLeavePre", {
-	callback = function()
-		M.insert_mode_col = vim.fn.col(".")
-	end,
-})
-
-api.nvim_create_autocmd("ModeChanged", {
-	pattern = "i:niI",
-	callback = function()
-		M.is_i_ctrl_o = true
-	end,
-})
-api.nvim_create_autocmd("ModeChanged", {
-	pattern = { "niI:i", "niI:n" },
-	callback = function()
-		M.is_i_ctrl_o = false
+		local win_id = tonumber(vim.fn.expand("<afile>"))
+		if win_id and not relative_focusable(win_id) then
+			fn_popups(popup_update_config_from_scrolling)
+		end
 	end,
 })
 
