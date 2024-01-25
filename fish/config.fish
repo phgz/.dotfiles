@@ -19,7 +19,7 @@ bind \ca beginning-of-line
 bind \ce end-of-line
 bind \c_ kill-line
 bind \ck kill-word
-bind \cc kill-whole-line repaint
+bind \cc cancel-commandline
 bind \cg expand-abbr
 
 # >>> conda initialize >>>
