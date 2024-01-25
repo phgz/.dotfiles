@@ -261,20 +261,22 @@ function M.duplicate(visual_motion)
 end
 
 function M.yank_comment_paste()
-	local utils = require("Comment.utils")
-	local col = call("col", { "." })
-	local range = utils.get_region()
-	local lines = utils.get_lines(range)
+	local start_row = api.nvim_buf_get_mark(0, "[")[1]
+	local end_row = api.nvim_buf_get_mark(0, "]")[1]
+	local lines = api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
+	local range = end_row - start_row + 1
 
 	-- Copying the block
-	local srow = range.erow
-	api.nvim_buf_set_lines(0, srow, srow, false, lines)
+	api.nvim_buf_set_lines(0, end_row, end_row, true, lines)
 
 	-- Doing the comment
-	require("Comment.api").comment.linewise()
+	require("Comment.api").comment.linewise.count(range)
 
 	-- Move the cursor
-	api.nvim_win_set_cursor(0, { srow + 1, col - 1 })
+	local pre_motion_row, pre_motion_col = unpack(M.get_position_registry())
+	M.set_position_registry({})
+	api.nvim_win_set_cursor(0, { pre_motion_row + range, pre_motion_col })
+end
 end
 
 function M.cursor_is_punctuation()
