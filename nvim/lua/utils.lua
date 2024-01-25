@@ -613,11 +613,16 @@ function M.diagnostics_status_line()
 	return vim.deep_equal(non_empty, {}) and "" or " " .. table.concat(non_empty, " ")
 end
 
+function M.status_column()
+	-- we subtract vim.api.nvim_win_get_position(0)[1] to handle stacked windows
+	local offset = M.win_row_offset_from_win_middle(
+		call("screenpos", { 0, vim.v.lnum, 1 }).row - api.nvim_win_get_position(0)[1],
+		M.virtual_win_height()
+	)
 	local highlight = vim.v.virtnum > 0 and "%#WrappedLineNr#" or ""
 	local chars = " M"
-	if screen_row + vim.v.virtnum ~= middle then
-		chars = (screen_row + vim.v.virtnum < middle and "h" or "l")
-			.. string.char(math.abs(middle - screen_row - vim.v.virtnum) % 30 + 96)
+	if vim.v.virtnum ~= offset then
+		chars = (vim.v.virtnum < offset and "h" or "l") .. string.char(math.abs(offset - vim.v.virtnum) % 30 + 96)
 	end
 
 	return highlight .. chars
