@@ -545,11 +545,31 @@ end
 
 M.apply_to_next_motion = function(motion)
 	local arg1 = call("nr2char", { call("getchar", {}) })
+
+	if arg1 == esc or (arg1 ~= "i" and arg1 ~= "a") then
+		M.abort()
+		return
+	end
+
 	local arg2 = call("nr2char", { call("getchar", {}) })
 
-	if vim.list_contains({ "'", '"', "{", "}", "(", ")", "[", "]", "<", ">" }, arg2) then
-		vim.cmd("norm f" .. arg2)
-		api.nvim_feedkeys(motion .. arg1 .. arg2, "m", false)
+	local pairs = {
+		["'"] = "'",
+		['"'] = '"',
+		["{"] = "{}",
+		["}"] = "}{",
+		["("] = "()",
+		[")"] = ")(",
+		["["] = "[]",
+		["]"] = "][",
+		["<"] = "<>",
+		[">"] = "><",
+	}
+	if vim.list_contains(vim.tbl_keys(pairs), arg2) then
+		-- api.nvim_feedkeys(esc, "i", false)
+		local pos = vim.fn.searchpos(table.concat(vim.split(pairs[arg2], "", { plain = true }), "\\|"), "Wn")
+		api.nvim_win_set_cursor(0, pos)
+		api.nvim_feedkeys(motion .. arg1 .. arg2, "x!", false)
 	end
 end
 
