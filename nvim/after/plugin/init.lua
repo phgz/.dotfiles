@@ -7,6 +7,8 @@ local status_line = function()
 	return "%F" .. git .. diagnostics .. flags .. "%=" .. message
 end
 
+vim.fn.matchadd("DiffText", "\\%97v")
+
 vim.go.statusline = status_line()
 vim.opt.formatoptions:remove({ "l", "o", "r" })
 vim.wo.statuscolumn = [[%s%{%luaeval("require'utils'.status_column()")%}]]
