@@ -447,6 +447,7 @@ return {
 			)
 
 			keymap.set("n", "<localleader>t", "<cmd>Inspect<cr>")
+			keymap.set("n", "<localleader>T", "<cmd>InspectTree<cr>")
 			keymap.set("n", "<leader>i", function()
 				local func = require("nvim-treesitter.textobjects.lsp_interop").peek_definition_code
 				local captures = vim.treesitter.get_captures_at_cursor()
