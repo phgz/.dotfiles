@@ -319,15 +319,15 @@ function M.goto_quote(fwd)
 	call("search", { [[\("\|'\)]], "W" .. (fwd and "" or "b") })
 end
 
-function M.diagnostic(fwd)
-	-- INFO for whatever reason, diagnostic line numbers and the end column (but
-	-- not the start column) are all off-by-one
-
-	-- HACK if cursor is standing on a diagnostic, get_prev() will return that
-	-- diagnostic *BUT* only if the cursor is not on the first character of the
-	-- diagnostic, since the columns checked seem to be off-by-one as well m(
-	-- Therefore counteracted by temporarily moving the cursor
-	vim.cmd.normal({ "l", bang = true })
+function M.compare_pos(pos_1, pos_2, opts)
+	if opts.gt then
+		return pos_1[1] > pos_2[1]
+			or (pos_1[1] == pos_2[1] and (opts.eq and pos_1[2] >= pos_2[2] or pos_1[2] > pos_2[2]))
+	else
+		return pos_1[1] < pos_2[1]
+			or (pos_1[1] == pos_2[1] and (opts.eq and pos_1[2] <= pos_2[2] or pos_1[2] < pos_2[2]))
+	end
+end
 	local prevD = vim.diagnostic.get_prev({ wrap = false })
 	vim.cmd.normal({ "h", bang = true })
 
