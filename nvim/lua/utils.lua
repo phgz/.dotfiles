@@ -336,11 +336,51 @@ M.get_normalized_diag_range = function(diagnostic)
 		end_pos = { diagnostic.end_lnum + 1, diagnostic.end_col - 1 },
 	}
 end
-		local curAfterPrevDstart = (curRow == prevD.lnum + 1 and curCol >= prevD.col) or (curRow > prevD.lnum + 1)
-		local curBeforePrevDend = (curRow == prevD.end_lnum + 1 and curCol <= prevD.end_col - 1)
-			or (curRow < prevD.end_lnum)
-		curStandingOnPrevD = curAfterPrevDstart and curBeforePrevDend
+
+function M.get_diagnostic_under_cursor_range()
+	local cursor_pos = api.nvim_win_get_cursor(0)
+	local row_diags = vim.diagnostic.get(0, { lnum = cursor_pos[1] - 1 })
+	local nearest_diagnostic_under_cursor = vim.iter(row_diags):fold(nil, function(acc, diag)
+		local diagnostic_range = M.get_normalized_diag_range(diag)
+		local cursor_is_on_diagnostic = M.compare_pos(cursor_pos, diagnostic_range.start_pos, { gt = true, eq = true })
+			and M.compare_pos(cursor_pos, diagnostic_range.end_pos, { gt = false, eq = true })
+
+		if not cursor_is_on_diagnostic then
+			return acc
+		end
+
+		local distance = math.abs(diagnostic_range.start_pos[2] - cursor_pos[2])
+
+		if acc == nil then
+			return { diagnostic_range, distance }
+		end
+
+		if distance < acc[2] then
+			return { diagnostic_range, distance }
+		end
+	end)
+
+	if nearest_diagnostic_under_cursor == nil then
+		vim.print({ vim.diagnostic.get_next({ wrap = false }) }, {
+			vim.diagnostic.get_prev({
+				wrap = false,
+			}),
+		})
+		return nil
+	else
+		local start_pos, end_pos =
+			nearest_diagnostic_under_cursor[1].start_pos, nearest_diagnostic_under_cursor[1].end_pos
+
+		vim.print({ vim.diagnostic.get_next({ cursor_position = { end_pos[1], end_pos[2] + 1 }, wrap = false }) }, {
+			vim.diagnostic.get_prev({
+				cursor_position = { start_pos[1], start_pos[2] - 1 },
+				wrap = false,
+			}),
+		})
+		-- local asd = adsf
+		return nearest_diagnostic_under_cursor[1]
 	end
+end
 
 	local target
 	if not fwd or curStandingOnPrevD then
