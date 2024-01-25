@@ -118,7 +118,10 @@ return {
 				vim.keymap.set("n", "<localleader>r", vim.lsp.buf.rename)
 				vim.keymap.set("n", "H", function()
 					local captures = vim.treesitter.get_captures_at_cursor()
-					if vim.list_contains(captures, "function.call") or vim.list_contains(captures, "method.call") then
+					if
+						vim.list_contains(captures, "function.call")
+						or vim.list_contains(captures, "function.method.call")
+					then
 						vim.lsp.buf.hover()
 					else
 						vim.lsp.buf.signature_help()
