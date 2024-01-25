@@ -1,3 +1,6 @@
+local keymap = vim.keymap
+local api = vim.api
+local fn = vim.fn
 -- https://github.com/trimclain/builder.nvim: Simple building plugin
 local utils = require("utils")
 return {
@@ -41,10 +44,10 @@ return {
 		"kwkarlwang/bufresize.nvim", -- keep windows proportions
 		config = function()
 			require("bufresize").setup()
-			vim.keymap.set("n", "<leader>q", function() -- Close window
+			keymap.set("n", "<leader>q", function() -- Close window
 				require("bufresize").block_register()
-				local win = vim.api.nvim_get_current_win()
-				vim.api.nvim_win_close(win, false)
+				local win = api.nvim_get_current_win()
+				api.nvim_win_close(win, false)
 				require("bufresize").resize_close()
 			end)
 		end,
@@ -76,26 +79,26 @@ return {
 				},
 			})
 			-- moving between splits
-			vim.keymap.set({ "i", "n", "o", "v" }, "<S-left>", require("smart-splits").move_cursor_left)
-			vim.keymap.set({ "i", "n", "o", "v" }, "<S-down>", require("smart-splits").move_cursor_down)
-			vim.keymap.set({ "i", "n", "o", "v" }, "<S-up>", require("smart-splits").move_cursor_up)
-			vim.keymap.set({ "i", "n", "o", "v" }, "<S-right>", require("smart-splits").move_cursor_right)
+			keymap.set({ "i", "n", "o", "v" }, "<S-left>", require("smart-splits").move_cursor_left)
+			keymap.set({ "i", "n", "o", "v" }, "<S-down>", require("smart-splits").move_cursor_down)
+			keymap.set({ "i", "n", "o", "v" }, "<S-up>", require("smart-splits").move_cursor_up)
+			keymap.set({ "i", "n", "o", "v" }, "<S-right>", require("smart-splits").move_cursor_right)
 			-- resizing splits
-			vim.keymap.set({ "i", "n", "o", "v" }, "<C-S-left>", require("smart-splits").resize_left)
-			vim.keymap.set({ "i", "n", "o", "v" }, "<C-S-down>", require("smart-splits").resize_down)
-			vim.keymap.set({ "i", "n", "o", "v" }, "<C-S-up>", require("smart-splits").resize_up)
-			vim.keymap.set({ "i", "n", "o", "v" }, "<C-S-right>", require("smart-splits").resize_right)
+			keymap.set({ "i", "n", "o", "v" }, "<C-S-left>", require("smart-splits").resize_left)
+			keymap.set({ "i", "n", "o", "v" }, "<C-S-down>", require("smart-splits").resize_down)
+			keymap.set({ "i", "n", "o", "v" }, "<C-S-up>", require("smart-splits").resize_up)
+			keymap.set({ "i", "n", "o", "v" }, "<C-S-right>", require("smart-splits").resize_right)
 			-- swapping buffers between windows
-			vim.keymap.set({ "i", "n", "o", "v" }, "<S-M-left>", require("smart-splits").swap_buf_left)
-			vim.keymap.set({ "i", "n", "o", "v" }, "<S-M-down>", require("smart-splits").swap_buf_down)
-			vim.keymap.set({ "i", "n", "o", "v" }, "<S-M-up>", require("smart-splits").swap_buf_up)
-			vim.keymap.set({ "i", "n", "o", "v" }, "<S-M-right>", require("smart-splits").swap_buf_right)
+			keymap.set({ "i", "n", "o", "v" }, "<S-M-left>", require("smart-splits").swap_buf_left)
+			keymap.set({ "i", "n", "o", "v" }, "<S-M-down>", require("smart-splits").swap_buf_down)
+			keymap.set({ "i", "n", "o", "v" }, "<S-M-up>", require("smart-splits").swap_buf_up)
+			keymap.set({ "i", "n", "o", "v" }, "<S-M-right>", require("smart-splits").swap_buf_right)
 		end,
 	},
 	{
 		"https://github.com/atusy/treemonkey.nvim",
 		init = function()
-			vim.keymap.set({ "x", "o" }, "n", function()
+			keymap.set({ "x", "o" }, "n", function()
 				require("treemonkey").select({ ignore_injections = false })
 			end)
 		end,
@@ -104,7 +107,7 @@ return {
 		"HiPhish/rainbow-delimiters.nvim", -- "Enclosers" coloring
 		config = function()
 			-- local strategy = function()
-			-- 	if vim.api.nvim_call_function("line", { "$" }) > 10000 then
+			-- 	if api.nvim_call_function("line", { "$" }) > 10000 then
 			-- 		return require("rainbow-delimiters").strategy["local"]
 			-- 	else
 			-- 		return require("rainbow-delimiters").strategy["global"]
@@ -244,12 +247,13 @@ return {
 					use_esc_to_cancel = true,
 				},
 			})
-			vim.keymap.set("n", "sx", function()
+			keymap.set("n", "sx", function()
 				require("substitute").operator({ register = vim.v.register })
 			end, { noremap = true })
-			vim.keymap.set("n", "sxx", require("substitute").line, { noremap = true })
-			vim.keymap.set("n", "sX", require("substitute").eol, { noremap = true })
-			vim.keymap.set("n", "cx", require("substitute.exchange").operator, { noremap = true })
+			keymap.set("n", "sxx", require("substitute").line, { noremap = true })
+			keymap.set("n", "sX", require("substitute").eol, { noremap = true })
+			keymap.set("n", "cx", require("substitute.exchange").operator, { noremap = true })
+			keymap.set("x", "CX", require("substitute.exchange").operator, { noremap = true })
 		end,
 	},
 	{
@@ -285,7 +289,7 @@ return {
 		"ThePrimeagen/refactoring.nvim", --  Extract block in new function
 		keys = { { "<leader>e", mode = "v" } },
 		config = function()
-			vim.keymap.set("v", "<Leader>e", function()
+			keymap.set("v", "<Leader>e", function()
 				require("refactoring").refactor("Extract Function")
 			end, { silent = true })
 		end,
@@ -305,7 +309,7 @@ return {
 				},
 			})
 
-			vim.keymap.set("n", "<leader>a", require("neogen").generate, { silent = true })
+			keymap.set("n", "<leader>a", require("neogen").generate, { silent = true })
 		end,
 	},
 	{
@@ -332,9 +336,36 @@ return {
 					delete = "ds",
 					change = "cs",
 				},
+				surrounds = {
+					["f"] = {},
+					["k"] = {
+						add = function()
+							api.nvim_feedkeys("i", "n", false)
+							return { { "(" }, { ")" } }
+						end,
+						find = function()
+							if vim.g.loaded_nvim_treesitter then
+								local selection =
+									require("nvim-surround.queries").get_selection("@call.outer", "textobjects")
+								if selection then
+									return selection
+								end
+							end
+							return require("nvim-surround.patterns").get_selection("[^=%s%(%){}]+%b()")
+						end,
+						delete = "^(.-%()().-(%))()$",
+						change = {
+							target = "^.-([%w%._]+)()%(.-%)()()$",
+							replacement = function()
+								api.nvim_feedkeys("i", "n", false)
+								return { { "" }, { "" } }
+							end,
+						},
+					},
+				},
 			})
 
-			vim.keymap.set("n", "S", function()
+			keymap.set("n", "S", function()
 				return "<Plug>(nvim-surround-normal)g_"
 			end, { expr = true, silent = true })
 		end,
@@ -346,8 +377,8 @@ return {
 			require("sibling-swap").setup({
 				use_default_keymaps = false,
 			})
-			vim.keymap.set("n", "<C-.>", require("sibling-swap")["swap_with_right_with_opp"])
-			vim.keymap.set("n", "<C-,>", require("sibling-swap")["swap_with_left_with_opp"])
+			keymap.set("n", "<C-.>", require("sibling-swap")["swap_with_right_with_opp"])
+			keymap.set("n", "<C-,>", require("sibling-swap")["swap_with_left_with_opp"])
 		end,
 	},
 	{
@@ -409,14 +440,14 @@ return {
 					eol = "KA",
 				},
 			})
-			vim.keymap.set(
+			keymap.set(
 				"n",
 				"KD",
 				[[<cmd>lua require'utils'.set_position_registry(vim.fn.getpos("."))<cr><cmd>let &operatorfunc = "v:lua.require'utils'.yank_comment_paste"<cr>g@]],
 				{ silent = true }
 			)
 
-			vim.keymap.set(
+			keymap.set(
 				"o",
 				"K",
 				"<cmd>lua require'utils'.adj_commented()<cr>",
@@ -453,18 +484,14 @@ return {
 				mode = "o",
 				function()
 					local is_i_ctrl_o = require("commands").is_i_ctrl_o
-					local is_eol = require("commands").insert_mode_col == vim.fn.col("$")
+					local is_eol = require("commands").insert_mode_col == fn.col("$")
 					local ret = require("flash").remote({ motion = true, restore = true })
 					if not vim.deep_equal(ret.results, {}) and (vim.v.operator == "y" or vim.v.operator == "d") then
 						vim.defer_fn(function()
 							if is_i_ctrl_o then
-								vim.api.nvim_feedkeys(
-									(is_eol and "a" or "i") .. vim.keycode("<C-r>") .. '"',
-									"n",
-									false
-								)
+								api.nvim_feedkeys((is_eol and "a" or "i") .. vim.keycode("<C-r>") .. '"', "n", false)
 							else
-								vim.api.nvim_feedkeys("p", "", false)
+								api.nvim_feedkeys("p", "", false)
 							end
 						end, 0)
 					end
@@ -476,36 +503,36 @@ return {
 				mode = "n",
 				function()
 					if vim.v.count ~= 0 then
-						vim.api.nvim_feedkeys(":.-" .. vim.v.count - 1 .. ",.", "n", false)
+						api.nvim_feedkeys(":.-" .. vim.v.count - 1 .. ",.", "n", false)
 						return
 					end
-					local char = vim.fn.escape(vim.fn.getcharstr(), "^$.*~")
+					local char = fn.escape(fn.getcharstr(), "^$.*~")
 					if char == "h" or char == "l" or char == "M" then
-						local offset = utils.get_linechars_offset_from_cursor(vim.fn.char2nr(char))
+						local offset = utils.get_linechars_offset_from_cursor(fn.char2nr(char))
 						if not offset then
 							return
 						end
-						vim.api.nvim_feedkeys(":." .. offset .. ",.", "n", false)
+						api.nvim_feedkeys(":." .. offset .. ",.", "n", false)
 					elseif char == "i" or char == "a" then
-						local pos = vim.api.nvim_win_get_cursor(0)
-						local is_i_ctrl_o = vim.fn.mode(1) == "niI"
+						local pos = api.nvim_win_get_cursor(0)
+						local is_i_ctrl_o = fn.mode(1) == "niI"
 						if is_i_ctrl_o then
-							vim.api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
+							api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
 						end
 						require("flash").jump()
-						if vim.deep_equal(vim.api.nvim_win_get_cursor(0), pos) then
+						if vim.deep_equal(api.nvim_win_get_cursor(0), pos) then
 							return
 						end
-						vim.api.nvim_create_autocmd("InsertLeave", {
+						api.nvim_create_autocmd("InsertLeave", {
 							once = true,
 							callback = function()
-								vim.api.nvim_win_set_cursor(0, pos)
+								api.nvim_win_set_cursor(0, pos)
 								if is_i_ctrl_o then
-									vim.api.nvim_feedkeys("i", "n", false)
+									api.nvim_feedkeys("i", "n", false)
 								end
 							end,
 						})
-						vim.api.nvim_feedkeys(char, "n", false)
+						api.nvim_feedkeys(char, "n", false)
 					end
 				end,
 			},
@@ -551,7 +578,7 @@ return {
 					}),
 				},
 			})
-			vim.keymap.set({ "n" }, "<leader>k", function()
+			keymap.set({ "n" }, "<leader>k", function()
 				local is_markup_lang = vim.list_contains({ "json", "toml", "yaml" }, vim.bo.ft)
 				local is_yaml_bool_scalar = vim.bo.ft == "yaml"
 					and vim.treesitter.get_node({ bufnr = 0 }):type() == "boolean_scalar"
@@ -567,7 +594,7 @@ return {
 		"junegunn/vim-easy-align", -- Align text based on pattern
 		keys = { { "<localleader>a", mode = { "n", "x" } } },
 		config = function()
-			vim.keymap.set({ "n", "x" }, "<localleader>a", "<Plug>(LiveEasyAlign)")
+			keymap.set({ "n", "x" }, "<localleader>a", "<Plug>(LiveEasyAlign)")
 		end,
 	},
 	{
@@ -616,6 +643,7 @@ return {
 				progress = {
 					enabled = false,
 				},
+				hover = { enabled = true },
 				signature = {
 					enabled = true,
 					auto_open = {
@@ -665,6 +693,10 @@ return {
 						max_height = 9,
 						max_width = 96,
 					},
+					border = {
+						padding = false,
+					},
+					scrollbar = true,
 				},
 			},
 			routes = {

@@ -3,7 +3,6 @@ local utils = require("utils")
 local keymap = vim.keymap
 local api = vim.api
 local fn = vim.fn
-local cmd = vim.cmd
 
 keymap.set("n", "<C-o>", function()
 	utils.jump_within_buffer(true)
@@ -74,7 +73,7 @@ keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
 end)
 
 keymap.set("n", "<leader>T", function()
-	cmd.edit(last_deleted_buffer_registry)
+	vim.cmd.edit(last_deleted_buffer_registry)
 end)
 
 keymap.set("v", "<leader>s", function() -- Sort selection
@@ -98,7 +97,7 @@ keymap.set("n", "<leader>o", function() -- open files returned by input command
 
 	local files = vim.split(command.stdout, "\n", { trimempty = true })
 	for _, file in ipairs(files) do
-		cmd.edit(file)
+		vim.cmd.edit(file)
 	end
 
 	if current_file ~= "" then
@@ -128,7 +127,7 @@ end)
 --Normal key
 keymap.set("v", "ab", "apk") -- a block is a paragraph
 keymap.set("o", "ab", function()
-	cmd.normal({ "vab" })
+	vim.cmd.normal({ "vab" })
 end) -- a block is a paragraph
 keymap.set("n", "<left>", "<nop>") -- do nothing with arrows
 keymap.set("n", "<right>", "<nop>") -- do nothing with arrows
@@ -139,7 +138,7 @@ keymap.set("", "gl", "l") -- move right
 keymap.set("o", "iB", function() -- scroll  left
 	local view = fn.winsaveview()
 	api.nvim_win_set_cursor(0, { 1, 0 })
-	cmd.normal({ "Vo", bang = true })
+	vim.cmd.normal({ "Vo", bang = true })
 	api.nvim_win_set_cursor(0, { api.nvim_buf_line_count(0), 0 })
 	if vim.v.operator == "y" then
 		vim.defer_fn(function()
@@ -150,7 +149,7 @@ end) -- buffer motion
 keymap.set("o", "aB", function() -- scroll  left
 	local view = fn.winsaveview()
 	api.nvim_win_set_cursor(0, { 1, 0 })
-	cmd.normal({ "Vo", bang = true })
+	vim.cmd.normal({ "Vo", bang = true })
 	api.nvim_win_set_cursor(0, { api.nvim_buf_line_count(0), 0 })
 	if vim.v.operator == "y" then
 		vim.defer_fn(function()
@@ -160,11 +159,11 @@ keymap.set("o", "aB", function() -- scroll  left
 end) -- buffer motion
 keymap.set("", "zJ", function() -- scroll  left
 	local count = math.floor(api.nvim_win_get_width(0) / 3)
-	cmd.normal({ count .. "zh", bang = true })
+	vim.cmd.normal({ count .. "zh", bang = true })
 end) -- scroll right
 keymap.set("", "zK", function()
 	local count = math.floor(api.nvim_win_get_width(0) / 3)
-	cmd.normal({ count .. "zl", bang = true })
+	vim.cmd.normal({ count .. "zl", bang = true })
 end) -- scroll right
 keymap.set("n", "`", "'") -- Swap ` and '
 keymap.set("n", "'", "`") -- Swap ` and '
@@ -196,7 +195,7 @@ keymap.set({ "n" }, "go", function() -- open git modified files
 
 	local files = vim.split(git_diff.stdout, "\n", { trimempty = true })
 	for _, file in ipairs(files) do
-		cmd.edit(git_root .. file)
+		vim.cmd.edit(git_root .. file)
 	end
 
 	if current_file ~= "" then
@@ -238,7 +237,7 @@ end)
 keymap.set("o", "L", function() -- select line from first char to end
 	local operator_pending_state = utils.get_operator_pending_state()
 	local visual_mode = operator_pending_state.forced_motion or "v"
-	cmd.normal({ visual_mode .. "g_o^", bang = true })
+	vim.cmd.normal({ visual_mode .. "g_o^", bang = true })
 end)
 keymap.set("o", "?", function() -- select prev diagnostic
 	local forced_motion = utils.get_operator_pending_state().forced_motion
@@ -249,7 +248,7 @@ keymap.set("o", "?", function() -- select prev diagnostic
 	end
 
 	api.nvim_win_set_cursor(0, diagnostic_range.start_pos)
-	cmd.normal({ forced_motion or "v", bang = true })
+	vim.cmd.normal({ forced_motion or "v", bang = true })
 	api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
 end)
 keymap.set("o", "/", function() -- select next diagnostic
@@ -262,7 +261,7 @@ keymap.set("o", "/", function() -- select next diagnostic
 	end
 
 	api.nvim_win_set_cursor(0, diagnostic_range.start_pos)
-	cmd.normal({ forced_motion or "v", bang = true })
+	vim.cmd.normal({ forced_motion or "v", bang = true })
 	api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
 end)
 keymap.set("n", "Z", function() -- Write buffer
@@ -301,7 +300,7 @@ end)
 keymap.set("", "<M-j>", "^") -- Go to first nonblank char
 keymap.set("", "<M-k>", "$") -- Go to last char
 keymap.set("", "0", function() -- Go to beggining of file
-	cmd.normal({ "gg", bang = true })
+	vim.cmd.normal({ "gg", bang = true })
 	fn.cursor(1, 1)
 end)
 keymap.set("", "-", function() -- Go to end of file
@@ -397,8 +396,8 @@ keymap.set("", "l", function() -- Goto line
 	elseif visual_state.is_active and visual_state.char == "v" then
 		visual = "V"
 	end
-	cmd.normal({ "m'", bang = true })
-	cmd.normal({ visual .. math.abs(offset) .. "g" .. (offset > 0 and "j" or "k"), bang = true })
+	vim.cmd.normal({ "m'", bang = true })
+	vim.cmd.normal({ visual .. math.abs(offset) .. "g" .. (offset > 0 and "j" or "k"), bang = true })
 end)
 
 keymap.set("", "h", function() -- Goto line
@@ -409,12 +408,12 @@ keymap.set("", "h", function() -- Goto line
 		return
 	end
 
-	cmd.normal("l" .. fn.nr2char(192 - char))
+	vim.cmd.normal("l" .. fn.nr2char(192 - char))
 end)
 
 keymap.set("", "M", function() -- Goto line
 	utils.operator_pending_registry = utils.get_operator_pending_state()
-	cmd.normal("l`")
+	vim.cmd.normal("l`")
 end)
 
 -- {motion} linewise remote
@@ -428,7 +427,7 @@ keymap.set("o", "\\", function()
 
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_win_set_cursor(0, { row + offset, col })
-	cmd.normal({ "V", bang = true })
+	vim.cmd.normal({ "V", bang = true })
 	api.nvim_feedkeys(operator, "", false)
 	utils.abort()
 	if operator == "d" then
@@ -438,7 +437,7 @@ keymap.set("o", "\\", function()
 	end
 	api.nvim_feedkeys("p", "", false)
 	vim.defer_fn(function()
-		cmd.undojoin()
+		vim.cmd.undojoin()
 		api.nvim_feedkeys("==_", "n", false)
 	end, 0)
 end)
@@ -466,7 +465,7 @@ keymap.set("o", "R", function()
 
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_win_set_cursor(0, { row + first_line_offset, col })
-	cmd.normal({ "V", bang = true })
+	vim.cmd.normal({ "V", bang = true })
 	api.nvim_win_set_cursor(0, { row + second_line_offset, col })
 	api.nvim_feedkeys(operator, "", false)
 	utils.abort()
@@ -488,7 +487,7 @@ keymap.set("o", "R", function()
 	api.nvim_feedkeys("p", "", false)
 	utils.abort()
 	vim.defer_fn(function()
-		cmd.undojoin()
+		vim.cmd.undojoin()
 		api.nvim_feedkeys("gv=_", "n", false)
 	end, 0)
 end)
@@ -571,7 +570,7 @@ keymap.set({ "n", "v" }, "<M-S-m>", function() -- Move lines
 		local start_row, end_row, _ = fn.line("v"), fn.line(".")
 		count = math.abs(end_row - start_row)
 		if start_row < end_row then
-			cmd.normal({ "o", bang = true })
+			vim.cmd.normal({ "o", bang = true })
 		end
 	else
 		first_char = fn.getchar()
@@ -608,7 +607,7 @@ keymap.set({ "n", "v" }, "<M-S-m>", function() -- Move lines
 	vim.cmd(".,." .. count .. "move ." .. offset - 1)
 	local adjustment = offset < 0 and offset or offset - count - 1
 	api.nvim_win_set_cursor(0, { cursor_pos[1] + adjustment, cursor_pos[2] })
-	cmd.normal({ count + 1 .. "==_", bang = true })
+	vim.cmd.normal({ count + 1 .. "==_", bang = true })
 end)
 
 keymap.set("n", "<M-S-w>", function() -- Swap line
@@ -670,9 +669,9 @@ keymap.set("i", "<C-k>", function() -- Delete next word
 end)
 
 keymap.set("n", "<C-l>", function() -- Clear message
-	cmd.echo([["\u00A0"]])
+	vim.cmd.echo([["\u00A0"]])
 	vim.wo.statusline = vim.wo.statusline
-	cmd.mes("clear")
+	vim.cmd.mes("clear")
 end)
 
 keymap.set("i", "<C-l>", function() -- Add new string parameter

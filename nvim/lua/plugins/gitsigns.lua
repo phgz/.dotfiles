@@ -1,11 +1,10 @@
+local api = vim.api
 return {
 	"lewis6991/gitsigns.nvim",
 	event = "BufReadPre",
 	config = function()
-		local call = vim.api.nvim_call_function
-
 		-- Add close_preview_on_escape
-		vim.api.nvim_set_hl(0, "GitSignsDeleteLn", { default = true, link = "DiffDelete" })
+		api.nvim_set_hl(0, "GitSignsDeleteLn", { default = true, link = "DiffDelete" })
 		require("gitsigns").setup({
 			signs = {
 				add = { text = "│" },
@@ -31,7 +30,7 @@ return {
 			linehl = false, -- Toggle with `:Gitsigns toggle_linehl`
 			word_diff = false, -- Toggle with `:Gitsigns toggle_word_diff`
 			diff_opts = {
-				ignore_whitespace = true,
+				ignore_whitespace = false,
 			},
 			on_attach = function(bufnr)
 				local gs = package.loaded.gitsigns
@@ -45,11 +44,11 @@ return {
 				-- Actions
 				map("n", "gr", gs.reset_hunk)
 				map("v", "gr", function()
-					gs.reset_hunk({ vim.fn.line("v"), vim.fn.line(".") })
+					gs.reset_hunk({ fn.line("v"), fn.line(".") })
 				end)
 				map("n", "ga", gs.stage_hunk)
 				map("v", "ga", function()
-					gs.stage_hunk({ vim.fn.line("v"), vim.fn.line(".") })
+					gs.stage_hunk({ fn.line("v"), fn.line(".") })
 				end)
 				map("n", "gs", gs.undo_stage_hunk)
 				map("n", "gA", gs.stage_buffer)
@@ -59,9 +58,9 @@ return {
 					local winid = require("gitsigns.popup").is_open("hunk")
 					if winid then
 						local filetype = vim.bo.filetype
-						vim.api.nvim_win_call(winid, function()
+						api.nvim_win_call(winid, function()
 							vim.bo.filetype = filetype
-							vim.keymap.set("n", "q", "<cmd>close<cr>", { silent = true, buffer = true })
+							map("n", "q", "<cmd>close<cr>", { silent = true })
 						end)
 					end
 				end)
@@ -69,18 +68,18 @@ return {
 					gs.blame_line({ ignore_whitespace = true })
 				end)
 				map("n", "gc", function()
-					gs.diffthis(call("input", { "Compare to: " }))
+					gs.diffthis(fn.input("Compare to: "))
 				end)
 
 				-- Text objects
 				map("o", "ih", gs.select_hunk)
 				map("o", "ah", gs.select_hunk)
 				map("x", "ih", function()
-					vim.api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
+					api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
 					gs.select_hunk()
 				end)
 				map("x", "ah", function()
-					vim.api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
+					api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
 					gs.select_hunk()
 				end)
 			end,

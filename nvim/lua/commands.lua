@@ -1,5 +1,6 @@
 local api = vim.api
-local call = api.nvim_call_function
+local fn = vim.fn
+local keymap = vim.keymap
 local esc = vim.keycode("<esc>")
 
 M = {}
@@ -28,7 +29,7 @@ local popup_update_config_from_scrolling = function(win)
 		assert(win_conf.relative == "win", win_conf.relative)
 		local updated_conf = vim.tbl_deep_extend("force", api.nvim_win_get_config(win), {
 			row = {
-				[false] = win_conf.row[false] - vim.v.event[vim.fn.expand("<afile>")].topline,
+				[false] = win_conf.row[false] - vim.v.event[fn.expand("<afile>")].topline,
 				[true] = win_conf.row[true],
 			},
 		})
@@ -52,7 +53,7 @@ api.nvim_create_autocmd("BufReadPost", {
 		local row, col = unpack(api.nvim_buf_get_mark(0, '"'))
 		if row > 0 and row <= api.nvim_buf_line_count(0) then
 			api.nvim_win_set_cursor(0, { row, col })
-			vim.api.nvim_feedkeys("zz", "n", false)
+			api.nvim_feedkeys("zz", "n", false)
 		end
 		vim.defer_fn(function()
 			vim.cmd("redrawstatus")
@@ -62,7 +63,7 @@ api.nvim_create_autocmd("BufReadPost", {
 
 api.nvim_create_autocmd("CmdwinEnter", {
 	callback = function()
-		vim.keymap.set("n", "q", "<C-c>", { buffer = true })
+		keymap.set("n", "q", "<C-c>", { buffer = true })
 	end,
 })
 
@@ -73,7 +74,7 @@ api.nvim_create_autocmd("FileType", {
 	-- command = [[nnoremap <buffer><silent> q :close<cr> | let &stc=""]],
 
 	callback = function()
-		vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = true })
+		keymap.set("n", "q", "<cmd>close<cr>", { buffer = true })
 		vim.wo.stc = ""
 	end,
 })
@@ -81,7 +82,7 @@ api.nvim_create_autocmd("FileType", {
 M.insert_mode_col = 0
 api.nvim_create_autocmd("InsertLeavePre", {
 	callback = function()
-		M.insert_mode_col = vim.fn.col(".")
+		M.insert_mode_col = fn.col(".")
 	end,
 })
 
@@ -114,9 +115,9 @@ api.nvim_create_autocmd("ModeChanged", {
 api.nvim_del_augroup_by_name("nvim_swapfile")
 api.nvim_create_autocmd("SwapExists", {
 	callback = function()
-		local info = vim.fn.swapinfo(vim.v.swapname)
+		local info = fn.swapinfo(vim.v.swapname)
 		local user = vim.uv.os_get_passwd().username
-		local iswin = 1 == vim.fn.has("win32")
+		local iswin = 1 == fn.has("win32")
 		if info.error or info.pid <= 0 or (not iswin and info.user ~= user) then
 			vim.v.swapchoice = "" -- Show the prompt.
 			return
@@ -136,7 +137,7 @@ api.nvim_create_autocmd("TextYankPost", {
 			return
 		end
 
-		call("setreg", { "/", call("getreg", { '"' }) })
+		fn.setreg("/", fn.getreg('"'))
 
 		local extra_visual_command = ""
 
@@ -145,7 +146,7 @@ api.nvim_create_autocmd("TextYankPost", {
 			local end_row, end_col = unpack(api.nvim_buf_get_mark(0, "]"))
 			api.nvim_buf_set_mark(0, "<", start_row, start_col, {})
 			api.nvim_buf_set_mark(0, ">", end_row, end_col - (event_info.inclusive and 0 or 1), {})
-			local previous_mode = vim.fn.visualmode()
+			local previous_mode = fn.visualmode()
 			if not (previous_mode == "" or previous_mode == event_info.regtype) then
 				extra_visual_command = event_info.regtype
 			end
@@ -157,11 +158,11 @@ api.nvim_create_autocmd("TextYankPost", {
 
 api.nvim_create_autocmd("VimEnter", {
 	callback = function()
-		vim.keymap.set("n", "<esc>", function() -- Close popups
+		keymap.set("n", "<esc>", function() -- Close popups
 			-- api.nvim_win_close(win, false) is not consistent
 			fn_popups(win_close)
 		end)
-		vim.keymap.set("i", "<C-q>", function() -- Close popups in insert mode
+		keymap.set("i", "<C-q>", function() -- Close popups in insert mode
 			fn_popups(win_close)
 		end)
 	end,
@@ -171,7 +172,7 @@ api.nvim_create_autocmd("VimEnter", {
 api.nvim_create_autocmd("WinScrolled", {
 	callback = function()
 		vim.wo.statuscolumn = vim.wo.statuscolumn
-		local win_id = tonumber(vim.fn.expand("<afile>"))
+		local win_id = tonumber(fn.expand("<afile>"))
 		if win_id and not relative_focusable(win_id) then
 			fn_popups(popup_update_config_from_scrolling)
 		end

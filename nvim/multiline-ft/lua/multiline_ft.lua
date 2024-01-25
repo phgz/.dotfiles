@@ -1,7 +1,6 @@
 local M = {}
 local api = vim.api
 local fn = vim.fn
-local cmd = vim.cmd
 local esc = vim.keycode("<esc>")
 local dummy_fn = "{_ -> v:true}"
 local global_repeat_fn = "v:lua.require'multiline_ft'.multiline_find_repeat"
@@ -214,7 +213,7 @@ function M.goto_pos_multiline(opts)
 	searchpos_opts = opts.forward and searchpos_opts or searchpos_opts .. "b"
 	local count = vim.v.count == 0 and opts.count or vim.v.count
 	local orig_row, orig_col = unpack(api.nvim_win_get_cursor(0))
-	cmd.normal({ "m'", bang = true })
+	vim.cmd.normal({ "m'", bang = true })
 	local new_row, new_col
 
 	if opts.repeat_motion and opts.exclusive then

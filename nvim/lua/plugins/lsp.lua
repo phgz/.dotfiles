@@ -1,4 +1,6 @@
-local call = vim.api.nvim_call_function
+local api = vim.api
+local fn = vim.fn
+local keymap = vim.keymap
 return {
 	{
 		"neovim/nvim-lspconfig",
@@ -88,7 +90,7 @@ return {
 					local navic = require("nvim-navic")
 					local navic_lib = require("nvim-navic.lib")
 
-					vim.keymap.set("n", "<leader>w", function()
+					keymap.set("n", "<leader>w", function()
 						if navic.is_available() then
 							navic_lib.update_context(bufnr)
 							vim.notify(navic.get_location())
@@ -99,24 +101,24 @@ return {
 					navic.attach(client, bufnr)
 
 					local navic_cursor_autocmds =
-						vim.api.nvim_get_autocmds({ group = "navic", event = { "CursorHold", "CursorMoved" } })
-					vim.api.nvim_del_autocmd(navic_cursor_autocmds[2].id)
-					vim.api.nvim_del_autocmd(navic_cursor_autocmds[3].id)
+						api.nvim_get_autocmds({ group = "navic", event = { "CursorHold", "CursorMoved" } })
+					api.nvim_del_autocmd(navic_cursor_autocmds[2].id)
+					api.nvim_del_autocmd(navic_cursor_autocmds[3].id)
 				end
 
 				local function on_list(options)
-					vim.fn.setqflist({}, " ", options)
+					fn.setqflist({}, " ", options)
 					vim.cmd("silent cfirst")
 				end
 
-				vim.keymap.set("n", "<leader>j", function()
+				keymap.set("n", "<leader>j", function()
 					vim.lsp.buf.definition({ on_list = on_list })
 				end, opts)
-				vim.keymap.set("n", "<localleader>h", function()
+				keymap.set("n", "<localleader>h", function()
 					vim.lsp.inlay_hint.enable(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr))
 				end, opts)
-				vim.keymap.set("n", "<localleader>r", vim.lsp.buf.rename)
-				vim.keymap.set("n", "H", function()
+				keymap.set("n", "<localleader>r", vim.lsp.buf.rename)
+				keymap.set("n", "H", function()
 					local captures = vim.treesitter.get_captures_at_cursor()
 					if
 						vim.list_contains(captures, "function.call")
@@ -158,7 +160,7 @@ return {
 				},
 			}
 
-			vim.keymap.set("n", "L", vim.diagnostic.open_float, { silent = true })
+			keymap.set("n", "L", vim.diagnostic.open_float, { silent = true })
 			vim.diagnostic.config(lsp_config.diagnostic)
 
 			-- local capabilities = vim.lsp.protocol.make_client_capabilities

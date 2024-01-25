@@ -1,5 +1,3 @@
-local api = vim.api
-
 --Global (g:) editor variables.
 local g = vim.g
 

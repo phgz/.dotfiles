@@ -1,5 +1,5 @@
 local api = vim.api
-local call = api.nvim_call_function
+local fn = vim.fn
 
 local M = {}
 
@@ -34,7 +34,7 @@ function M.update_selection(use_gv, requested_visual_mode, start_row, start_col,
 
 	requested_visual_mode = vim.keycode(requested_visual_mode)
 	if use_gv then
-		local previous_mode = call("visualmode", {})
+		local previous_mode = fn.visualmode()
 
 		-- visualmode() is set to "" when no visual selection has yet been made. Defaults it to "v"
 		if previous_mode == "" then
@@ -98,7 +98,7 @@ function M.motion_back(lowercase)
 		motion_back_char = motion_back_char,
 	})
 	M.abort()
-	local col = vim.fn.col(".")
+	local col = fn.col(".")
 	local chars_after_cursor = api.nvim_get_current_line():sub(col, col + 1)
 	if #chars_after_cursor == 1 or chars_after_cursor:match("[^%w_]") then
 		api.nvim_feedkeys(motion_back_char .. operator .. (operator == "y" and "e" or "w"), "n", false)
@@ -113,16 +113,16 @@ function M.motion_back(lowercase)
 end
 
 function M.get_listed_buffers(as_filenames)
-	local raw_listed_buffers = vim.split(vim.api.nvim_exec2("buffers", { output = true }).output, "\n")
+	local raw_listed_buffers = vim.split(api.nvim_exec2("buffers", { output = true }).output, "\n")
 	return vim.iter.map(function(raw_buffer)
 		local bufnr = raw_buffer:match("%s*(%d+)")
-		return as_filenames and vim.fn.expand("#" .. bufnr .. ":p") or tonumber(bufnr)
+		return as_filenames and fn.expand("#" .. bufnr .. ":p") or tonumber(bufnr)
 	end, raw_listed_buffers)
 end
 
 function M.jump_within_buffer(older)
-	local jumplist, current_jump_position = unpack(vim.fn.getjumplist())
-	local current_bufnr = vim.api.nvim_win_get_buf(0)
+	local jumplist, current_jump_position = unpack(fn.getjumplist())
+	local current_bufnr = api.nvim_win_get_buf(0)
 	local start = older and current_jump_position or current_jump_position + 2
 	local step = older and -1 or 1
 	local stop = older and 1 or #jumplist
@@ -132,7 +132,7 @@ function M.jump_within_buffer(older)
 	for i = start, stop, step do
 		n = n + 1
 		if jumplist[i].bufnr == current_bufnr then
-			vim.api.nvim_feedkeys(n .. action, "n", false)
+			api.nvim_feedkeys(n .. action, "n", false)
 			return
 		end
 	end
@@ -158,8 +158,8 @@ function M.get_range(range)
 	local start_row, start_col, end_row, end_col
 
 	if range == nil then
-		_, start_row, start_col, _ = unpack(call("getpos", { "v" }))
-		_, end_row, end_col, _ = unpack(call("getpos", { "." }))
+		_, start_row, start_col, _ = unpack(fn.getpos("v"))
+		_, end_row, end_col, _ = unpack(fn.getpos("."))
 		start_col, end_col = start_col - 1, end_col - 1
 	else
 		start_row, start_col = range.start_row, range.start_col
@@ -279,9 +279,9 @@ function M.yank_comment_paste()
 end
 
 function M.virtual_win_height()
-	local first_row_in_win = call("line", { "w0" })
-	local last_row_in_win = call("line", { "w$" })
-	local last_row = call("line", { "$" })
+	local first_row_in_win = fn.line("w0")
+	local last_row_in_win = fn.line("w$")
+	local last_row = fn.line("$")
 
 	if last_row == last_row_in_win then
 		-- use text height
@@ -316,7 +316,7 @@ function M.cursor_is_punctuation()
 end
 
 function M.goto_quote(fwd)
-	call("search", { [[\("\|'\)]], "W" .. (fwd and "" or "b") })
+	fn.search([[\("\|'\)]], "W" .. (fwd and "" or "b"))
 end
 
 function M.compare_pos(pos_1, pos_2, opts)
@@ -383,12 +383,12 @@ function M.get_diagnostic_under_cursor_range()
 end
 
 function M.get_linechars_offset_from_cursor(first_char, echo)
-	local chars = first_char and { first_char } or { call("getchar", {}) }
+	local chars = first_char and { first_char } or { fn.getchar() }
 	if chars[1] ~= 77 then
 		if chars[1] == 27 or (chars[1] ~= 104 and chars[1] ~= 108) then
 			return nil
 		else
-			chars[2] = call("getchar", {})
+			chars[2] = fn.getchar()
 			if chars[2] == 27 then
 				return nil
 			end
@@ -397,7 +397,7 @@ function M.get_linechars_offset_from_cursor(first_char, echo)
 
 	local char = chars[1] == 77 and 96 or chars[1] == 104 and 192 - chars[2] or chars[2]
 	local height = M.virtual_win_height()
-	local win_row = call("winline", {})
+	local win_row = fn.winline()
 	local offset = M.win_row_offset_from_win_middle(win_row - (char - 96), height)
 
 	if offset == 0 or win_row + offset > height or win_row + offset < 1 then
@@ -405,7 +405,7 @@ function M.get_linechars_offset_from_cursor(first_char, echo)
 	else
 		if echo then
 			vim.notify(vim.iter(chars):fold("", function(acc, char_as_nr)
-				return acc .. vim.fn.nr2char(char_as_nr)
+				return acc .. fn.nr2char(char_as_nr)
 			end))
 		end
 		return offset
@@ -413,7 +413,7 @@ function M.get_linechars_offset_from_cursor(first_char, echo)
 end
 
 function M.replace()
-	local quote_reg = call("getreg", { '"' }):gsub("\n$", "")
+	local quote_reg = fn.getreg('"'):gsub("\n$", "")
 	local start_row, start_col = unpack(api.nvim_buf_get_mark(0, "["))
 	local end_row, end_col = unpack(api.nvim_buf_get_mark(0, "]"))
 	local to_insert = vim.split(quote_reg, "\n")
@@ -451,23 +451,23 @@ M.goto_block_extremity = function(forward)
 	local mark = forward and "'}" or "'{"
 	local opposite = forward and "'{" or "'}"
 
-	local col = call("col", { "." })
-	local line = call("line", { mark })
-	if line == call("line", { "." }) + (forward and 1 or -1) then
-		call("cursor", { line, 0 })
-		line = call("line", { mark })
+	local col = fn.col(".")
+	local line = fn.line(mark)
+	if line == fn.line(".") + (forward and 1 or -1) then
+		fn.cursor(line, 0)
+		line = fn.line(mark)
 	end
 	local line_content = api.nvim_get_current_line()
-	call("cursor", { line, 0 })
+	fn.cursor(line, 0)
 	local is_empty = line_content == ""
-	line = is_empty and call("line", { opposite }) or line
-	local rhs = (is_empty == forward and 1 or -1) * call("empty", { call("getline", { line }) })
-	call("cursor", { line + rhs, col })
+	line = is_empty and fn.line(opposite) or line
+	local rhs = (is_empty == forward and 1 or -1) * fn.empty(fn.getline(line))
+	fn.cursor(line + rhs, col)
 end
 
 M.goto_camel_or_snake_or_kebab_part = function(fwd, seek_after, operator)
 	local flags = "Wn" .. (fwd and "" or "b")
-	local initial_stopline = vim.fn.line("w" .. (fwd and "$" or "0"))
+	local initial_stopline = fn.line("w" .. (fwd and "$" or "0"))
 
 	local snake_part_after = [==[_\zs[[:alnum:]]]==]
 	local snake_part_before = [==[[[:alnum:]]\ze_]==]
@@ -506,7 +506,7 @@ M.goto_camel_or_snake_or_kebab_part = function(fwd, seek_after, operator)
 
 	local closest_pattern = vim.iter(patterns):fold({ 0, 0, initial_stopline }, function(acc, pattern)
 		local closest_row, closest_col, stopline = unpack(acc)
-		local match_row, match_col = unpack(call("searchpos", { pattern, flags, stopline }))
+		local match_row, match_col = unpack(fn.searchpos(pattern, flags, stopline))
 
 		if match_row == 0 then
 			return acc
@@ -544,14 +544,14 @@ M.goto_camel_or_snake_or_kebab_part = function(fwd, seek_after, operator)
 end
 
 M.apply_to_next_motion = function(motion)
-	local arg1 = call("nr2char", { call("getchar", {}) })
+	local arg1 = fn.nr2char(fn.getchar())
 
 	if arg1 == esc or (arg1 ~= "i" and arg1 ~= "a") then
 		M.abort()
 		return
 	end
 
-	local arg2 = call("nr2char", { call("getchar", {}) })
+	local arg2 = fn.nr2char(fn.getchar())
 
 	local pairs = {
 		["'"] = "'",
@@ -567,7 +567,7 @@ M.apply_to_next_motion = function(motion)
 	}
 	if vim.list_contains(vim.tbl_keys(pairs), arg2) then
 		-- api.nvim_feedkeys(esc, "i", false)
-		local pos = vim.fn.searchpos(table.concat(vim.split(pairs[arg2], "", { plain = true }), "\\|"), "Wn")
+		local pos = fn.searchpos(table.concat(vim.split(pairs[arg2], "", { plain = true }), "\\|"), "Wn")
 		api.nvim_win_set_cursor(0, pos)
 		api.nvim_feedkeys(motion .. arg1 .. arg2, "x!", false)
 	end
@@ -614,9 +614,9 @@ function M.diagnostics_status_line()
 end
 
 function M.status_column()
-	-- we subtract vim.api.nvim_win_get_position(0)[1] to handle stacked windows
+	-- we subtract api.nvim_win_get_position(0)[1] to handle stacked windows
 	local offset = M.win_row_offset_from_win_middle(
-		call("screenpos", { 0, vim.v.lnum, 1 }).row - api.nvim_win_get_position(0)[1],
+		fn.screenpos(0, vim.v.lnum, 1).row - api.nvim_win_get_position(0)[1],
 		M.virtual_win_height()
 	)
 	local highlight = vim.v.virtnum > 0 and "%#WrappedLineNr#" or ""

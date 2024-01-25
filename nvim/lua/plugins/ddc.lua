@@ -1,3 +1,7 @@
+local api = vim.api
+local fn = vim.fn
+local keymap = vim.keymap
+
 return {
 	"Shougo/ddc.vim",
 	dependencies = {
@@ -37,10 +41,6 @@ return {
 	},
 
 	config = function()
-		local api = vim.api
-		local fn = vim.fn
-		local cmd = vim.cmd
-		local keymap = vim.keymap
 		local npairs = require("nvim-autopairs")
 
 		local get_snippet = function(item)
@@ -254,11 +254,11 @@ return {
 			{ expr = true }
 		)
 
-		cmd([[
+		vim.cmd([[
 			call ddc#custom#load_config(expand('$HOME') . "/.dotfiles/nvim/ddc.ts")
 			call popup_preview#enable()
 			call signature_help#enable()
 			call ddc#enable(#{context_filetype: 'treesitter'})
-				]])
+		]])
 	end,
 }
