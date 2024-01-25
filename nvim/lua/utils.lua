@@ -599,24 +599,19 @@ function M.mk_repeatable(func)
 	end
 end
 
-function M.status_column()
-	local screen_row = call("screenpos", { 0, vim.v.lnum, 1 }).row
-	local last_screen_row = call("line", { "w$" })
-	local last_row = call("line", { "$" })
-	local middle
+function M.diagnostics_status_line()
+	local diag_count = vim.diagnostic.count(0)
+	local severity = vim.diagnostic.severity
+	local errors = diag_count[severity.E] and "%#RedStatusLine#" .. diag_count[severity.E] .. "E" or ""
+	local warns = diag_count[severity.W] and "%#YellowStatusLine#" .. diag_count[severity.W] .. "W" or ""
+	local hints = diag_count[severity.N] and "%#GreenStatusLine#" .. diag_count[severity.N] .. "H" or ""
+	local infos = diag_count[severity.I] and "%#BlueStatusLine#" .. diag_count[severity.I] .. "I" or ""
+	local non_empty = vim.iter.filter(function(diag)
+		return diag ~= ""
+	end, { errors, warns, hints, infos })
 
-	if last_row == last_screen_row then
-		-- use text height
-		local text_height = vim.api.nvim_win_text_height(0, {
-			start_row = call("line", { "w0" }) - 1,
-			end_row = last_screen_row - 1,
-		})
-		middle = math.ceil(text_height.all / 2)
-	else
-		-- use win height
-		local window_height = vim.api.nvim_win_get_height(0)
-		middle = math.ceil(window_height / 2)
-	end
+	return vim.deep_equal(non_empty, {}) and "" or " " .. table.concat(non_empty, " ")
+end
 
 	local highlight = vim.v.virtnum > 0 and "%#WrappedLineNr#" or ""
 	local chars = " M"
