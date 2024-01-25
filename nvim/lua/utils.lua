@@ -328,14 +328,14 @@ function M.compare_pos(pos_1, pos_2, opts)
 			or (pos_1[1] == pos_2[1] and (opts.eq and pos_1[2] <= pos_2[2] or pos_1[2] < pos_2[2]))
 	end
 end
-	local prevD = vim.diagnostic.get_prev({ wrap = false })
-	vim.cmd.normal({ "h", bang = true })
 
-	local nextD = vim.diagnostic.get_next({ wrap = false })
-	local curStandingOnPrevD = false -- however, if prev diag is covered by or before the cursor has yet to be determined
-	local curRow, curCol = unpack(vim.api.nvim_win_get_cursor(0))
-
-	if prevD then
+M.get_normalized_diag_range = function(diagnostic)
+	-- INFO for whatever reason, diagnostic line numbers are off-by-one -1 and end_col is off-by-one +1
+	return {
+		start_pos = { diagnostic.lnum + 1, diagnostic.col },
+		end_pos = { diagnostic.end_lnum + 1, diagnostic.end_col - 1 },
+	}
+end
 		local curAfterPrevDstart = (curRow == prevD.lnum + 1 and curCol >= prevD.col) or (curRow > prevD.lnum + 1)
 		local curBeforePrevDend = (curRow == prevD.end_lnum + 1 and curCol <= prevD.end_col - 1)
 			or (curRow < prevD.end_lnum)
