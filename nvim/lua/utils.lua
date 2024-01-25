@@ -277,6 +277,28 @@ function M.yank_comment_paste()
 	M.set_position_registry({})
 	api.nvim_win_set_cursor(0, { pre_motion_row + range, pre_motion_col })
 end
+
+function M.virtual_win_height()
+	local first_row_in_win = call("line", { "w0" })
+	local last_row_in_win = call("line", { "w$" })
+	local last_row = call("line", { "$" })
+
+	if last_row == last_row_in_win then
+		-- use text height
+		return api.nvim_win_text_height(0, {
+			start_row = first_row_in_win - 1,
+			end_row = last_row_in_win - 1,
+		}).all
+	else
+		-- use win height
+		return api.nvim_win_get_height(0)
+	end
+end
+
+function M.win_row_offset_from_win_middle(win_row, height)
+	local win_middle = math.ceil(height / 2)
+
+	return win_middle - win_row
 end
 
 function M.cursor_is_punctuation()
