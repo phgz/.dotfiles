@@ -239,6 +239,27 @@ function M.paste(lowercase)
 	})
 end
 
+-- The dot repeat behaviour is undefined
+function M.duplicate(visual_motion)
+	local start_row, start_col = unpack(api.nvim_buf_get_mark(0, "["))
+	local end_row, end_col = unpack(api.nvim_buf_get_mark(0, "]"))
+	local pre_motion_row, pre_motion_col = unpack(M.get_position_registry())
+
+	if visual_motion == "line" then
+		local lines = api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
+		local range = end_row - start_row + 1
+		api.nvim_buf_set_lines(0, end_row, end_row, true, lines)
+		api.nvim_win_set_cursor(0, { pre_motion_row + range, pre_motion_col })
+	elseif visual_motion == "char" then
+		local lines = api.nvim_buf_get_text(0, start_row - 1, start_col, end_row - 1, end_col + 1, {})
+		local range = end_col - start_col + 1
+		api.nvim_buf_set_text(0, end_row - 1, end_col + 1, end_row - 1, end_col + 1, lines)
+		api.nvim_win_set_cursor(0, { end_row, pre_motion_col + range })
+	else
+		api.nvim_win_set_cursor(0, { pre_motion_row, pre_motion_col })
+	end
+end
+
 function M.yank_comment_paste()
 	local utils = require("Comment.utils")
 	local col = call("col", { "." })
