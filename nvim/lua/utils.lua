@@ -382,20 +382,34 @@ function M.get_diagnostic_under_cursor_range()
 	end
 end
 
-	local target
-	if not fwd or curStandingOnPrevD then
-		target = prevD
-	elseif nextD then
-		target = nextD
+function M.get_linechars_offset_from_cursor(first_char, echo)
+	local chars = first_char and { first_char } or { call("getchar", {}) }
+	if chars[1] ~= 77 then
+		if chars[1] == 27 or (chars[1] ~= 104 and chars[1] ~= 108) then
+			return nil
+		else
+			chars[2] = call("getchar", {})
+			if chars[2] == 27 then
+				return nil
+			end
+		end
 	end
-	if not target then
-		vim.notify("Diagnostic not found")
-		return
+
+	local char = chars[1] == 77 and 96 or chars[1] == 104 and 192 - chars[2] or chars[2]
+	local height = M.virtual_win_height()
+	local win_row = call("winline", {})
+	local offset = M.win_row_offset_from_win_middle(win_row - (char - 96), height)
+
+	if offset == 0 or win_row + offset > height or win_row + offset < 1 then
+		return nil
+	else
+		if echo then
+			vim.notify(vim.iter(chars):fold("", function(acc, char_as_nr)
+				return acc .. vim.fn.nr2char(char_as_nr)
+			end))
+		end
+		return offset
 	end
-	local start_pos, end_pos = { target.lnum + 1, target.col }, { target.end_lnum + 1, target.end_col - 1 }
-	vim.api.nvim_win_set_cursor(0, start_pos)
-	vim.cmd.normal({ "v", bang = true })
-	vim.api.nvim_win_set_cursor(0, end_pos)
 end
 
 function M.replace()
