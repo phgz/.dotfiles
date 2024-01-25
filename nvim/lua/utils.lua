@@ -304,9 +304,15 @@ end
 function M.cursor_is_punctuation()
 	local captures = vim.treesitter.get_captures_at_cursor()
 
-	return vim.iter(captures):any(function(capture)
+	local is_punct = vim.iter(captures):any(function(capture)
 		return capture:match("^punctuation%.")
 	end)
+
+	local col = api.nvim_win_get_cursor(0)[2] + 1
+	local cursor_char = api.nvim_get_current_line():sub(col, col)
+	local extra_punct = { "/", "'", '"', "." }
+	print(is_punct or vim.list_contains(extra_punct, cursor_char))
+	return is_punct or vim.list_contains(extra_punct, cursor_char)
 end
 
 function M.goto_quote(fwd)
