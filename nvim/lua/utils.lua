@@ -435,9 +435,8 @@ function M.replace()
 end
 
 M.move = function(fwd)
-	local visual_mode = M.get_modes().visual
+	local visual_mode = M.get_visual_state().char
 	local start_row, start_col, end_row, end_col = M.get_range()
-	local range = end_row - start_row
 	vim.cmd(start_row .. "," .. end_row .. "move" .. (fwd and end_row .. "+1" or start_row .. "-2"))
 
 	if fwd then
@@ -445,7 +444,7 @@ M.move = function(fwd)
 	else
 		M.update_selection(true, visual_mode, start_row - 1, start_col, end_row - 1, end_col)
 	end
-	vim.api.nvim_feedkeys("=gv", "n", false)
+	api.nvim_feedkeys("=gv", "n", false)
 end
 
 M.goto_block_extremity = function(forward)
@@ -466,39 +465,81 @@ M.goto_block_extremity = function(forward)
 	call("cursor", { line + rhs, col })
 end
 
-M.goto_camelCase_or_snake_case_part = function(fwd, supplemental_snakecase_offset)
-	local row, col = unpack(api.nvim_win_get_cursor(0))
-	local prev_char = api.nvim_get_current_line():sub(col, col)
-	local is_backward_and_neighbour = not fwd and prev_char:find("[%u_]")
-	local snake_case = "_"
-	local opts = "Wn" .. (fwd and "" or "b")
+M.goto_camel_or_snake_or_kebab_part = function(fwd, seek_after, operator)
+	local flags = "Wn" .. (fwd and "" or "b")
+	local initial_stopline = vim.fn.line("w" .. (fwd and "$" or "0"))
 
-	if is_backward_and_neighbour then
-		api.nvim_win_set_cursor(0, { row, col - 1 })
-	end
+	local snake_part_after = [==[_\zs[[:alnum:]]]==]
+	local snake_part_before = [==[[[:alnum:]]\ze_]==]
+	local kebab_part_after = [==[\(\<-\d\+\>\)\@!\&-\zs[[:alnum:]]]==] -- take negative numbers into account
+	local kebab_part_before = [==[[[:alnum:]]\ze-]==]
+	local camelPart = [[\l\zs\u]]
 
-	local pattern = snake_case
-	local word_under_cursor = call("expand", { "<cword>" })
-	local wuc_start_col = call("searchpos", { word_under_cursor, "Wcnb" })[2] - 1
-	local i = fwd and col - wuc_start_col + 1 or 1
-	local j = fwd and -1 or col - wuc_start_col - (is_backward_and_neighbour and 1 or 0)
+	local snake_word_start = [==[\<\a[[:alnum:]]*_\w\{-}\>]==]
+	local kebab_word_start = [==[\<\a[[:alnum:]]*-[\-[:alnum:]]\{-}\>]==]
+	local camelWordStart = [==[\<\a\+\l\u[[:alnum:]]\{-}\>]==]
 
-	if word_under_cursor:sub(i, j):find(snake_case) == nil then
-		pattern = pattern .. "\\|\\u\\l"
-	end
+	local snake_word_end = [==[\<\a[[:alnum:]]*_\w\{-}\zs\w\>]==]
+	local kebab_word_end = [==[\<\a[[:alnum:]]*-[\-[:alnum:]]\{-}\zs[\-[:alnum:]]\>]==]
+	local camelWordEnd = [==[\<\a\+\l\u[[:alnum:]]\{-}\zs[[:alnum:]]\>]==]
 
-	local new_row, new_col = unpack(call("searchpos", { pattern, opts }))
+	local snake_part = seek_after and snake_part_after or snake_part_before
+	local kebab_part = seek_after and kebab_part_after or kebab_part_before
 
-	if new_row == 0 then
-		if is_backward_and_neighbour then
-			-- Reset cursor position since we moved it for `searchpos`
-			api.nvim_win_set_cursor(0, { row, col })
+	local word_end_patterns = {
+		snake_word_end,
+		kebab_word_end,
+		camelWordEnd,
+	}
+
+	local patterns = {
+		snake_part,
+		snake_word_start,
+		snake_word_end,
+		kebab_part,
+		kebab_word_start,
+		kebab_word_end,
+		camelPart,
+		camelWordStart,
+		camelWordEnd,
+	}
+
+	local closest_pattern = vim.iter(patterns):fold({ 0, 0, initial_stopline }, function(acc, pattern)
+		local closest_row, closest_col, stopline = unpack(acc)
+		local match_row, match_col = unpack(call("searchpos", { pattern, flags, stopline }))
+
+		if match_row == 0 then
+			return acc
 		end
-	else
-		new_col = new_col - 1 -- 0-based indexed in neovim API
-		local char = api.nvim_buf_get_text(0, new_row - 1, new_col, new_row - 1, new_col + 1, {})[1]
-		local offset = char == snake_case and 1 + supplemental_snakecase_offset or 0
-		api.nvim_win_set_cursor(0, { new_row, new_col + offset })
+		if closest_row == 0 then
+			return { match_row, match_col, match_row, pattern }
+		end
+
+		-- No need to check if match_row exceeds closest_row because of stopline
+		local match_is_closer = (fwd and { match_row < closest_row or match_col < closest_col } or {
+			match_row > closest_row or match_col > closest_col,
+		})[1]
+
+		return match_is_closer and { match_row, match_col, match_row, pattern } or acc
+	end)
+
+	local found_row, found_col, _, pattern = unpack(closest_pattern)
+	if found_row ~= 0 then
+		found_col = found_col - 1 -- 0-based indexed in neovim API
+		local offset = 0
+		if operator then
+			if pattern == snake_part or pattern == kebab_part then
+				if operator == "d" then
+					offset = fwd and 0 or -1
+				else
+					offset = fwd and -1 or 0
+				end
+			end
+			if vim.list_contains(word_end_patterns, pattern) then
+				offset = 1
+			end
+		end
+		api.nvim_win_set_cursor(0, { found_row, found_col + offset })
 	end
 end
 
