@@ -137,6 +137,7 @@ function M.jump_within_buffer(older)
 		end
 	end
 end
+
 ---@deprecated
 function M.get_modes()
 	local modes = { normal = false, operator_pending = false, visual = "v" }
@@ -171,14 +172,14 @@ function M.get_range(range)
 		start_row, end_row = end_row, start_row
 	end
 
-	local visual_mode = M.get_modes().visual
+	local visual_mode = M.get_visual_state().char or "v"
 
 	if visual_mode == "V" then
 		start_col, end_col = 0, #api.nvim_buf_get_lines(0, end_row - 1, end_row, true)[1]
 	else
 		local backward_col = start_col > end_col
 		local same_row = start_row == end_row
-		local cond_c_v = visual_mode == api.nvim_replace_termcodes("<C-v>", true, true, true) and backward_col
+		local cond_c_v = visual_mode == vim.keycode("<C-v>") and backward_col
 		local cond_v = visual_mode == "v" and (backward_row or (same_row and backward_col))
 		if cond_c_v or cond_v then
 			start_col, end_col = end_col, start_col
@@ -188,7 +189,7 @@ function M.get_range(range)
 	return start_row, start_col, end_row, end_col
 end
 
---Textobject for adjacent commented lines
+-- Textobject for adjacent commented lines
 function M.adj_commented()
 	local utils = require("Comment.utils")
 	local current_line = api.nvim_win_get_cursor(0)[1] -- current line
@@ -204,6 +205,7 @@ function M.adj_commented()
 
 	local line = api.nvim_buf_get_lines(0, current_line - 1, current_line, false)
 	if next(line) == nil or not is_commented(line[1]) then
+		api.nvim_feedkeys(esc, "n", false)
 		return
 	end
 
@@ -222,9 +224,10 @@ function M.adj_commented()
 	M.update_selection(true, "V", rs, 0, re, 0)
 end
 
+-- The autocmd does not work with custom register (`".` for example)
 function M.paste(lowercase)
 	local char = lowercase and "p" or "P"
-	api.nvim_feedkeys(char, "n", true)
+	api.nvim_feedkeys('"' .. vim.v.register .. char, "n", false)
 	api.nvim_create_autocmd("TextChanged", {
 		once = true,
 		callback = function()
