@@ -1,5 +1,6 @@
 local esc = vim.keycode("<esc>")
 local utils = require("utils")
+local registry = require("registry")
 local keymap = vim.keymap
 local api = vim.api
 local fn = vim.fn
@@ -24,9 +25,8 @@ keymap.set("n", "<leader>h", function() -- Split horizontal
 	vim.cmd("split")
 end)
 
-local last_deleted_buffer_registry = nil
 keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
-	last_deleted_buffer_registry = fn.expand("%:p")
+	registry.last_deleted_buffer = fn.expand("%:p")
 	vim.cmd("bdelete")
 	local new_current_file = fn.expand("%:p")
 	local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
@@ -73,7 +73,7 @@ keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
 end)
 
 keymap.set("n", "<leader>T", function()
-	vim.cmd.edit(last_deleted_buffer_registry)
+	vim.cmd.edit(registry.last_deleted_buffer)
 end)
 
 keymap.set("v", "<leader>s", function() -- Sort selection
@@ -183,7 +183,7 @@ end)
 keymap.set(
 	"n",
 	"m",
-	[[<cmd>lua require'utils'.set_position_registry(vim.fn.getpos("."))<cr><cmd>let &operatorfunc = "v:lua.require'utils'.duplicate"<cr>g@]]
+	[[<cmd>lua require'registry'.set_position(vim.fn.getpos("."))<cr><cmd>let &operatorfunc = "v:lua.require'utils'.duplicate"<cr>g@]]
 )
 keymap.set({ "n" }, "go", function() -- open git modified files
 	local current_file = fn.expand("%:p")
@@ -380,8 +380,8 @@ keymap.set("v", "+", function() -- get tabular stats
 end)
 
 keymap.set("", "l", function() -- Goto line
-	local op_pending_state = utils.operator_pending_registry or utils.get_operator_pending_state()
-	utils.operator_pending_registry = nil
+	local op_pending_state = registry.operator_pending or utils.get_operator_pending_state()
+	registry.operator_pending = nil
 	local visual_state = utils.get_visual_state()
 
 	local offset = utils.get_linechars_offset_from_cursor(108)
@@ -401,7 +401,7 @@ keymap.set("", "l", function() -- Goto line
 end)
 
 keymap.set("", "h", function() -- Goto line
-	utils.operator_pending_registry = utils.get_operator_pending_state()
+	registry.operator_pending = utils.get_operator_pending_state()
 	local char = fn.getchar()
 	if char == 27 then
 		utils.abort()
@@ -412,7 +412,7 @@ keymap.set("", "h", function() -- Goto line
 end)
 
 keymap.set("", "M", function() -- Goto line
-	utils.operator_pending_registry = utils.get_operator_pending_state()
+	registry.operator_pending = utils.get_operator_pending_state()
 	vim.cmd.normal("l`")
 end)
 

@@ -443,7 +443,7 @@ return {
 			keymap.set(
 				"n",
 				"KD",
-				[[<cmd>lua require'utils'.set_position_registry(vim.fn.getpos("."))<cr><cmd>let &operatorfunc = "v:lua.require'utils'.yank_comment_paste"<cr>g@]],
+				[[<cmd>lua require'registry'.set_position(vim.fn.getpos("."))<cr><cmd>let &operatorfunc = "v:lua.require'utils'.yank_comment_paste"<cr>g@]],
 				{ silent = true }
 			)
 
@@ -484,7 +484,7 @@ return {
 				mode = "o",
 				function()
 					local is_i_ctrl_o = require("commands").is_i_ctrl_o
-					local is_eol = require("commands").insert_mode_col == fn.col("$")
+					local is_eol = require("registry").insert_mode_col == fn.col("$")
 					local ret = require("flash").remote({ motion = true, restore = true })
 					if not vim.deep_equal(ret.results, {}) and (vim.v.operator == "y" or vim.v.operator == "d") then
 						vim.defer_fn(function()

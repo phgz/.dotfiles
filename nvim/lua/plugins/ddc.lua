@@ -1,6 +1,7 @@
 local api = vim.api
 local fn = vim.fn
 local keymap = vim.keymap
+local registry = require("registry")
 
 return {
 	"Shougo/ddc.vim",
@@ -129,10 +130,9 @@ return {
 		local opts_expr = vim.tbl_extend("error", opts, { expr = true })
 
 		local has_registered_scroll_preview_keymaps = false
-		local keymaps_registry = {}
 		local register_scroll_preview_keymaps = function()
 			if not has_registered_scroll_preview_keymaps then
-				keymaps_registry = { fn.maparg("<C-f>", "i", false, true), fn.maparg("<C-b>", "i", false, true) }
+				registry.keymaps = { fn.maparg("<C-f>", "i", false, true), fn.maparg("<C-b>", "i", false, true) }
 				keymap.set("i", "<C-f>", function()
 					fn["popup_preview#scroll"](4)
 				end, opts_expr)
@@ -143,7 +143,7 @@ return {
 			end
 		end
 		local unregister_scroll_preview_keymaps = function()
-			local keymaps = keymaps_registry
+			local keymaps = registry.keymaps
 			fn.mapset("i", false, keymaps[1])
 			fn.mapset("i", false, keymaps[2])
 			has_registered_scroll_preview_keymaps = false

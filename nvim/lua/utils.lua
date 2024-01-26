@@ -1,19 +1,8 @@
 local api = vim.api
 local fn = vim.fn
+local registry = require("registry")
 
 local M = {}
-
-M.operator_pending_registry = nil
-
-local position_registry = {}
-M.set_position_registry = function(pos)
-	-- We check the length of pos, as getpos() returns a 4 elements table.
-	-- If it's the case, we also readjust to be neovim API o-based
-	position_registry = #pos == 4 and { pos[2], pos[3] - 1 } or pos
-end
-M.get_position_registry = function()
-	return position_registry
-end
 
 local esc = vim.keycode("<esc>")
 
@@ -86,15 +75,15 @@ function M.motion_back(lowercase)
 	motion_back_char = char
 	local operator
 	if vim.v.operator == "g@" and vim.go.operatorfunc == "v:lua.require'utils'.motion_back" then
-		operator = M.operator_pending_registry
+		operator = registry.operator_pending
 	else
 		operator = vim.v.operator
 	end
-	M.operator_pending_registry = operator
+	registry.operator_pending = operator
 	vim.print({
 		char = char,
 		operator = operator,
-		operator_pending_registry = M.operator_pending_registry,
+		operator_pending_registry = registry.operator_pending,
 		motion_back_char = motion_back_char,
 	})
 	M.abort()
@@ -243,7 +232,7 @@ end
 function M.duplicate(visual_motion)
 	local start_row, start_col = unpack(api.nvim_buf_get_mark(0, "["))
 	local end_row, end_col = unpack(api.nvim_buf_get_mark(0, "]"))
-	local pre_motion_row, pre_motion_col = unpack(M.get_position_registry())
+	local pre_motion_row, pre_motion_col = unpack(registry.get_position())
 
 	if visual_motion == "line" then
 		local lines = api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
@@ -273,8 +262,8 @@ function M.yank_comment_paste()
 	require("Comment.api").comment.linewise.count(range)
 
 	-- Move the cursor
-	local pre_motion_row, pre_motion_col = unpack(M.get_position_registry())
-	M.set_position_registry({})
+	local pre_motion_row, pre_motion_col = unpack(registry.get_position())
+	registry.set_position({})
 	api.nvim_win_set_cursor(0, { pre_motion_row + range, pre_motion_col })
 end
 
