@@ -238,41 +238,71 @@ return {
 				return "@" .. query.captures[capture_id]
 			end
 
-			local next_diagnostic_end, prev_diagnostic_end = ts_repeat_move.make_repeatable_move_pair(function()
-				local diagnostic_range = utils.get_diagnostic_under_cursor_range()
-				if diagnostic_range and not vim.deep_equal(api.nvim_win_get_cursor(0), diagnostic_range.end_pos) then
-					api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
-					vim.defer_fn(function()
-						vim.diagnostic.open_float({ scope = "cursor" })
-					end, 1)
-				else
-					vim.diagnostic.goto_next({ float = { border = "none" }, wrap = false })
+			local pair_diagnostic_end = function(severity)
+				return ts_repeat_move.make_repeatable_move_pair(function()
+					local diagnostic_range = utils.get_diagnostic_under_cursor_range()
+					if
+						diagnostic_range and not vim.deep_equal(api.nvim_win_get_cursor(0), diagnostic_range.end_pos)
+					then
+						api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
+						vim.defer_fn(function()
+							vim.diagnostic.open_float({ scope = "cursor" })
+						end, 1)
+					else
+						vim.diagnostic.goto_next({
+							float = { border = "none" },
+							severity = vim.diagnostic.severity[severity],
+							wrap = false,
+						})
+						diagnostic_range = utils.get_diagnostic_under_cursor_range()
+						if diagnostic_range then
+							api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
+						end
+					end
+				end, function()
+					local diagnostic_range = utils.get_diagnostic_under_cursor_range()
+
+					vim.diagnostic.goto_prev({
+						float = { border = "none" },
+						severity = vim.diagnostic.severity[severity],
+						wrap = false,
+						cursor_position = diagnostic_range
+								and { diagnostic_range.start_pos[1], diagnostic_range.start_pos[2] - 1 }
+							or nil,
+					})
+
 					diagnostic_range = utils.get_diagnostic_under_cursor_range()
 					if diagnostic_range then
 						api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
 					end
-				end
-			end, function()
-				local diagnostic_range = utils.get_diagnostic_under_cursor_range()
+				end)
+			end
 
-				vim.diagnostic.goto_prev({
-					float = { border = "none" },
-					wrap = false,
-					cursor_position = diagnostic_range
-							and { diagnostic_range.start_pos[1], diagnostic_range.start_pos[2] - 1 }
-						or nil,
-				})
+			local pair_diagnostic_start = function(severity)
+				return ts_repeat_move.make_repeatable_move_pair(function()
+					vim.diagnostic.goto_next({
+						float = { border = "none" },
+						wrap = false,
+						severity = vim.diagnostic.severity[severity],
+					})
+				end, function()
+					vim.diagnostic.goto_prev({
+						float = { border = "none" },
+						wrap = false,
+						severity = vim.diagnostic.severity[severity],
+					})
+				end)
+			end
 
-				diagnostic_range = utils.get_diagnostic_under_cursor_range()
-				if diagnostic_range then
-					api.nvim_win_set_cursor(0, diagnostic_range.end_pos)
-				end
-			end)
-			local next_diagnostic_start, prev_diagnostic_start = ts_repeat_move.make_repeatable_move_pair(function()
-				vim.diagnostic.goto_next({ float = { border = "none" }, wrap = false })
-			end, function()
-				vim.diagnostic.goto_prev({ float = { border = "none" }, wrap = false })
-			end)
+			local next_diagnostic_start, prev_diagnostic_start = pair_diagnostic_start()
+			local next_diagnostic_start_info, prev_diagnostic_start_info = pair_diagnostic_start("HINT")
+			local next_diagnostic_start_warning, prev_diagnostic_start_warning = pair_diagnostic_start("WARN")
+			local next_diagnostic_start_error, prev_diagnostic_start_error = pair_diagnostic_start("ERROR")
+
+			local next_diagnostic_end, prev_diagnostic_end = pair_diagnostic_end()
+			local next_diagnostic_end_info, prev_diagnostic_end_info = pair_diagnostic_end("HINT")
+			local next_diagnostic_end_warning, prev_diagnostic_end_warning = pair_diagnostic_end("WARN")
+			local next_diagnostic_end_error, prev_diagnostic_end_error = pair_diagnostic_end("ERROR")
 
 			local diagnostic_wrapper = function(func)
 				return function()
@@ -413,6 +443,18 @@ return {
 			keymap.set({ "n", "x", "o" }, "[d", diagnostic_wrapper(prev_diagnostic_start))
 			keymap.set({ "n", "x", "o" }, "]gd", diagnostic_wrapper(next_diagnostic_end))
 			keymap.set({ "n", "x", "o" }, "[gd", diagnostic_wrapper(prev_diagnostic_end))
+			keymap.set({ "n", "x", "o" }, "]w", diagnostic_wrapper(next_diagnostic_start_warning))
+			keymap.set({ "n", "x", "o" }, "[w", diagnostic_wrapper(prev_diagnostic_start_warning))
+			keymap.set({ "n", "x", "o" }, "]gw", diagnostic_wrapper(next_diagnostic_end_warning))
+			keymap.set({ "n", "x", "o" }, "[gw", diagnostic_wrapper(prev_diagnostic_end_warning))
+			keymap.set({ "n", "x", "o" }, "]e", diagnostic_wrapper(next_diagnostic_start_error))
+			keymap.set({ "n", "x", "o" }, "[e", diagnostic_wrapper(prev_diagnostic_start_error))
+			keymap.set({ "n", "x", "o" }, "]ge", diagnostic_wrapper(next_diagnostic_end_error))
+			keymap.set({ "n", "x", "o" }, "[ge", diagnostic_wrapper(prev_diagnostic_end_error))
+			keymap.set({ "n", "x", "o" }, "]i", diagnostic_wrapper(next_diagnostic_start_info))
+			keymap.set({ "n", "x", "o" }, "[i", diagnostic_wrapper(prev_diagnostic_start_info))
+			keymap.set({ "n", "x", "o" }, "]gi", diagnostic_wrapper(next_diagnostic_end_info))
+			keymap.set({ "n", "x", "o" }, "[gi", diagnostic_wrapper(prev_diagnostic_end_info))
 			keymap.set({ "n", "x", "o" }, "]q", next_quote)
 			keymap.set({ "n", "x", "o" }, "[q", prev_quote)
 			keymap.set({ "n", "x", "o" }, "]z", next_fold)
