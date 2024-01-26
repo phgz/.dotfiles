@@ -15,8 +15,8 @@ set fish_vi_force_cursor 1
 set fish_cursor_default line
 fish_vi_cursor
 
-bind \ca beginning-of-line
-bind \ce end-of-line
+bind \ca beginning-of-buffer
+bind \ce end-of-buffer
 bind \c_ kill-line
 bind \ck kill-word
 bind \cc cancel-commandline
