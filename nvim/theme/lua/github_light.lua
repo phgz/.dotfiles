@@ -66,7 +66,7 @@ require("github-theme").setup({
 			CursorLine = { bg = "#DEE9F6" },
 			CursorLineNr = { fg = "fg2", style = "bold" },
 			StatusLine = { fg = "#4C92E1", bg = "bg3" },
-			YellowStatusLine = { fg = "diag.info", bg = "bg3" },
+			YellowStatusLine = { fg = "diag.warn", bg = "bg3" },
 			GreenStatusLine = { fg = "git.add", bg = "bg3" },
 			BlueStatusLine = { fg = "git.changed", bg = "bg3" },
 			RedStatusLine = { fg = "git.removed", bg = "bg3" },
