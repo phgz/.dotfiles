@@ -19,8 +19,11 @@ bind \ca beginning-of-buffer
 bind \ce end-of-buffer
 bind \c_ kill-line
 bind \ck kill-word
+bind \ed kill-bigword
 bind \cc cancel-commandline
 bind \cg expand-abbr
+bind \e\[1\;2A history-search-backward # shift up
+bind \e\[1\;2B history-search-forward # Shift down
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -63,6 +66,7 @@ function multicd
 end
 
 abbr --add dotdot --regex '^\.\.\.+$' --function multicd
+abbr --add projrootdir --position anywhere --regex '^prd$' --function prd
 
 abbr -ag cat bat
 abbr -ag ls exa
