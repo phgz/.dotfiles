@@ -15,7 +15,7 @@ return {
 				changedelete = { show_count = true, text = "~" },
 			},
 			count_chars = {
-				[1] = "",
+				[1] = "", --"₁",
 				[2] = "₂",
 				[3] = "₃",
 				[4] = "₄",
@@ -69,8 +69,9 @@ return {
 					gs.blame_line({ ignore_whitespace = true })
 				end)
 				map("n", "gc", function()
-					if fn.input("Compare to: ") ~= "" then
-						gs.diffthis()
+					local input = fn.input("Compare to: ")
+					if input ~= "" then
+						gs.diffthis(input)
 					end
 				end)
 
