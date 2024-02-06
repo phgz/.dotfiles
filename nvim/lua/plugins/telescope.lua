@@ -8,6 +8,7 @@ return {
 		dependencies = {
 			{ "phgz/telescope-repo.nvim", branch = "feature/custom-post-action" },
 			"debugloop/telescope-undo.nvim",
+			"rguruprakash/simple-note.nvim",
 			"nvim-telescope/telescope-ui-select.nvim",
 		},
 
@@ -66,6 +67,14 @@ return {
 			require("telescope").load_extension("noice")
 			require("telescope").load_extension("ui-select")
 
+			require("simple-note").setup({
+				telescope_rename = "<C-r><C-n>",
+			})
+
+			keymap.set("n", "<leader>N", function()
+				require("simple-note").listNotes()
+			end)
+
 			api.nvim_create_autocmd("User", {
 				pattern = "TelescopePreviewerLoaded",
 				callback = function()
@@ -85,12 +94,14 @@ return {
 					local read_only = is_read_only and "[RO]" or ""
 					local help = fn.getbufvar(fn.bufnr("#"), "&buftype") == "help" and "[Help]" or ""
 					local git_status = fn.getbufvar(fn.bufnr("#"), "gitsigns_status")
+					local diagnostics = require("utils").diagnostics_status_line(fn.bufnr("#"))
 					if git_status ~= "" then
 						git_status = "  " .. git_status
 					end
-					vim.wo.statusline = [[%{%expand('#:~')%}]]
+					vim.wo.statusline = [[%{%expand('#:p:~')%}]]
 						.. git_status
-						.. [[%#GreenStatusLin#]]
+						.. diagnostics
+						.. [[%#GreenStatusLine#]]
 						.. ((is_modified or is_read_only) and " " or "")
 						.. help
 						.. [[%#YellowStatusLine#]]
@@ -112,6 +123,9 @@ return {
 				},
 			})
 
+			keymap.set("n", "<leader><M-f>", function()
+				builtin.find_files(dropdown_theme)
+			end)
 			keymap.set("n", "<leader>F", function()
 				local _, _, p_root = fn.expand("%:p"):find(string.format("(%s", os.getenv("HOME")) .. "/[^/]+/)")
 				builtin.find_files(vim.tbl_extend("error", dropdown_theme, { cwd = p_root }))
