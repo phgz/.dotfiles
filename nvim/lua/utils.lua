@@ -104,7 +104,7 @@ function M.motion_back(lowercase)
 		api.nvim_feedkeys("g@l", "n", false)
 		vim.defer_fn(function()
 			vim.go.operatorfunc = "v:lua.require'utils'.motion_back"
-		end, 100)
+		end, 1)
 	else
 		api.nvim_create_autocmd("InsertLeave", {
 			once = true,
@@ -112,7 +112,7 @@ function M.motion_back(lowercase)
 				api.nvim_feedkeys("g@l", "n", false)
 				vim.defer_fn(function()
 					vim.go.operatorfunc = "v:lua.require'utils'.motion_back"
-				end, 100)
+				end, 1)
 			end,
 		})
 	end
