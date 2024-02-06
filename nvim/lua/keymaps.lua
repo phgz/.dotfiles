@@ -26,6 +26,7 @@ keymap.set("n", "<leader>h", function() -- Split horizontal
 end)
 
 keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
+	-- could use BufDelete and BufUnload autocmds
 	registry.last_deleted_buffer = fn.expand("%:p")
 	vim.cmd("bdelete")
 	local new_current_file = fn.expand("%:p")
@@ -84,6 +85,26 @@ keymap.set("v", "<leader>s", function() -- Sort selection
 	api.nvim_feedkeys(esc, "x", false)
 end)
 
+keymap.set("v", "<leader>r", function() -- rearrange columns
+	local separator = fn.getcharstr()
+	local cursor_line = api.nvim_get_current_line()
+	local columns = vim.iter(cursor_line:gmatch(".")):fold({ 1 }, function(acc, char)
+		return char == separator and vim.list_extend(acc, { #acc + 1 }) or acc
+	end)
+
+	local order = vim.fn.input("Order: ", table.concat(columns, " "))
+	api.nvim_feedkeys(
+		":!awk -F '"
+			.. separator
+			.. "' 'BEGIN { OFS = FS } {print "
+			.. order:gsub("%d", "$%0"):gsub("%s+", ", ")
+			.. "}'"
+			.. vim.keycode("<cr>"),
+		"n",
+		false
+	)
+end)
+
 keymap.set("n", "<leader>o", function() -- open files returned by input command
 	local current_file = fn.expand("%:p")
 	local input = fn.input("Command (cwd is " .. fn.getcwd() .. "): ")
@@ -116,6 +137,14 @@ keymap.set("n", "<localleader>q", function() -- Remove breakpoints
 	api.nvim_win_set_cursor(0, cur_pos)
 end)
 
+keymap.set("n", "<localleader>s", function()
+	local buf = vim.api.nvim_create_buf(true, true)
+	vim.api.nvim_open_win(buf, true, {
+		split = "below",
+		win = 0,
+	})
+end)
+
 keymap.set("n", "<localleader>b", function() -- Set breakpoint
 	local row = api.nvim_win_get_cursor(0)[1]
 	local content = api.nvim_get_current_line()
@@ -126,7 +155,26 @@ end)
 
 --Normal key
 keymap.set("v", "ab", "apk") -- a block is a paragraph
-keymap.set("o", "ab", function()
+keymap.set("n", "s&", "<cmd>~<cr>") -- repeat substitute with last search pattern
+keymap.set("n", "sr", function() -- set replace register with motion
+	registry.register = "r"
+	vim.go.operatorfunc = "v:lua.require'utils'.set_register"
+	api.nvim_feedkeys("g@", "n", false)
+end)
+keymap.set("n", "sp", function() -- set pattern
+	registry.register = "/"
+	vim.go.operatorfunc = "v:lua.require'utils'.set_register"
+	api.nvim_feedkeys("g@", "n", false)
+end)
+keymap.set("n", "sg", "<cmd>s//\\=getreg('r')<cr>")
+keymap.set("n", "@/", function() -- Set search register
+	local input = fn.input("Let @/: ")
+	if input ~= "" then
+		fn.setreg("/", input)
+		return
+	end
+end) -- a block is a paragraph
+keymap.set("o", "abl", function()
 	vim.cmd.normal({ "vab" })
 end) -- a block is a paragraph
 keymap.set("n", "<left>", "<nop>") -- do nothing with arrows
@@ -135,7 +183,7 @@ keymap.set("n", "<up>", "<nop>") -- do nothing with arrows
 keymap.set("n", "<down>", "<nop>") -- do nothing with arrows
 keymap.set("", "gh", "h") -- move left
 keymap.set("", "gl", "l") -- move right
-keymap.set("o", "iB", function() -- scroll  left
+keymap.set("o", "ibu", function() -- scroll  left
 	local view = fn.winsaveview()
 	api.nvim_win_set_cursor(0, { 1, 0 })
 	vim.cmd.normal({ "Vo", bang = true })
@@ -146,7 +194,7 @@ keymap.set("o", "iB", function() -- scroll  left
 		end, 0)
 	end
 end) -- buffer motion
-keymap.set("o", "aB", function() -- scroll  left
+keymap.set("o", "abu", function() -- scroll  left
 	local view = fn.winsaveview()
 	api.nvim_win_set_cursor(0, { 1, 0 })
 	vim.cmd.normal({ "Vo", bang = true })
@@ -279,6 +327,7 @@ keymap.set("n", "o", function() -- `o` with count
 	if count > 1 then
 		utils.new_lines(true, count - 1)
 	end
+	-- vim.cmd.startinsert() does not work because of indentation
 	api.nvim_feedkeys("o", "n", false)
 end)
 keymap.set("n", "O", function() -- `O` with count
@@ -406,9 +455,9 @@ end)
 keymap.set("", "M", function() -- Goto line
 end)
 
-keymap.set("", "M", function() -- Goto line
-	registry.operator_pending = utils.get_operator_pending_state()
-	vim.cmd.normal("l`")
+keymap.set("o", "$", function() -- Till the end
+	local cursor_pos = api.nvim_win_get_cursor(0)
+	api.nvim_win_set_cursor(0, { cursor_pos[1], vim.fn.col("$") - 2 })
 end)
 
 -- {motion} linewise remote
@@ -501,7 +550,7 @@ keymap.set("o", "gq", function() -- go to after previous identifier part
 	utils.goto_camel_or_snake_or_kebab_part(false, true, vim.v.operator)
 end)
 
-keymap.set("o", ">", function() -- Apply operator to next pair
+keymap.set("o", "p", function() -- Apply operator to next pair
 	utils.apply_to_next_motion(vim.v.operator)
 	api.nvim_feedkeys(esc, "i", false)
 end)
@@ -513,16 +562,25 @@ keymap.set("c", "<C-a>", "<C-b>") -- Goto beginning of line
 keymap.set("c", "<M-left>", function()
 	local pos = fn.getcmdpos()
 	local content_till_cursor = fn.getcmdline():sub(1, pos - 1)
-	local rev_content = content_till_cursor:reverse()
-	local punct_or_space_pos = #content_till_cursor - (rev_content:find("[%c%z%s%p]") or 0) + 1
-	return string.rep("<left>", pos - punct_or_space_pos)
+	return string.rep("<left>", pos - utils.find_punct_in_string(content_till_cursor, true) - 1)
 end, { expr = true }) -- Move one word left
 keymap.set("c", "<M-right>", function()
 	local pos = fn.getcmdpos()
 	local content_after_cursor = fn.getcmdline():sub(pos + 1)
-	local punct_or_space_pos = content_after_cursor:find("[%s%p]") or 0
-	return string.rep("<right>", punct_or_space_pos)
+	return string.rep("<right>", utils.find_punct_in_string(content_after_cursor))
 end, { expr = true }) -- Move one word right
+keymap.set("c", "<M-BS>", function()
+	local pos = fn.getcmdpos()
+	local content_till_cursor = fn.getcmdline():sub(1, pos - 1)
+	return string.rep("<BS>", pos - utils.find_punct_in_string(content_till_cursor, true) - 1)
+end, { expr = true }) -- delete one word left
+
+keymap.set("i", "<M-BS>", function() -- delete one word left
+	local col_pos = api.nvim_win_get_cursor(0)[2]
+	local content_till_cursor = api.nvim_get_current_line():sub(1, col_pos)
+	return string.rep("<BS>", col_pos - utils.find_punct_in_string(content_till_cursor, true))
+end, { expr = true })
+
 keymap.set("i", "<C-space>", function() -- Pad with space
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { "  " })
@@ -682,6 +740,27 @@ keymap.set("i", "<C-l>", function() -- Add new string parameter
 	api.nvim_win_set_cursor(0, { row, col + 4 })
 end)
 
+keymap.set("i", "<C-i>", function() -- Interpolate between strings
+	local concat_lang_mapping = { haskell = "++", julia = "*", lua = "..", vim = "." }
+	local concat_chars = concat_lang_mapping[vim.bo.filetype] or "+"
+	local row, col = unpack(api.nvim_win_get_cursor(0))
+	local _, node_col_start, _ = vim.treesitter.get_node():start()
+	local quote = api.nvim_get_current_line():sub(node_col_start, node_col_start)
+	api.nvim_buf_set_text(
+		0,
+		row - 1,
+		col,
+		row - 1,
+		col,
+		{ quote .. " " .. concat_chars .. "  " .. concat_chars .. " " .. quote }
+	)
+	api.nvim_win_set_cursor(0, { row, col + 3 + #concat_chars })
+end)
+
+keymap.set("i", "<C-x>", "<C-]>") -- Trigger abbreviation
+keymap.set("i", "<C-2>", "<C-a>") -- Insert last inserted text
+keymap.set("i", "<C-a>", "<C-@>") -- Insert last inserted text and exit insert mode
+
 keymap.set("x", "<C-g>", function() -- Show rows/cols stats
 	local start_row, end_row = fn.line("v"), fn.line(".")
 	local start_col, end_col = fn.col("v"), fn.col(".")
@@ -700,3 +779,9 @@ keymap.set("", "<M-x>", function() -- Delete character after cursor
 end)
 
 keymap.set("n", "<C-[>", "<C-t>")
+
+--------------------------------------------------------------------------------
+--                               Abbreviations                                --
+--------------------------------------------------------------------------------
+
+keymap.set("!a", "tpye", "type")
