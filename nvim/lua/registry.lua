@@ -4,6 +4,7 @@ M.insert_mode_col = nil
 M.is_i_ctrl_o = nil
 M.operator_pending = nil
 M.last_deleted_buffer = nil
+M.register = nil
 M.keymaps = nil
 
 local position = nil
