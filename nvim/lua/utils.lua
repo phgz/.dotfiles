@@ -588,8 +588,8 @@ function M.mk_repeatable(func)
 	end
 end
 
-function M.diagnostics_status_line()
-	local diag_count = vim.diagnostic.count(0)
+function M.diagnostics_status_line(bufnr)
+	local diag_count = vim.diagnostic.count(bufnr or 0)
 	local severity = vim.diagnostic.severity
 	local errors = diag_count[severity.E] and "%#RedStatusLine#" .. diag_count[severity.E] .. "E" or ""
 	local warns = diag_count[severity.W] and "%#YellowStatusLine#" .. diag_count[severity.W] .. "W" or ""
