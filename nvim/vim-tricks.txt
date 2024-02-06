@@ -6,6 +6,8 @@
 &                         => repeat last :s
 @:                        => repeat the previous ":" command N times
 
+CTRL-@                    => insert previously inserted text and stop insert
+CTRL-A                    => insert previously inserted text
 <C-r>=expand('%:p:h')     => insert directory of current file
 <C-r>=repeat('-', 9)      => insert result of expr
 <C-g>                     => show ruler
@@ -15,6 +17,7 @@
 <CTRL-W>^                 => split current window and edit alternate file
 
 /abc\C                    => force case sensitivity
+/abc/e                    => set cursor on the end of the match
 :%!                       => filter all lines through the {filter} command
 :*                        => :'<,'>
 :=                        => echo last line number
@@ -32,14 +35,17 @@
 :'<,'>g!/^$/exe "norm! f{vi}^[" | s/\%V\S\+/&, => apply to non-empty lines, chain commands with |
 :'<,'>g/./exe "norm! yf(" | %s//utils.& => for each line in range, yank a part, then global substitute that selection
 :'<,'>g/./if line(".") % 2 == 0 | {cmd} => apply command only to even lines
+:exe "s/" . expand("<cword>") . "/foo" => substitute the word under cursor by foo
 :<C-v>                    => insert literal
 :cd %:h                   => change to the directory of the current file
 :write ++p                => creates parent directories
 :<C-R>_<C-W>              => insert the Word under the cursor.
 :<C-f>                    => open command-line window
 :ascii                    => print ascii value of char under cursor
+:let @/ = "the"           => set the search register to "the"
 
 cgn                       => changes the text of the next match
+gx                        => opens the current filepath or URL at cursor
 gJ                        => join without space
 gf                        => start editing the file whose name is under the cursor
 gi                        => Start insert mode where it was stopped last time
@@ -57,7 +63,7 @@ g<C-{a,x}>                => increment/decrement sequentially
 g{0,^,$}                  => Go to first/first non-blank/last char on screen line
 g{p,P}                    => same as `p` or `P`, but do not move cursor
 g{n,N}                    => select next/prev search match
-
+z{f,d}<motion>            => create or delete fold for motion
 2yi"                      => also select the surrounding quotes, but not the following white space
 dvb                       => make the motion inclusive (v toggles inclusiveness of last char)
 yVaf                      => force operator to work linewise
