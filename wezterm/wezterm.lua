@@ -196,12 +196,15 @@ end)
 local c = wezterm.config_builder()
 
 c.adjust_window_size_when_changing_font_size = false
+c.freetype_load_target = "Mono"
+c.freetype_load_flags = "FORCE_AUTOHINT"
 c.cell_width = 1.0
 c.color_scheme = get_color_scheme()
 c.cursor_blink_rate = 0
 c.cursor_thickness = 1
 c.font = wezterm.font("FantasqueSansM Nerd Font")
 c.font_size = 19
+c.front_end = "WebGpu"
 c.hide_tab_bar_if_only_one_tab = false
 c.enable_tab_bar = false
 c.show_tabs_in_tab_bar = false
@@ -354,6 +357,15 @@ c.keys = {
 		mods = "SUPER",
 		action = wezterm.action_callback(function(window, pane)
 			window:perform_action(act.CopyTo("ClipboardAndPrimarySelection"), pane)
+
+			window:perform_action(act.ClearSelection, pane)
+		end),
+	},
+	{
+		key = "v",
+		mods = "SUPER",
+		action = wezterm.action_callback(function(window, pane)
+			window:perform_action(act.PasteFrom("Clipboard"), pane)
 
 			window:perform_action(act.ClearSelection, pane)
 		end),
