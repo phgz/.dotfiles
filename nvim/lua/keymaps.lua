@@ -5,10 +5,10 @@ local keymap = vim.keymap
 local api = vim.api
 local fn = vim.fn
 
-keymap.set("n", "<C-o>", function()
+keymap.set("n", "<C-o>", function() -- Jump within buffer
 	utils.jump_within_buffer(true)
 end)
-keymap.set("n", "<C-i>", function()
+keymap.set("n", "<C-i>", function() -- Jump within buffer
 	utils.jump_within_buffer(false)
 end)
 
@@ -73,7 +73,7 @@ keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
 	end
 end)
 
-keymap.set("n", "<leader>T", function()
+keymap.set("n", "<leader>T", function() -- Open last deleted buffer
 	vim.cmd.edit(registry.last_deleted_buffer)
 end)
 
@@ -137,7 +137,7 @@ keymap.set("n", "<localleader>q", function() -- Remove breakpoints
 	api.nvim_win_set_cursor(0, cur_pos)
 end)
 
-keymap.set("n", "<localleader>s", function()
+keymap.set("n", "<localleader>s", function() -- Open scratch buffer
 	local buf = vim.api.nvim_create_buf(true, true)
 	vim.api.nvim_open_win(buf, true, {
 		split = "below",
@@ -166,15 +166,15 @@ keymap.set("n", "sp", function() -- set pattern
 	vim.go.operatorfunc = "v:lua.require'utils'.set_register"
 	api.nvim_feedkeys("g@", "n", false)
 end)
-keymap.set("n", "sg", "<cmd>s//\\=getreg('r')<cr>")
+keymap.set("n", "sg", "<cmd>s//\\=getreg('r')<cr>") -- substitute last seatch pattern with `r` (replace) register
 keymap.set("n", "@/", function() -- Set search register
 	local input = fn.input("Let @/: ")
 	if input ~= "" then
 		fn.setreg("/", input)
 		return
 	end
-end) -- a block is a paragraph
-keymap.set("o", "abl", function()
+end)
+keymap.set("o", "abl", function() -- a block is a paragraph
 	vim.cmd.normal({ "vab" })
 end) -- a block is a paragraph
 keymap.set("n", "<left>", "<nop>") -- do nothing with arrows
@@ -208,11 +208,11 @@ end) -- buffer motion
 keymap.set("", "zJ", function() -- scroll  left
 	local count = math.floor(api.nvim_win_get_width(0) / 3)
 	vim.cmd.normal({ count .. "zh", bang = true })
-end) -- scroll right
-keymap.set("", "zK", function()
+end)
+keymap.set("", "zK", function() -- scroll right
 	local count = math.floor(api.nvim_win_get_width(0) / 3)
 	vim.cmd.normal({ count .. "zl", bang = true })
-end) -- scroll right
+end)
 keymap.set("n", "`", "'") -- Swap ` and '
 keymap.set("n", "'", "`") -- Swap ` and '
 keymap.set("", "p", function() -- Paste and set '< and '> marks
@@ -221,14 +221,14 @@ end)
 keymap.set("", "P", function() -- Paste and set '< and '> marks
 	utils.paste(false)
 end)
-keymap.set("n", "mm", function()
+keymap.set("n", "mm", function() -- Duplicate line below
 	api.nvim_feedkeys("mVL", "", false)
 end)
-keymap.set("n", "mM", function()
+keymap.set("n", "mM", function() -- Duplicate line above
 	api.nvim_feedkeys("mVL", "", false)
 	api.nvim_feedkeys("k", "n", false)
 end)
-keymap.set(
+keymap.set( -- Duplicate a motion
 	"n",
 	"m",
 	[[<cmd>lua require'registry'.set_position(vim.fn.getpos("."))<cr><cmd>let &operatorfunc = "v:lua.require'utils'.duplicate"<cr>g@]]
@@ -452,16 +452,14 @@ end)
 keymap.set("", "h", function() -- Goto line
 end)
 --
-keymap.set("", "M", function() -- Goto line
-end)
+keymap.set("", "M", "mm") -- mark position
 
 keymap.set("o", "$", function() -- Till the end
 	local cursor_pos = api.nvim_win_get_cursor(0)
 	api.nvim_win_set_cursor(0, { cursor_pos[1], vim.fn.col("$") - 2 })
 end)
 
--- {motion} linewise remote
-keymap.set("o", "\\", function()
+keymap.set("o", "\\", function() -- {motion} linewise remote
 	local operator = vim.v.operator
 	local offset = utils.get_linechars_offset_from_cursor()
 
@@ -486,8 +484,7 @@ keymap.set("o", "\\", function()
 	end, 0)
 end)
 
--- {motion} linewise range remote
-keymap.set("o", "R", function()
+keymap.set("o", "R", function() -- {motion} linewise range remote
 	local operator = vim.v.operator
 	if operator ~= "y" and operator ~= "d" then
 		return
@@ -546,7 +543,7 @@ keymap.set("o", "q", function() -- go to after next identifier part
 	utils.goto_camel_or_snake_or_kebab_part(true, true, vim.v.operator)
 end)
 keymap.set("o", "gq", function() -- go to after previous identifier part
-	api.nvim_feedkeys("v", "x", false)
+	vim.cmd.norm("v")
 	utils.goto_camel_or_snake_or_kebab_part(false, true, vim.v.operator)
 end)
 
@@ -610,8 +607,6 @@ keymap.set("n", "<C-g>", function() -- Show file stats
 	vim.wo.statusline = vim.wo.statusline
 	vim.notify(row .. ":" .. col + 1 .. "; " .. line_count .. " lines --" .. relative .. "%--")
 end)
-
-keymap.set("n", "<M-m>", "mm")
 
 -- broken with folds
 keymap.set({ "n", "v" }, "<M-S-m>", function() -- Move lines
@@ -778,7 +773,7 @@ keymap.set("", "<M-x>", function() -- Delete character after cursor
 	api.nvim_set_current_line(content:sub(1, col + 1) .. content:sub(col + 3))
 end)
 
-keymap.set("n", "<C-[>", "<C-t>")
+keymap.set("n", "<C-[>", "<C-t>") -- Jump to older entry in the tag stack
 
 --------------------------------------------------------------------------------
 --                               Abbreviations                                --
