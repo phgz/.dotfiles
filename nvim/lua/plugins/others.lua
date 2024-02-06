@@ -539,10 +539,32 @@ return {
 				end,
 			},
 			{
+				"l",
+				mode = { "n", "o", "x" },
+				function()
+					local forced_motion = utils.get_operator_pending_state().forced_motion
+					-- vim.cmd.normal("V")
+					local ret = require("flash").jump({
+						-- search = { forward = true, wrap = false, multi_window = false },
+						search = { multi_window = false },
+						prompt = { enabled = false },
+						label = { after = { 0, 0 }, reuse = "all" },
+						jump = { autojump = true },
+						highlight = { backdrop = false, matches = false },
+					})
+					if vim.deep_equal(ret.results, {}) then
+						api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
+						api.nvim_feedkeys(vim.keycode("<esc>"), "n", false)
+					elseif forced_motion then
+						api.nvim_feedkeys(forced_motion, "x", false)
+					end
+				end,
+			},
+			{
 				"r",
 				mode = "o",
 				function()
-					local is_i_ctrl_o = require("commands").is_i_ctrl_o
+					local is_i_ctrl_o = require("registry").is_i_ctrl_o
 					local is_eol = require("registry").insert_mode_col == fn.col("$")
 					local ret = require("flash").remote({ motion = true, restore = true })
 					if not vim.deep_equal(ret.results, {}) and (vim.v.operator == "y" or vim.v.operator == "d") then
@@ -571,7 +593,11 @@ return {
 						if not offset then
 							return
 						end
-						api.nvim_feedkeys(":." .. offset .. ",.", "n", false)
+						if offset < 0 then
+							api.nvim_feedkeys(":." .. offset .. ",.", "n", false)
+						else
+							api.nvim_feedkeys(":.,.+" .. offset, "n", false)
+						end
 					elseif char == "i" or char == "a" then
 						local pos = api.nvim_win_get_cursor(0)
 						local is_i_ctrl_o = fn.mode(1) == "niI"
