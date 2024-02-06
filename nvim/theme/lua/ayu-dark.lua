@@ -67,6 +67,7 @@ require("ayu").setup({
 		NoiceCmdlineIcon = { link = "StatusLine" },
 		NoiceCmdline = { link = "StatusLine" },
 		NoiceCursor = { bg = "#F29718" },
+		NoiceCmdlinePrompt = { link = "YellowStatusLine" },
 
 		FlashPrompt = { link = "StatusLine" },
 	},

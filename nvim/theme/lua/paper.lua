@@ -57,6 +57,7 @@ vim.g.nvim_paper_highlights = {
 	NoiceCursor = { bg = "#000000" },
 	NoiceCmdlineIcon = { link = "StatusLine" },
 	NoiceCmdline = { link = "StatusLine" },
+	NoiceCmdlinePrompt = { link = "YellowStatusLine" },
 
 	FlashLabel = { link = "IncSearch" },
 	FlashPrompt = { link = "StatusLine" },

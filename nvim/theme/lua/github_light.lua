@@ -35,6 +35,9 @@ require("github-theme").setup({
 			["@markup.raw"] = { fg = "#0366d6" },
 			WrappedLineNr = { fg = "#B3B4B6" },
 
+			Delimiter = { fg = "black" },
+			Visual = { bg = "#B3B4B6" },
+
 			IlluminatedWordText = { style = "bold" },
 			IlluminatedWordRead = { style = "bold" },
 			IlluminatedWordWrite = { style = "bold" },
@@ -46,6 +49,7 @@ require("github-theme").setup({
 			NoiceCmdlineIcon = { link = "StatusLine" },
 			NoiceCmdline = { link = "StatusLine" },
 			NoiceCursor = { bg = "#044289" },
+			NoiceCmdlinePrompt = { link = "YellowStatusLine" },
 
 			NormalFloat = { bg = "bg1" },
 			TelescopePromptTitle = { fg = "#4C92E1" },

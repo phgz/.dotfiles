@@ -77,6 +77,7 @@ vim.g.gruvbox_baby_highlights = {
 	NoiceCursor = { bg = "#928374" },
 	NoiceCmdlineIcon = { link = "StatusLine" },
 	NoiceCmdline = { link = "StatusLine" },
+	NoiceCmdlinePrompt = { link = "YellowStatusLine" },
 
 	FlashPrompt = { link = "StatusLine" },
 }
