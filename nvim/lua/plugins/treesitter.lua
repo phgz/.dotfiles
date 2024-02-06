@@ -30,6 +30,9 @@ return {
 			local gs = require("gitsigns")
 			local gs_is_open = require("gitsigns.popup").is_open
 
+			local gs_cache = require("gitsigns.cache")
+			local Hunks = require("gitsigns.hunks")
+
 			require("nvim-treesitter.configs").setup({
 				highlight = {
 					enable = true,
@@ -72,13 +75,14 @@ return {
 
 						keymaps = {
 							-- You can use the capture groups defined in textobjects.scm
-							["ibe"] = "@binary.outer",
-							["ibl"] = "@binary.lhs",
-							["ibr"] = "@binary.rhs",
 							["aa"] = "@assignment.lhs",
 							["ia"] = "@assignment.lhs",
 							["av"] = "@assignment.rhs",
 							["iv"] = "@assignment.rhs",
+							["abe"] = "@binary.outer",
+							["ibl"] = "@binary.lhs",
+							["ibr"] = "@binary.rhs",
+							["abo"] = "@boolean",
 							["ak"] = "@call.outer",
 							["ik"] = "@call.inner",
 							["aC"] = "@class.outer",
@@ -87,18 +91,20 @@ return {
 							["iK"] = "@comment.outer",
 							["ac"] = "@conditional.outer",
 							["ic"] = "@conditional.inner",
+							["ad"] = "@dictionary.outer",
 							["af"] = "@function.outer",
 							["if"] = "@function.inner",
 							["al"] = "@loop.outer",
 							["il"] = "@loop.inner",
+							["aL"] = "@list.outer",
 							["an"] = "@number.inner",
 							["in"] = "@number.inner",
 							["ap"] = "@parameter.outer",
 							["ip"] = "@parameter.inner",
 							["ar"] = "@return.outer",
 							["ir"] = "@return.inner",
-							["as"] = "@statement.outer",
-							["is"] = "@statement.outer",
+							["as"] = "@string.outer",
+							["is"] = "@string.inner",
 						},
 						include_surrounding_whitespace = false,
 						selection_modes = {
@@ -117,69 +123,80 @@ return {
 							["]be"] = "@binary.outer",
 							["]bl"] = "@binary.lhs",
 							["]br"] = "@binary.rhs",
+							["]bo"] = "@boolean",
 							["]a"] = "@assignment.lhs",
 							["]v"] = "@assignment.rhs",
 							["]k"] = "@call.outer",
 							["]C"] = "@class.outer",
 							["]K"] = "@comment.outer",
 							["]c"] = "@conditional.outer",
+							["]d"] = "@dictionary.outer",
 							["]f"] = "@function.outer",
 							["]l"] = "@loop.outer",
+							["]L"] = "@list.outer",
 							["]n"] = "@number.inner",
 							["]p"] = "@parameter.inner",
 							["]r"] = "@return.outer",
-							["]s"] = "@statement.outer",
+							["]s"] = "@string.outer",
 						},
 						goto_next_end = {
 							["]gbe"] = "@binary.outer",
 							["]gbl"] = "@binary.lhs",
 							["]gbr"] = "@binary.rhs",
+							["]gbo"] = "@boolean",
 							["]ga"] = "@assignment.lhs",
 							["]gv"] = "@assignment.rhs",
 							["]gk"] = "@call.outer",
 							["]gC"] = "@class.outer",
 							["]gK"] = "@comment.outer",
 							["]gc"] = "@conditional.outer",
+							["]gd"] = "@dictionary.outer",
 							["]gf"] = "@function.outer",
 							["]gl"] = "@loop.outer",
+							["]gL"] = "@list.outer",
 							["]gn"] = "@number.inner",
 							["]gp"] = "@parameter.inner",
 							["]gr"] = "@return.outer",
-							["]gs"] = "@statement.outer",
+							["]gs"] = "@string.outer",
 						},
 						goto_previous_start = {
 							["[be"] = "@binary.outer",
 							["[bl"] = "@binary.lhs",
 							["[br"] = "@binary.rhs",
+							["[bo"] = "@boolean",
 							["[a"] = "@assignment.lhs",
 							["[v"] = "@assignment.rhs",
 							["[k"] = "@call.outer",
 							["[C"] = "@class.outer",
 							["[K"] = "@comment.outer",
 							["[c"] = "@conditional.outer",
+							["[d"] = "@dictionary.outer",
 							["[f"] = "@function.outer",
 							["[l"] = "@loop.outer",
+							["[L"] = "@list.outer",
 							["[n"] = "@number.inner",
 							["[p"] = "@parameter.inner",
 							["[r"] = "@return.outer",
-							["[s"] = "@statement.outer",
+							["[s"] = "@string.outer",
 						},
 						goto_previous_end = {
 							["[gbe"] = "@binary.outer",
 							["[gbl"] = "@binary.lhs",
 							["[gbr"] = "@binary.rhs",
+							["[gbo"] = "@boolean",
 							["[ga"] = "@assignment.lhs",
 							["[gv"] = "@assignment.rhs",
 							["[gk"] = "@call.outer",
 							["[gC"] = "@class.outer",
 							["[gK"] = "@comment.outer",
 							["[gc"] = "@conditional.outer",
+							["[gd"] = "@dictionary.outer",
 							["[gf"] = "@function.outer",
-							["[gl"] = "@loop.outer",
+							["[gL"] = "@list.outer",
 							["[gn"] = "@number.inner",
 							["[gp"] = "@parameter.inner",
 							["[gr"] = "@return.outer",
-							["[gs"] = "@statement.outer",
+							["[gs"] = "@string.outer",
 						},
 					},
 					lsp_interop = {
@@ -295,12 +312,14 @@ return {
 			end
 
 			local next_diagnostic_start, prev_diagnostic_start = pair_diagnostic_start()
-			local next_diagnostic_start_info, prev_diagnostic_start_info = pair_diagnostic_start("HINT")
+			local next_diagnostic_start_hint, prev_diagnostic_start_hint = pair_diagnostic_start("HINT")
+			local next_diagnostic_start_info, prev_diagnostic_start_info = pair_diagnostic_start("INFO")
 			local next_diagnostic_start_warning, prev_diagnostic_start_warning = pair_diagnostic_start("WARN")
 			local next_diagnostic_start_error, prev_diagnostic_start_error = pair_diagnostic_start("ERROR")
 
 			local next_diagnostic_end, prev_diagnostic_end = pair_diagnostic_end()
-			local next_diagnostic_end_info, prev_diagnostic_end_info = pair_diagnostic_end("HINT")
+			local next_diagnostic_end_hint, prev_diagnostic_end_hint = pair_diagnostic_end("HINT")
+			local next_diagnostic_end_info, prev_diagnostic_end_info = pair_diagnostic_end("INFO")
 			local next_diagnostic_end_warning, prev_diagnostic_end_warning = pair_diagnostic_end("WARN")
 			local next_diagnostic_end_error, prev_diagnostic_end_error = pair_diagnostic_end("ERROR")
 
@@ -336,27 +355,39 @@ return {
 			keymap.set({ "n", "x", "o" }, ";", hunk_wrapper(ts_repeat_move.repeat_last_move))
 			keymap.set({ "n", "x", "o" }, ",", hunk_wrapper(ts_repeat_move.repeat_last_move_opposite))
 
+			local function get_cursor_hunk()
+				local bufnr = api.nvim_get_current_buf()
+				if not gs_cache.cache[bufnr] then
+					return
+				end
+				local hunks = {}
+				vim.list_extend(hunks, gs_cache.cache[bufnr].hunks or {})
+				vim.list_extend(hunks, gs_cache.cache[bufnr].hunks_staged or {})
+
+				local lnum = api.nvim_win_get_cursor(0)[1]
+
+				return Hunks.find_hunk(lnum, hunks)
+			end
+
 			local hunk_opp = function(prev)
 				return function()
 					local view = fn.winsaveview()
-					local cursor_pos = api.nvim_win_get_cursor(0)
-					gs.select_hunk()
-					local is_inside_hunk = vim.list_contains({ "v", "V", vim.keycode("<C-v>") }, fn.mode())
+					local cursor_hunk = get_cursor_hunk()
 					local is_on_hunk_edge_or_outside = true
-					if is_inside_hunk then
-						local selection_start, selection_end = fn.line("v"), fn.line(".")
-						local col_range_lt = prev and fn.col({ selection_start, "$" }) - 1 or 0
+					if cursor_hunk then
+						local hunk_start, hunk_end = cursor_hunk.added.start, cursor_hunk.vend
+						local col_range_lt = prev and fn.col({ hunk_start, "$" }) - 1 or 0
 						local col_range_gt = prev and fn.col("$") - 1 or 0
+						local cursor_pos = api.nvim_win_get_cursor(0)
 						is_on_hunk_edge_or_outside = utils.compare_pos(
 							cursor_pos,
-							{ selection_start, col_range_lt },
+							{ hunk_start, col_range_lt },
 							{ gt = false, eq = prev }
 						) or utils.compare_pos(
 							cursor_pos,
-							{ selection_end, col_range_gt },
+							{ hunk_end, col_range_gt },
 							{ gt = true, eq = not prev }
 						)
-						api.nvim_feedkeys(esc, "n", false)
 					end
 
 					local opts = { navigation_message = false, preview = false }
@@ -380,10 +411,9 @@ return {
 						gs.prev_hunk(wrap_opts)
 						gs.next_hunk({ wrap = true })
 					else
-						gs.select_hunk()
-						api.nvim_feedkeys(esc, "n", false)
+						api.nvim_win_set_cursor(0, { get_cursor_hunk().vend, 0 })
 					end
-					cursor_pos = api.nvim_win_get_cursor(0)
+					local cursor_pos = api.nvim_win_get_cursor(0)
 					view.lnum = cursor_pos[1]
 					view.col = cursor_pos[2]
 					fn.winrestview(view)
@@ -439,22 +469,26 @@ return {
 			keymap.set({ "n", "x", "o" }, "[h", hunk_wrapper(prev_hunk_start))
 			keymap.set({ "n", "x", "o" }, "]gh", hunk_wrapper(next_hunk_end))
 			keymap.set({ "n", "x", "o" }, "[gh", hunk_wrapper(prev_hunk_end))
-			keymap.set({ "n", "x", "o" }, "]d", diagnostic_wrapper(next_diagnostic_start))
-			keymap.set({ "n", "x", "o" }, "[d", diagnostic_wrapper(prev_diagnostic_start))
-			keymap.set({ "n", "x", "o" }, "]gd", diagnostic_wrapper(next_diagnostic_end))
-			keymap.set({ "n", "x", "o" }, "[gd", diagnostic_wrapper(prev_diagnostic_end))
-			keymap.set({ "n", "x", "o" }, "]w", diagnostic_wrapper(next_diagnostic_start_warning))
-			keymap.set({ "n", "x", "o" }, "[w", diagnostic_wrapper(prev_diagnostic_start_warning))
-			keymap.set({ "n", "x", "o" }, "]gw", diagnostic_wrapper(next_diagnostic_end_warning))
-			keymap.set({ "n", "x", "o" }, "[gw", diagnostic_wrapper(prev_diagnostic_end_warning))
-			keymap.set({ "n", "x", "o" }, "]e", diagnostic_wrapper(next_diagnostic_start_error))
-			keymap.set({ "n", "x", "o" }, "[e", diagnostic_wrapper(prev_diagnostic_start_error))
-			keymap.set({ "n", "x", "o" }, "]ge", diagnostic_wrapper(next_diagnostic_end_error))
-			keymap.set({ "n", "x", "o" }, "[ge", diagnostic_wrapper(prev_diagnostic_end_error))
-			keymap.set({ "n", "x", "o" }, "]i", diagnostic_wrapper(next_diagnostic_start_info))
-			keymap.set({ "n", "x", "o" }, "[i", diagnostic_wrapper(prev_diagnostic_start_info))
-			keymap.set({ "n", "x", "o" }, "]gi", diagnostic_wrapper(next_diagnostic_end_info))
-			keymap.set({ "n", "x", "o" }, "[gi", diagnostic_wrapper(prev_diagnostic_end_info))
+			keymap.set({ "n", "x", "o" }, "]D", diagnostic_wrapper(next_diagnostic_start))
+			keymap.set({ "n", "x", "o" }, "[D", diagnostic_wrapper(prev_diagnostic_start))
+			keymap.set({ "n", "x", "o" }, "]gD", diagnostic_wrapper(next_diagnostic_end))
+			keymap.set({ "n", "x", "o" }, "[gD", diagnostic_wrapper(prev_diagnostic_end))
+			keymap.set({ "n", "x", "o" }, "]H", diagnostic_wrapper(next_diagnostic_start_hint))
+			keymap.set({ "n", "x", "o" }, "[H", diagnostic_wrapper(prev_diagnostic_start_hint))
+			keymap.set({ "n", "x", "o" }, "]gH", diagnostic_wrapper(next_diagnostic_end_hint))
+			keymap.set({ "n", "x", "o" }, "[gH", diagnostic_wrapper(prev_diagnostic_end_hint))
+			keymap.set({ "n", "x", "o" }, "]I", diagnostic_wrapper(next_diagnostic_start_info))
+			keymap.set({ "n", "x", "o" }, "[I", diagnostic_wrapper(prev_diagnostic_start_info))
+			keymap.set({ "n", "x", "o" }, "]gI", diagnostic_wrapper(next_diagnostic_end_info))
+			keymap.set({ "n", "x", "o" }, "[gI", diagnostic_wrapper(prev_diagnostic_end_info))
+			keymap.set({ "n", "x", "o" }, "]W", diagnostic_wrapper(next_diagnostic_start_warning))
+			keymap.set({ "n", "x", "o" }, "[W", diagnostic_wrapper(prev_diagnostic_start_warning))
+			keymap.set({ "n", "x", "o" }, "]gW", diagnostic_wrapper(next_diagnostic_end_warning))
+			keymap.set({ "n", "x", "o" }, "[gW", diagnostic_wrapper(prev_diagnostic_end_warning))
+			keymap.set({ "n", "x", "o" }, "]E", diagnostic_wrapper(next_diagnostic_start_error))
+			keymap.set({ "n", "x", "o" }, "[E", diagnostic_wrapper(prev_diagnostic_start_error))
+			keymap.set({ "n", "x", "o" }, "]gE", diagnostic_wrapper(next_diagnostic_end_error))
+			keymap.set({ "n", "x", "o" }, "[gE", diagnostic_wrapper(prev_diagnostic_end_error))
 			keymap.set({ "n", "x", "o" }, "]q", next_quote)
 			keymap.set({ "n", "x", "o" }, "[q", prev_quote)
 			keymap.set({ "n", "x", "o" }, "]z", next_fold)
@@ -471,7 +505,7 @@ return {
 			keymap.set({ "x" }, "[%", xprev_match)
 			keymap.set(
 				"n",
-				"sp",
+				"sP",
 				utils.mk_repeatable(function()
 					require("nvim-treesitter.textobjects.swap").swap_previous(get_text_object())
 				end),
@@ -480,7 +514,7 @@ return {
 
 			keymap.set(
 				"n",
-				"sn",
+				"sN",
 				utils.mk_repeatable(function()
 					require("nvim-treesitter.textobjects.swap").swap_next(get_text_object())
 				end),
