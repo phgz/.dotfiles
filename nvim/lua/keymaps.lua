@@ -384,7 +384,7 @@ keymap.set("", "l", function() -- Goto line
 	registry.operator_pending = nil
 	local visual_state = utils.get_visual_state()
 
-	local offset = utils.get_linechars_offset_from_cursor(108)
+	local offset = utils.get_linechars_offset_from_cursor()
 
 	if not offset then
 		return
@@ -401,14 +401,9 @@ keymap.set("", "l", function() -- Goto line
 end)
 
 keymap.set("", "h", function() -- Goto line
-	registry.operator_pending = utils.get_operator_pending_state()
-	local char = fn.getchar()
-	if char == 27 then
-		utils.abort()
-		return
-	end
-
-	vim.cmd.normal("l" .. fn.nr2char(192 - char))
+end)
+--
+keymap.set("", "M", function() -- Goto line
 end)
 
 keymap.set("", "M", function() -- Goto line
@@ -560,6 +555,7 @@ end)
 
 keymap.set("n", "<M-m>", "mm")
 
+-- broken with folds
 keymap.set({ "n", "v" }, "<M-S-m>", function() -- Move lines
 	local count
 	local first_char
@@ -577,7 +573,7 @@ keymap.set({ "n", "v" }, "<M-S-m>", function() -- Move lines
 		if first_char == 27 then
 			return
 		end
-		if first_char ~= 77 and first_char ~= 104 and first_char ~= 108 and vim.v.count == 0 then
+		if first_char ~= 108 and vim.v.count == 0 then
 			local operatorfunc = vim.go.operatorfunc
 			vim.go.operatorfunc = "{_ -> v:true}"
 			print(first_char)
@@ -610,6 +606,7 @@ keymap.set({ "n", "v" }, "<M-S-m>", function() -- Move lines
 	vim.cmd.normal({ count + 1 .. "==_", bang = true })
 end)
 
+-- broken with folds
 keymap.set("n", "<M-S-w>", function() -- Swap line
 	local offset = utils.get_linechars_offset_from_cursor()
 	local cursor_row = api.nvim_win_get_cursor(0)[1]

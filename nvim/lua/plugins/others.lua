@@ -250,6 +250,12 @@ return {
 			keymap.set("n", "sx", function()
 				require("substitute").operator({ register = vim.v.register })
 			end, { noremap = true })
+			keymap.set("n", "sxn", function()
+				require("treemonkey").select({ ignore_injections = false })
+				if utils.get_visual_state().is_active then
+					require("substitute").visual({ register = vim.v.register })
+				end
+			end, { noremap = true })
 			keymap.set("n", "sxx", require("substitute").line, { noremap = true })
 			keymap.set("n", "sX", require("substitute").eol, { noremap = true })
 			keymap.set("n", "cx", require("substitute.exchange").operator, { noremap = true })
@@ -395,6 +401,7 @@ return {
 	{
 		"lukas-reineke/indent-blankline.nvim", -- Indentation line
 		event = "BufReadPre",
+		enabled = false,
 		-- main = "ibl",
 		config = function()
 			require("ibl").setup({

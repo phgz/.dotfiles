@@ -6,6 +6,11 @@ local M = {}
 
 local esc = vim.keycode("<esc>")
 
+-- stylua: ignore
+local chars = { "{", "(", "~", "_", "+", "!", "@", "#", "$", ":", "?", "<", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "[", "1", "2", "3", "4", "5", "-", "`", "\\", "'", ";", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", ".", ",", "/", "=", "6", "7", "8", "9", "0", "]", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", ">", '"', "|", "%%", "^", "&", "*", ")", "}"}
+vim.tbl_add_reverse_lookup(chars)
+local CHARS_MIDDLE_INDEX = 48
+
 function M.abort()
 	api.nvim_feedkeys(esc, "x", false)
 	api.nvim_feedkeys(esc, "n", false)
@@ -371,31 +376,22 @@ function M.get_diagnostic_under_cursor_range()
 	end
 end
 
-function M.get_linechars_offset_from_cursor(first_char, echo)
-	local chars = first_char and { first_char } or { fn.getchar() }
-	if chars[1] ~= 77 then
-		if chars[1] == 27 or (chars[1] ~= 104 and chars[1] ~= 108) then
-			return nil
-		else
-			chars[2] = fn.getchar()
-			if chars[2] == 27 then
-				return nil
-			end
-		end
+function M.get_linechars_offset_from_cursor(char_as_nr, echo)
+	char_as_nr = char_as_nr or fn.getchar()
+
+	if char_as_nr == 27 then
+		return nil
 	end
 
-	local char = chars[1] == 77 and 96 or chars[1] == 104 and 192 - chars[2] or chars[2]
 	local height = M.virtual_win_height()
 	local win_row = fn.winline()
-	local offset = M.win_row_offset_from_win_middle(win_row - (char - 96), height)
-
+	local offset =
+		M.win_row_offset_from_win_middle(win_row - (chars[fn.nr2char(char_as_nr)] - CHARS_MIDDLE_INDEX), height)
 	if offset == 0 or win_row + offset > height or win_row + offset < 1 then
 		return nil
 	else
 		if echo then
-			vim.notify(vim.iter(chars):fold("", function(acc, char_as_nr)
-				return acc .. fn.nr2char(char_as_nr)
-			end))
+			vim.notify(fn.nr2char(char_as_nr))
 		end
 		return offset
 	end
@@ -609,12 +605,8 @@ function M.status_column()
 		M.virtual_win_height()
 	)
 	local highlight = vim.v.virtnum > 0 and "%#WrappedLineNr#" or ""
-	local chars = " M"
-	if vim.v.virtnum ~= offset then
-		chars = (vim.v.virtnum < offset and "h" or "l") .. string.char(math.abs(offset - vim.v.virtnum) % 30 + 96)
-	end
 
-	return highlight .. chars
+	return highlight .. (chars[CHARS_MIDDLE_INDEX - (offset - vim.v.virtnum)] or " ")
 end
 
 return M
