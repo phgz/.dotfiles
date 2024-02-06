@@ -43,6 +43,7 @@ return {
 
 	config = function()
 		local npairs = require("nvim-autopairs")
+		local utils = require("utils")
 
 		local get_snippet = function(item)
 			local lsp_item = vim.json.decode(vim.tbl_get(item, "user_data", "lspitem"))
@@ -74,7 +75,7 @@ return {
 		end
 
 		-- TextChangedP
-		local insert_suggestion = function(suggestion, is_snippet)
+		local insert_suggestion = function(suggestion, is_snippet, subword)
 			local row, col = unpack(api.nvim_win_get_cursor(0))
 			api.nvim_win_set_cursor(0, { row, col - 1 })
 			local captures = vim.treesitter.get_captures_at_cursor()
@@ -83,7 +84,9 @@ return {
 				return capture:match("^punctuation%.")
 			end)
 
-			local word_under_cursor_start_col = (is_punctuation or api.nvim_get_current_line():sub(col, col) == "/")
+			local word_under_cursor_start_col = (
+				is_punctuation or api.nvim_get_current_line():sub(col, col):match("[./]")
+			)
 					and col
 				or get_wuc_start_col()
 			api.nvim_win_set_cursor(0, { row, col })
@@ -93,12 +96,20 @@ return {
 				vim.snippet.expand(suggestion)
 				assert(vim.snippet.active(), "Snippet did not expand.")
 			else
-				local construct = string.rep(vim.keycode("<BS>"), col - word_under_cursor_start_col)
-				api.nvim_feedkeys(construct .. suggestion, "n", false)
+				if subword then
+					local word_under_cursor_length = col - word_under_cursor_start_col
+					local next_subword_pos = suggestion:find("[_%-%u]", word_under_cursor_length + 1)
+					if next_subword_pos == word_under_cursor_length + 1 then
+						next_subword_pos = suggestion:find("[_%-%u]", word_under_cursor_length + 2)
+					end
+					suggestion = next_subword_pos and suggestion:sub(1, next_subword_pos - 1) or suggestion
+				end
+				local bs_sequence = string.rep(vim.keycode("<BS>"), col - word_under_cursor_start_col)
+				api.nvim_feedkeys(bs_sequence .. suggestion:match(".*[^?]"), "n", false)
 			end
 		end
 
-		local wise_tab = function()
+		local smart_action = function(fallback_sequence, subword)
 			local items = vim.g["ddc#_items"]
 			local complete_pos = vim.g["ddc#_complete_pos"]
 
@@ -110,19 +121,23 @@ return {
 				if vim.endswith(prev_input, suggestion) then
 					local snippet_text = get_snippet(item)
 					if snippet_text then
-						insert_suggestion(snippet_text, true)
+						insert_suggestion(snippet_text, true, false)
 					else
-						api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
+						api.nvim_feedkeys(fallback_sequence, "n", false)
 					end
 				else
-					fn["ddc#denops#_notify"]("hide", { "CompleteDone" })
-					vim.v.completed_item = item
-					vim.g["ddc#_skip_next_complete"] = vim.g["ddc#_skip_next_complete"] + 1
-					insert_suggestion(suggestion, false)
-					fn["ddc#on_complete_done"](item)
+					if not subword then
+						fn["ddc#denops#_notify"]("hide", { "CompleteDone" })
+						vim.v.completed_item = item
+						vim.g["ddc#_skip_next_complete"] = vim.g["ddc#_skip_next_complete"] + 1
+					end
+					insert_suggestion(suggestion, false, subword)
+					if not subword then
+						fn["ddc#on_complete_done"](item)
+					end
 				end
 			else
-				api.nvim_feedkeys(vim.keycode("<tab>"), "n", false)
+				api.nvim_feedkeys(fallback_sequence, "n", false)
 			end
 		end
 
@@ -154,8 +169,14 @@ return {
 				api.nvim_feedkeys(vim.keycode("<Down>"), "n", false)
 				register_scroll_preview_keymaps()
 			else
-				wise_tab()
+				smart_action(vim.keycode("<Tab>"))
 			end
+		end, opts)
+
+		keymap.set("i", "<M-right>", function() -- Go one subword right
+			local col_pos = api.nvim_win_get_cursor(0)[2]
+			local content_after_cursor = api.nvim_get_current_line():sub(col_pos + 2)
+			smart_action(string.rep(vim.keycode("<right>"), utils.find_punct_in_string(content_after_cursor)), true)
 		end, opts)
 
 		keymap.set("i", "<S-Tab>", function()
@@ -172,7 +193,8 @@ return {
 				unregister_scroll_preview_keymaps()
 				local col = api.nvim_win_get_cursor(0)[2]
 				local wuc_start_col = get_wuc_start_col()
-				local is_eow = api.nvim_get_current_line():sub(col + 1, col + 1):match("[^%w_]")
+				local next_col = api.nvim_get_current_line():sub(col + 1, col + 1)
+				local is_eow = next_col:match("^$") or next_col:match("[^%w_]")
 				if is_eow then
 					return "<C-y>"
 				else
@@ -239,17 +261,10 @@ return {
 		keymap.set(
 			"i",
 			"<M-left>",
-			hide_wrapper(function() -- Go one character left
-				return "<S-left>"
-			end),
-			{ expr = true }
-		)
-
-		keymap.set(
-			"i",
-			"<M-right>",
-			hide_wrapper(function() -- Go one character left
-				return "<S-right>"
+			hide_wrapper(function() -- Go one subword left
+				local col_pos = api.nvim_win_get_cursor(0)[2]
+				local content_till_cursor = api.nvim_get_current_line():sub(1, col_pos)
+				return string.rep("<left>", col_pos - utils.find_punct_in_string(content_till_cursor, true))
 			end),
 			{ expr = true }
 		)
