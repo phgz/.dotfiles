@@ -86,15 +86,9 @@ api.nvim_create_autocmd("InsertLeavePre", {
 	end,
 })
 
-api.nvim_create_augroup("lsp_diagnostics_warmup", {})
-api.nvim_create_autocmd("LspProgress", {
-	pattern = "end",
-	group = "lsp_diagnostics_warmup",
-	callback = function(arg)
-		if arg.data.result.value.title == "Diagnosing" then
-			api.nvim_del_augroup_by_name("lsp_diagnostics_warmup")
-			vim.cmd("redrawstatus")
-		end
+api.nvim_create_autocmd("DiagnosticChanged", {
+	callback = function()
+		vim.cmd("redrawstatus")
 	end,
 })
 
