@@ -100,10 +100,22 @@ function M.motion_back(lowercase)
 		vim.cmd.normal({ operator .. motion_back_char, bang = true })
 	end
 	vim.go.operatorfunc = "{_ -> v:true}"
-	api.nvim_feedkeys("g@l", "n", false)
-	vim.defer_fn(function()
-		vim.go.operatorfunc = "v:lua.require'utils'.motion_back"
-	end, 100)
+	if operator ~= "c" then
+		api.nvim_feedkeys("g@l", "n", false)
+		vim.defer_fn(function()
+			vim.go.operatorfunc = "v:lua.require'utils'.motion_back"
+		end, 100)
+	else
+		api.nvim_create_autocmd("InsertLeave", {
+			once = true,
+			callback = function()
+				api.nvim_feedkeys("g@l", "n", false)
+				vim.defer_fn(function()
+					vim.go.operatorfunc = "v:lua.require'utils'.motion_back"
+				end, 100)
+			end,
+		})
+	end
 end
 
 function M.get_listed_buffers(as_filenames)
@@ -513,19 +525,43 @@ M.goto_camel_or_snake_or_kebab_part = function(fwd, seek_after, operator)
 		found_col = found_col - 1 -- 0-based indexed in neovim API
 		local offset = 0
 		if operator then
-			if pattern == snake_part or pattern == kebab_part then
+			if vim.list_contains(word_end_patterns, pattern) then
+				offset = 1
+			elseif pattern == snake_part or pattern == kebab_part then
 				if operator == "d" then
 					offset = fwd and 0 or -1
 				else
 					offset = fwd and -1 or 0
 				end
 			end
-			if vim.list_contains(word_end_patterns, pattern) then
-				offset = 1
-			end
 		end
 		api.nvim_win_set_cursor(0, { found_row, found_col + offset })
 	end
+end
+
+M.find_punct_in_string = function(str, from_end)
+	if from_end then
+		str = str:reverse()
+	end
+
+	local init = 1
+	if str:sub(1, 1):match("[%s%p]") then
+		init = 2
+	end
+
+	if from_end then
+		return #str - (str:find("[%s%p]", init) or (2 * #str)) + 1
+	else
+		return str:find("[%s%p]", init) or #str + 1
+	end
+end
+
+M.set_register = function()
+	local register = registry.register
+	local start_row, start_col = unpack(api.nvim_buf_get_mark(0, "["))
+	local end_row, end_col = unpack(api.nvim_buf_get_mark(0, "]"))
+	local text = api.nvim_buf_get_text(0, start_row - 1, start_col, end_row - 1, end_col + 1, {})[1]
+	fn.setreg(register, vim.trim(text))
 end
 
 M.apply_to_next_motion = function(motion)
