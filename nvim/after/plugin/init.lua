@@ -11,4 +11,3 @@ vim.fn.matchadd("DiffText", "\\%97v")
 
 vim.go.statusline = status_line()
 vim.opt.formatoptions:remove({ "l", "o", "r" })
-vim.wo.statuscolumn = [[%s%{%luaeval("require'utils'.status_column()")%}]]

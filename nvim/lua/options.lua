@@ -59,8 +59,7 @@ go.cpoptions = go.cpoptions .. "y"
 wo.cursorline = true
 wo.foldtext = "getline(v:foldstart+1)"
 wo.linebreak = true
-wo.number = true
-wo.numberwidth = 3
+wo.number = false
 wo.signcolumn = "yes"
 -- wo.winbar = "..." -- Use winbar feature
 
