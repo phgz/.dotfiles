@@ -27,7 +27,7 @@ end
 local popup_update_config_from_scrolling = function(win)
 	if vim.w[win].gitsigns_preview == nil then
 		local win_conf = api.nvim_win_get_config(win)
-		assert(win_conf.relative == "win", win_conf.relative)
+		assert(win_conf.relative == "win", win_conf)
 		local updated_conf = vim.tbl_deep_extend("force", api.nvim_win_get_config(win), {
 			row = {
 				[false] = win_conf.row[false] - vim.v.event[fn.expand("<afile>")].topline,
