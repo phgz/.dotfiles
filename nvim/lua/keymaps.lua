@@ -205,11 +205,11 @@ keymap.set("o", "abu", function() -- scroll  left
 		end, 0)
 	end
 end) -- buffer motion
-keymap.set("", "zJ", function() -- scroll  left
+keymap.set("", "zj", function() -- scroll  left
 	local count = math.floor(api.nvim_win_get_width(0) / 3)
 	vim.cmd.normal({ count .. "zh", bang = true })
 end)
-keymap.set("", "zK", function() -- scroll right
+keymap.set("", "zk", function() -- scroll right
 	local count = math.floor(api.nvim_win_get_width(0) / 3)
 	vim.cmd.normal({ count .. "zl", bang = true })
 end)
@@ -750,6 +750,10 @@ keymap.set("i", "<C-i>", function() -- Interpolate between strings
 		{ quote .. " " .. concat_chars .. "  " .. concat_chars .. " " .. quote }
 	)
 	api.nvim_win_set_cursor(0, { row, col + 3 + #concat_chars })
+end)
+
+keymap.set("i", "<C-,>", function() -- Insert parameter to the left
+	api.nvim_feedkeys(", " .. string.rep(vim.keycode("<left>"), 2), "n", false)
 end)
 
 keymap.set("i", "<C-x>", "<C-]>") -- Trigger abbreviation
