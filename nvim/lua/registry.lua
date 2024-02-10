@@ -5,7 +5,7 @@ M.is_i_ctrl_o = nil
 M.operator_pending = nil
 M.last_deleted_buffer = nil
 M.register = nil
-M.keymaps = nil
+M.keymaps = {}
 
 local position = nil
 M.set_position = function(pos)
