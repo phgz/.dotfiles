@@ -69,9 +69,9 @@ abbr --add dotdot --regex '^\.\.\.+$' --function multicd
 abbr --add projrootdir --position anywhere --regex '^prd$' --function prd
 
 abbr -ag cat bat
-abbr -ag ls exa
-abbr -ag ll exal
-abbr -ag la exal -a
+abbr -ag ls eza
+abbr -ag ll ezal
+abbr -ag la ezal -a
 abbr -ag grep rg
 
 test -t 0 && initialize_tmux

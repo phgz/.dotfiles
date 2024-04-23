@@ -126,7 +126,7 @@ if [ ! -d "$HOME"/.cargo ]; then
 
     curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
     cargo=$HOME/.cargo/bin/cargo
-    PATH=/opt/homebrew/bin:$PATH $cargo install --locked exa ripgrep sd bat fd-find du-dust nu starship || exit
+    PATH=/opt/homebrew/bin:$PATH $cargo install --locked eza ripgrep sd bat fd-find du-dust nu starship || exit
 
     git clone https://github.com/crescentrose/sunshine
     pushd sunshine || exit
@@ -174,9 +174,9 @@ fi
 #------------------------------------------------------------------------------#
 # Add Terminfo for wezterm:
 tempfile=$(mktemp) &&
-    curl -o $tempfile https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo &&
-    /usr/bin/tic -x -o ~/.terminfo $tempfile &&
-    rm $tempfile
+    curl -o "$tempfile" https://raw.githubusercontent.com/wez/wezterm/main/termwiz/data/wezterm.terminfo &&
+    /usr/bin/tic -x -o ~/.terminfo "$tempfile" &&
+    rm "$tempfile"
 
 #------------------------------------------------------------------------------#
 #                         FantasqueSansMono Nerd Font                          #
