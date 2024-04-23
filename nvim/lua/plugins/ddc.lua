@@ -32,7 +32,6 @@ return {
 			end,
 		},
 		"Shougo/ddc-converter_remove_overlap",
-		"Shougo/ddc-filter-sorter_rank",
 		"Shougo/ddc-source-around",
 		"Shougo/ddc-source-lsp",
 		"Shougo/ddc-ui-inline",
@@ -46,7 +45,8 @@ return {
 		local utils = require("utils")
 
 		local get_snippet = function(item)
-			local lsp_item = vim.json.decode(vim.tbl_get(item, "user_data", "lspitem"))
+			local json_lsp_item = vim.tbl_get(item, "user_data", "lspitem")
+			local lsp_item = json_lsp_item and vim.json.decode(json_lsp_item) or nil
 			if
 				lsp_item
 				and lsp_item.insertTextFormat
@@ -158,9 +158,8 @@ return {
 			end
 		end
 		local unregister_scroll_preview_keymaps = function()
-			local keymaps = registry.keymaps
-			fn.mapset("i", false, keymaps[1])
-			fn.mapset("i", false, keymaps[2])
+			fn.mapset("i", false, registry.keymaps[1])
+			fn.mapset("i", false, registry.keymaps[2])
 			has_registered_scroll_preview_keymaps = false
 		end
 
