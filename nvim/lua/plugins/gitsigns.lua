@@ -68,6 +68,7 @@ return {
 				map("n", "gb", function()
 					gs.blame_line({ ignore_whitespace = true })
 				end)
+				vim.keymap.del("", "gcc")
 				map("n", "gc", function()
 					local input = fn.input("Compare to: ")
 					if input ~= "" then

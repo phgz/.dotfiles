@@ -115,7 +115,7 @@ return {
 					vim.lsp.buf.definition({ on_list = on_list })
 				end, opts)
 				keymap.set("n", "<localleader>h", function()
-					vim.lsp.inlay_hint.enable(bufnr, not vim.lsp.inlay_hint.is_enabled(bufnr))
+					vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 				end, opts)
 				keymap.set("n", "<localleader>r", vim.lsp.buf.rename)
 				keymap.set("n", "H", function()

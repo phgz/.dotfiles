@@ -8,7 +8,11 @@ local esc = vim.keycode("<esc>")
 
 -- stylua: ignore
 local chars = { "{", "(", "~", "_", "+", "!", "@", "#", "$", ":", "?", "<", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "[", "1", "2", "3", "4", "5", "-", "`", "\\", "'", ";", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", ".", ",", "/", "=", "6", "7", "8", "9", "0", "]", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", ">", '"', "|", "%%", "^", "&", "*", ")", "}"}
-vim.tbl_add_reverse_lookup(chars)
+
+for k, v in pairs(chars) do
+	chars[v] = k
+end
+
 local CHARS_MIDDLE_INDEX = 48
 
 function M.abort()
@@ -120,10 +124,10 @@ end
 
 function M.get_listed_buffers(as_filenames)
 	local raw_listed_buffers = vim.split(api.nvim_exec2("buffers", { output = true }).output, "\n")
-	return vim.iter.map(function(raw_buffer)
+	return vim.iter(raw_listed_buffers):map(function(raw_buffer)
 		local bufnr = raw_buffer:match("%s*(%d+)")
 		return as_filenames and fn.expand("#" .. bufnr .. ":p") or tonumber(bufnr)
-	end, raw_listed_buffers)
+	end)
 end
 
 function M.jump_within_buffer(older)
@@ -419,10 +423,10 @@ function M.replace()
 		-- vim.print(to_insert)
 		local old_indent = quote_reg:match("^%s*")
 		local new_indent = api.nvim_get_current_line():match("^%s*")
-		to_insert = vim.iter.map(function(str)
+		to_insert = vim.iter(to_insert):map(function(str)
 			local formatted = str:gsub("^" .. old_indent, new_indent)
 			return formatted
-		end, to_insert)
+		end)
 		-- vim.print(to_insert)
 		-- print(old_indent .. "-" .. new_indent)
 	end
@@ -627,9 +631,9 @@ function M.diagnostics_status_line(bufnr)
 	local warns = diag_count[severity.W] and "%#YellowStatusLine#" .. diag_count[severity.W] .. "W" or ""
 	local hints = diag_count[severity.N] and "%#GreenStatusLine#" .. diag_count[severity.N] .. "H" or ""
 	local infos = diag_count[severity.I] and "%#BlueStatusLine#" .. diag_count[severity.I] .. "I" or ""
-	local non_empty = vim.iter.filter(function(diag)
+	local non_empty = vim.iter({ errors, warns, hints, infos }):filter(function(diag)
 		return diag ~= ""
-	end, { errors, warns, hints, infos })
+	end)
 
 	return vim.deep_equal(non_empty, {}) and "" or " " .. table.concat(non_empty, " ")
 end

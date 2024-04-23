@@ -165,9 +165,9 @@ return {
 				is_equal = is_equal == nil and true or is_equal
 				local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
 				local jumps = fn.msgpackparse(context.jumps)
-				local listed_bufs = vim.iter.map(function(buf)
+				local listed_bufs = vim.iter(fn.msgpackparse(context.bufs)[4]):map(function(buf)
 					return buf.f
-				end, fn.msgpackparse(context.bufs)[4])
+				end)
 				local to_edit
 				for i = #jumps, 1, -4 do
 					local file = jumps[i].f
@@ -184,12 +184,12 @@ return {
 				local context = api.nvim_get_context({ types = { "bufs" } })
 				local bufs = fn.msgpackparse(context.bufs)[4]
 
-				local open_projects = vim.iter.filter(function(project_path)
+				local open_projects = vim.iter(project_paths):filter(function(project_path)
 					local found = vim.iter(bufs):find(function(buf_path)
 						return vim.startswith(buf_path.f, project_path)
 					end)
 					return found or false
-				end, project_paths)
+				end)
 
 				return open_projects
 			end

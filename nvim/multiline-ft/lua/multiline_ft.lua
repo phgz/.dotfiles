@@ -182,10 +182,10 @@ local function operate_func(pos)
 	elseif operator == "g~" or operator == "gu" or operator == "gU" then
 		local text_as_table = get_text_or_lines(modes.visual, start_row, start_col, end_row, end_col)
 
-		local switched_case_table = vim.iter.map(function(line)
+		local switched_case_table = vim.iter(text_as_table):map(function(line)
 			local switched_case_line = string.gsub(line, "%a", case_functions[operator])
 			return switched_case_line
-		end, text_as_table)
+		end)
 
 		set_text_or_lines(switched_case_table, modes.visual, start_row, start_col, end_row, end_col)
 	elseif operator == "g@" then

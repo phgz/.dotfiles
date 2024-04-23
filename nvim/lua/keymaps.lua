@@ -32,12 +32,12 @@ keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
 	local new_current_file = fn.expand("%:p")
 	local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
 	local jumps = fn.msgpackparse(context.jumps)
-	local still_listed = vim.iter.map(function(buf)
+	local still_listed = vim.iter(fn.msgpackparse(context.bufs)[4]):map(function(buf)
 		return buf.f
-	end, fn.msgpackparse(context.bufs)[4])
-	local possible_alternatives = vim.iter.filter(function(name)
+	end)
+	local possible_alternatives = vim.iter(still_listed):filter(function(name)
 		return name ~= new_current_file
-	end, still_listed)
+	end)
 
 	if #still_listed == 0 then
 		return
@@ -250,28 +250,47 @@ keymap.set({ "n" }, "go", function() -- open git modified files
 		fn.setreg("#", current_file)
 	end
 end, { silent = true })
+
+local function calculate_increment(first_screen_row, last_screen_row)
+	local folded_rows = {}
+
+	local row = first_screen_row
+	while row <= last_screen_row do
+		local foldclosed = fn.foldclosed(row)
+		if foldclosed ~= -1 then
+			local foldclosedend = fn.foldclosedend(row)
+			table.insert(folded_rows, foldclosedend - foldclosed)
+			row = foldclosedend + 1
+		else
+			row = row + 1
+		end
+	end
+
+	local folded_rows_sum = vim.iter(folded_rows):fold(0, function(s, number)
+		return s + number
+	end)
+
+	return math.floor((last_screen_row - (first_screen_row + folded_rows_sum) + 1) / 3)
+end
+
 keymap.set({ "n", "x" }, "k", function() -- scroll down 1/3 of screen
 	if fn.line("w$") == fn.line("$") then
 		return
 	end
 
-	local first_screen_row = fn.line("w0")
-	local last_screen_row = fn.line("w$")
-	local increment = math.floor((last_screen_row - first_screen_row + 1) / 3)
-
+	local increment = calculate_increment(fn.line("w0"), fn.line("w$"))
 	api.nvim_feedkeys(increment .. vim.keycode("<C-e>"), "n", false)
 end, { silent = true })
+
 keymap.set({ "n", "x" }, "j", function() -- scroll up 1/3 of screen
 	if fn.line("w0") == 1 then
 		return
 	end
 
-	local first_screen_row = fn.line("w0")
-	local last_screen_row = fn.line("w$")
-	local increment = math.floor((last_screen_row - first_screen_row + 1) / 3)
-
+	local increment = calculate_increment(fn.line("w0"), fn.line("w$"))
 	api.nvim_feedkeys(increment .. vim.keycode("<C-y>"), "n", false)
 end, { silent = true })
+
 keymap.set("n", "<S-cr>", function() -- Pad with newlines
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	api.nvim_buf_set_lines(0, row, row, true, { "" })

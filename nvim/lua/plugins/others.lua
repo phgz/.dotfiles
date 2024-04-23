@@ -54,16 +54,13 @@ return {
 	},
 	{
 		"mrjones2014/smart-splits.nvim", -- smart window navigation
-		keys = vim.iter.map(
-			function(key)
-				return { key, mode = { "i", "n", "o", "v" } }
-			end,
-			vim.iter({ "left", "right", "up", "down" })
-				:map(function(key)
-					return { "<C-S-" .. key .. ">", "<S-M-" .. key .. ">", "<S-" .. key .. ">" }
-				end)
-				:flatten()
-		),
+		keys = vim.iter(vim.iter({ "left", "right", "up", "down" })
+			:map(function(key)
+				return { "<C-S-" .. key .. ">", "<S-M-" .. key .. ">", "<S-" .. key .. ">" }
+			end)
+			:flatten()):map(function(key)
+			return { key, mode = { "i", "n", "o", "v" } }
+		end),
 		config = function()
 			require("smart-splits").setup({
 				default_amount = 2,
@@ -319,7 +316,7 @@ return {
 		end,
 	},
 	{
-		"kylechui/nvim-surround", -- Surround motion with delimiters
+		"phgz/nvim-surround", -- Surround motion with delimiters
 		keys = {
 			{ "<C-g>s", mode = "i" },
 			{ "<C-s>", mode = "i" },
@@ -673,6 +670,20 @@ return {
 					ts_node_action.node_action()
 				end
 			end, { desc = "Trigger Node Action" })
+		end,
+	},
+	{
+		"gbprod/stay-in-place.nvim",
+		config = function()
+			require("stay-in-place").setup({})
+		end,
+	},
+	{
+		"icholy/lsplinks.nvim",
+		config = function()
+			local lsplinks = require("lsplinks")
+			lsplinks.setup()
+			vim.keymap.set("n", "gx", lsplinks.gx)
 		end,
 	},
 	{
