@@ -5,6 +5,11 @@ local keymap = vim.keymap
 local api = vim.api
 local fn = vim.fn
 
+vim.keymap.del("", "gcc")
+vim.keymap.del("", "gc")
+vim.keymap.del("n", "[d")
+vim.keymap.del("n", "]d")
+
 keymap.set("n", "<C-o>", function() -- Jump within buffer
 	utils.jump_within_buffer(true)
 end)
@@ -32,12 +37,16 @@ keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
 	local new_current_file = fn.expand("%:p")
 	local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
 	local jumps = fn.msgpackparse(context.jumps)
-	local still_listed = vim.iter(fn.msgpackparse(context.bufs)[4]):map(function(buf)
-		return buf.f
-	end)
-	local possible_alternatives = vim.iter(still_listed):filter(function(name)
-		return name ~= new_current_file
-	end)
+	local still_listed = vim.iter(fn.msgpackparse(context.bufs)[4])
+		:map(function(buf)
+			return buf.f
+		end)
+		:totable()
+	local possible_alternatives = vim.iter(still_listed)
+		:filter(function(name)
+			return name ~= new_current_file
+		end)
+		:totable()
 
 	if #still_listed == 0 then
 		return

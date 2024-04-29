@@ -58,9 +58,11 @@ return {
 			:map(function(key)
 				return { "<C-S-" .. key .. ">", "<S-M-" .. key .. ">", "<S-" .. key .. ">" }
 			end)
-			:flatten()):map(function(key)
-			return { key, mode = { "i", "n", "o", "v" } }
-		end),
+			:flatten())
+			:map(function(key)
+				return { key, mode = { "i", "n", "o", "v" } }
+			end)
+			:totable(),
 		config = function()
 			require("smart-splits").setup({
 				default_amount = 2,
@@ -102,36 +104,6 @@ return {
 	},
 	{
 		"HiPhish/rainbow-delimiters.nvim", -- "Enclosers" coloring
-		config = function()
-			-- local strategy = function()
-			-- 	if api.nvim_call_function("line", { "$" }) > 10000 then
-			-- 		return require("rainbow-delimiters").strategy["local"]
-			-- 	else
-			-- 		return require("rainbow-delimiters").strategy["global"]
-			-- 	end
-			-- end
-
-			-- vim.g.rainbow_delimiters = {
-			-- 	strategy = vim.iter(require("nvim-treesitter.parsers")["available_parsers"]())
-			-- 		:fold({}, function(t, lang)
-			-- 			t[lang] = strategy
-			-- 			return t
-			-- 		end),
-			-- 	query = {
-			-- 		[""] = "rainbow-delimiters",
-			-- 		lua = "rainbow-blocks",
-			-- 	},
-			-- 	highlight = {
-			-- 		"RainbowDelimiterRed",
-			-- 		"RainbowDelimiterYellow",
-			-- 		"RainbowDelimiterBlue",
-			-- 		"RainbowDelimiterOrange",
-			-- 		"RainbowDelimiterGreen",
-			-- 		"RainbowDelimiterViolet",
-			-- 		"RainbowDelimiterCyan",
-			-- 	},
-			-- }
-		end,
 	},
 	{
 		"RRethy/vim-illuminate",

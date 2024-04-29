@@ -124,10 +124,12 @@ end
 
 function M.get_listed_buffers(as_filenames)
 	local raw_listed_buffers = vim.split(api.nvim_exec2("buffers", { output = true }).output, "\n")
-	return vim.iter(raw_listed_buffers):map(function(raw_buffer)
-		local bufnr = raw_buffer:match("%s*(%d+)")
-		return as_filenames and fn.expand("#" .. bufnr .. ":p") or tonumber(bufnr)
-	end)
+	return vim.iter(raw_listed_buffers)
+		:map(function(raw_buffer)
+			local bufnr = raw_buffer:match("%s*(%d+)")
+			return as_filenames and fn.expand("#" .. bufnr .. ":p") or tonumber(bufnr)
+		end)
+		:totable()
 end
 
 function M.jump_within_buffer(older)
@@ -423,10 +425,12 @@ function M.replace()
 		-- vim.print(to_insert)
 		local old_indent = quote_reg:match("^%s*")
 		local new_indent = api.nvim_get_current_line():match("^%s*")
-		to_insert = vim.iter(to_insert):map(function(str)
-			local formatted = str:gsub("^" .. old_indent, new_indent)
-			return formatted
-		end)
+		to_insert = vim.iter(to_insert)
+			:map(function(str)
+				local formatted = str:gsub("^" .. old_indent, new_indent)
+				return formatted
+			end)
+			:totable()
 		-- vim.print(to_insert)
 		-- print(old_indent .. "-" .. new_indent)
 	end
@@ -631,9 +635,11 @@ function M.diagnostics_status_line(bufnr)
 	local warns = diag_count[severity.W] and "%#YellowStatusLine#" .. diag_count[severity.W] .. "W" or ""
 	local hints = diag_count[severity.N] and "%#GreenStatusLine#" .. diag_count[severity.N] .. "H" or ""
 	local infos = diag_count[severity.I] and "%#BlueStatusLine#" .. diag_count[severity.I] .. "I" or ""
-	local non_empty = vim.iter({ errors, warns, hints, infos }):filter(function(diag)
-		return diag ~= ""
-	end)
+	local non_empty = vim.iter({ errors, warns, hints, infos })
+		:filter(function(diag)
+			return diag ~= ""
+		end)
+		:totable()
 
 	return vim.deep_equal(non_empty, {}) and "" or " " .. table.concat(non_empty, " ")
 end

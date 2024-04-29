@@ -165,9 +165,11 @@ return {
 				is_equal = is_equal == nil and true or is_equal
 				local context = api.nvim_get_context({ types = { "jumps", "bufs" } })
 				local jumps = fn.msgpackparse(context.jumps)
-				local listed_bufs = vim.iter(fn.msgpackparse(context.bufs)[4]):map(function(buf)
-					return buf.f
-				end)
+				local listed_bufs = vim.iter(fn.msgpackparse(context.bufs)[4])
+					:map(function(buf)
+						return buf.f
+					end)
+					:totable()
 				local to_edit
 				for i = #jumps, 1, -4 do
 					local file = jumps[i].f
@@ -184,21 +186,23 @@ return {
 				local context = api.nvim_get_context({ types = { "bufs" } })
 				local bufs = fn.msgpackparse(context.bufs)[4]
 
-				local open_projects = vim.iter(project_paths):filter(function(project_path)
-					local found = vim.iter(bufs):find(function(buf_path)
-						return vim.startswith(buf_path.f, project_path)
+				local opened_projects = vim.iter(project_paths)
+					:filter(function(project_path)
+						local found = vim.iter(bufs):find(function(buf_path)
+							return vim.startswith(buf_path.f, project_path)
+						end)
+						return found or false
 					end)
-					return found or false
-				end)
+					:totable()
 
-				return open_projects
+				return opened_projects
 			end
 
 			keymap.set("n", "<leader>s", function() --
-				local open_projects = get_opened_projects()
+				local opened_projects = get_opened_projects()
 
 				require("telescope").extensions.repo.list(vim.tbl_extend("error", dropdown_theme, {
-					search_dirs = vim.tbl_isempty(open_projects) and { "" } or open_projects,
+					search_dirs = vim.tbl_isempty(opened_projects) and { "" } or opened_projects,
 					post_action = post_action_fn,
 					prompt = " (opened projects)",
 				}))
@@ -206,6 +210,10 @@ return {
 
 			keymap.set("n", "<leader>S", function() -- Toggle with last opened project
 				local opened_projects = get_opened_projects()
+
+				if vim.tbl_isempty(opened_projects) then
+					return
+				end
 
 				local current_buffer_path = fn.expand("%:p")
 				local current_project_path = vim.iter(opened_projects):find(function(project_path)
