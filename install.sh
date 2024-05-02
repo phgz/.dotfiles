@@ -40,6 +40,7 @@ if [ "$platform" == "Darwin" ]; then
     $brew install --HEAD neovim
     $brew tap finestructure/Hummingbird
     $brew install finestructure/hummingbird/hummingbird
+    # brew upgrade --greedy
 
 #------------------------------------------------------------------------------#
 #                                    Linux                                     #

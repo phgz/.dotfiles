@@ -24,7 +24,7 @@ cursor_bg = '#044289'
 cursor_border = '#044289'
 cursor_fg = '#f6f8fa'
 foreground = '#282828'
-selection_bg = '#dbe9f9'
+selection_bg = '#edf1f3'
 selection_fg = '#24292f'
 
 [colors.indexed]
