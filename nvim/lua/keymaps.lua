@@ -9,6 +9,9 @@ vim.keymap.del("", "gcc")
 vim.keymap.del("", "gc")
 vim.keymap.del("n", "[d")
 vim.keymap.del("n", "]d")
+vim.keymap.del("n", "grn")
+vim.keymap.del("n", "gra")
+vim.keymap.del("n", "grr")
 
 keymap.set("n", "<C-o>", function() -- Jump within buffer
 	utils.jump_within_buffer(true)

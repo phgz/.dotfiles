@@ -4,6 +4,7 @@ local keymap = vim.keymap
 local registry = require("registry")
 
 return {
+	-- reload cache with, for example: `deno cache --reload denops/ddc/deps.ts`
 	"Shougo/ddc.vim",
 	dependencies = {
 		{

@@ -302,7 +302,7 @@ return {
 		},
 		config = function()
 			require("nvim-surround").setup({
-				move_cursor = false,
+				move_cursor = "sticky",
 				keymaps = {
 					insert = "<C-s>",
 					insert_line = "<C-g>s",
@@ -489,9 +489,6 @@ return {
 		event = "VeryLazy",
 		opts = {
 			modes = {
-				search = {
-					enabled = false,
-				},
 				char = {
 					enabled = false,
 					jump_labels = true,
