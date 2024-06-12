@@ -478,7 +478,7 @@ M.goto_camel_or_snake_or_kebab_part = function(fwd, seek_after, operator)
 	local snake_part_before = [==[[[:alnum:]]\ze_]==]
 	local kebab_part_after = [==[\(\<-\d\+\>\)\@!\&-\zs[[:alnum:]]]==] -- take negative numbers into account
 	local kebab_part_before = [==[[[:alnum:]]\ze-]==]
-	local camelPart = [[\l\zs\u]]
+	local camelPart = [[\l\zs\u\|\u\@<=\u\ze\l]]
 
 	local snake_word_start = [==[\<\a[[:alnum:]]*_\w\{-}\>]==]
 	local kebab_word_start = [==[\<\a[[:alnum:]]*-[\-[:alnum:]]\{-}\>]==]
