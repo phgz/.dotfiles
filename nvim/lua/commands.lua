@@ -108,7 +108,7 @@ api.nvim_create_autocmd("ModeChanged", {
 	end,
 })
 
-api.nvim_del_augroup_by_name("nvim_swapfile")
+api.nvim_del_augroup_by_name("nvim.swapfile")
 api.nvim_create_autocmd("SwapExists", {
 	callback = function()
 		local info = fn.swapinfo(vim.v.swapname)

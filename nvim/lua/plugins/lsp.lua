@@ -137,6 +137,7 @@ return {
 					underline = true,
 					update_in_insert = false,
 					severity_sort = true,
+					virtual_lines = false,
 					signs = {
 						text = {
 							[vim.diagnostic.severity.WARN] = "",

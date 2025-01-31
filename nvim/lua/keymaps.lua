@@ -5,15 +5,44 @@ local keymap = vim.keymap
 local api = vim.api
 local fn = vim.fn
 
+-- Remove buitin mappings added by neovim devs
 vim.keymap.del("", "gcc")
 vim.keymap.del("", "gc")
-vim.keymap.del("n", "[d")
-vim.keymap.del("n", "]d")
 vim.keymap.del("n", "grn")
 vim.keymap.del("n", "grr")
--- vim.keymap.del("n", "gri")
--- vim.keymap.del("n", "gra")
--- vim.keymap.del("n", "gO")
+vim.keymap.del("n", "gri")
+vim.keymap.del("n", "gra")
+vim.keymap.del("n", "gO")
+
+vim.keymap.del("n", "]a")
+vim.keymap.del("n", "[a")
+vim.keymap.del("n", "]A")
+vim.keymap.del("n", "[A")
+
+vim.keymap.del("n", "]b")
+vim.keymap.del("n", "[b")
+vim.keymap.del("n", "]B")
+vim.keymap.del("n", "[B")
+
+vim.keymap.del("n", "[d")
+vim.keymap.del("n", "]d")
+vim.keymap.del("n", "[D")
+vim.keymap.del("n", "]D")
+
+vim.keymap.del("n", "[l")
+vim.keymap.del("n", "]l")
+vim.keymap.del("n", "[L")
+vim.keymap.del("n", "]L")
+
+vim.keymap.del("n", "]q")
+vim.keymap.del("n", "[q")
+vim.keymap.del("n", "]Q")
+vim.keymap.del("n", "[Q")
+
+vim.keymap.del("n", "]t")
+vim.keymap.del("n", "[t")
+vim.keymap.del("n", "]T")
+vim.keymap.del("n", "[T")
 
 keymap.set("n", "<C-o>", function() -- Jump within buffer
 	utils.jump_within_buffer(true)
