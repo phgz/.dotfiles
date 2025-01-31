@@ -51,7 +51,6 @@ return {
 				map("v", "ga", function()
 					gs.stage_hunk({ fn.line("v"), fn.line(".") })
 				end)
-				map("n", "gs", gs.undo_stage_hunk)
 				map("n", "gA", gs.stage_buffer)
 				map("n", "gR", gs.reset_buffer)
 				map("n", "gd", function()

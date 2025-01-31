@@ -133,7 +133,7 @@ return {
 
 			local lsp_config = {
 				diagnostic = {
-					virtual_text = false,
+					virtual_text = false, -- is false by default
 					underline = true,
 					update_in_insert = false,
 					severity_sort = true,
@@ -185,8 +185,7 @@ return {
 								if is_poetry then
 									local venv_path = get_poetry_venv(config.root_dir)
 									vim.env.VIRTUAL_ENV = venv_path
-									config.settings.python.pythonPath =
-										require("lspconfig.util").path.join(vim.env.VIRTUAL_ENV, "bin", "python3")
+									config.settings.python.pythonPath = vim.env.VIRTUAL_ENV .. "/bin/python3"
 								end
 							end
 						end,

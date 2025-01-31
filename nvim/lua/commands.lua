@@ -28,6 +28,9 @@ local popup_update_config_from_scrolling = function(win)
 	if vim.w[win].gitsigns_preview == nil then
 		local win_conf = api.nvim_win_get_config(win)
 		assert(win_conf.relative == "win", win_conf)
+		if type(win_conf.row) == "number" then
+			return
+		end
 		local updated_conf = vim.tbl_deep_extend("force", api.nvim_win_get_config(win), {
 			row = {
 				[false] = win_conf.row[false] - vim.v.event[fn.expand("<afile>")].topline,
@@ -88,7 +91,7 @@ api.nvim_create_autocmd("InsertLeavePre", {
 
 api.nvim_create_autocmd("DiagnosticChanged", {
 	callback = function()
-		vim.cmd("redrawstatus")
+		pcall(vim.cmd.redrawstatus)
 	end,
 })
 

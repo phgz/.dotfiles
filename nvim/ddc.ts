@@ -5,7 +5,8 @@ export class Config extends BaseConfig {
   override config(args: ConfigArguments): Promise<void> {
     args.contextBuilder.patchGlobal({
       ui: "inline",
-      sources: ["lsp", "around", "look"],
+      // sources: ["lsp", "look", "around"],
+      sources: ["lsp", "around"],
       autoCompleteEvents: [
         "InsertEnter",
         "TextChangedI",
