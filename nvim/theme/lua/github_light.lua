@@ -25,7 +25,7 @@ require("github-theme").setup({
 				param = "#E36209",
 			},
 			diag = {
-				hint = "success.fg",
+				hint = "#1A7F37",
 				warn = "#BF8803",
 			},
 		},

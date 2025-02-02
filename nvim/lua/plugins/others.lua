@@ -24,7 +24,6 @@ return {
 	{
 		"projekt0n/github-nvim-theme", -- day theme
 		lazy = true,
-		-- tag = "v0.0.7",
 		config = function() end,
 	},
 	{
@@ -95,7 +94,7 @@ return {
 		end,
 	},
 	{
-		"https://github.com/atusy/treemonkey.nvim",
+		"atusy/treemonkey.nvim",
 		init = function()
 			keymap.set({ "x", "o" }, "n", function()
 				require("treemonkey").select({ ignore_injections = false })

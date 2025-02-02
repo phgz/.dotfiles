@@ -26,8 +26,6 @@ return {
 						"jsonls",
 						"lua_ls",
 						"pyright",
-						-- "pylyzer",
-						-- "ruff_lsp",
 						"taplo",
 						"vimls",
 						"yamlls",
