@@ -63,7 +63,7 @@ return {
 		end
 
 		local jump_inside_snippet = function(direction)
-			if vim.snippet.jumpable(direction) then
+			if vim.snippet.active({ direction = direction }) then
 				return "<cmd>lua vim.snippet.jump(" .. direction .. ")<cr>"
 			else
 				return ""
@@ -133,9 +133,6 @@ return {
 						vim.g["ddc#_skip_next_complete"] = vim.g["ddc#_skip_next_complete"] + 1
 					end
 					insert_suggestion(suggestion, false, subword)
-					if not subword then
-						fn["ddc#on_complete_done"](item)
-					end
 				end
 			else
 				api.nvim_feedkeys(fallback_sequence, "n", false)
@@ -179,11 +176,16 @@ return {
 			smart_action(string.rep(vim.keycode("<right>"), utils.find_punct_in_string(content_after_cursor)), true)
 		end, opts)
 
+		local native_not_loaded = true
 		keymap.set("i", "<S-Tab>", function()
 			if fn.pumvisible() == 1 then
 				api.nvim_feedkeys(vim.keycode("<Up><Up><Down>"), "n", false)
 				register_scroll_preview_keymaps()
 			else
+				if native_not_loaded then
+					fn["ddc#denops#_notify"]("show", { "native" })
+					native_not_loaded = false
+				end
 				fn["ddc#map#manual_complete"]({ sources = { "lsp" }, ui = "native" })
 			end
 		end, opts)

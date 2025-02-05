@@ -1,5 +1,4 @@
-import { BaseConfig } from "https://deno.land/x/ddc_vim@v4.3.1/types.ts";
-import { ConfigArguments } from "https://deno.land/x/ddc_vim@v4.3.1/base/config.ts";
+import { BaseConfig, ConfigArguments } from "jsr:@shougo/ddc-vim/config";
 
 export class Config extends BaseConfig {
   override config(args: ConfigArguments): Promise<void> {
@@ -54,6 +53,9 @@ export class Config extends BaseConfig {
           priority: [["Variable", "Text", "Method", "Function"]]
         },
       },
+      // uiParams: {
+      //     inline: {}
+      // },
       backspaceCompletion: true,
     });
   }
