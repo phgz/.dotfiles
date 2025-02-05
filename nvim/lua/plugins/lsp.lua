@@ -53,7 +53,7 @@ return {
 				config = true,
 			},
 			{
-				"folke/neodev.nvim",
+				"folke/lazydev.nvim",
 				config = true,
 			},
 			{
