@@ -36,7 +36,7 @@ if [ "$platform" == "Darwin" ]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    $brew install fish node glow fontconfig wget python@"$PYTHON_VERSION" wezterm helix brave-browser dbeaver-community discord firefox opera postman rectangle slack subler transmission vlc zoom tokei
+    $brew install fish node glow fontconfig wget python@"$PYTHON_VERSION" wezterm helix brave-browser dbeaver-community firefox postman rectangle slack subler transmission vlc zoom tokei
     $brew install --HEAD neovim
     $brew tap finestructure/Hummingbird
     $brew install finestructure/hummingbird/hummingbird
@@ -127,7 +127,7 @@ if [ ! -d "$HOME"/.cargo ]; then
 
     curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
     cargo=$HOME/.cargo/bin/cargo
-    PATH=/opt/homebrew/bin:$PATH $cargo install --locked eza ripgrep sd bat fd-find du-dust nu starship || exit
+    PATH=/opt/homebrew/bin:$PATH $cargo install --locked eza ripgrep sd bat fd-find du-dust starship || exit
 
     git clone https://github.com/crescentrose/sunshine
     pushd sunshine || exit
