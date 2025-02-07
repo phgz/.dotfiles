@@ -655,6 +655,18 @@ return {
 		end,
 	},
 	{
+		"arminveres/md-pdf.nvim",
+		branch = "main",
+		ft = "markdown",
+		config = function()
+			require("md-pdf").setup()
+			vim.api.nvim_create_autocmd("BufWritePost", {
+				pattern = "*.md",
+				callback = require("md-pdf").convert_md_to_pdf,
+			})
+		end,
+	},
+	{
 		"junegunn/vim-easy-align", -- Align text based on pattern
 		keys = { { "<localleader>a", mode = { "n", "x" } } },
 		config = function()
