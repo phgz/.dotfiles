@@ -67,6 +67,10 @@ require("github-theme").setup({
 			GitSignsAddPreview = { bg = "diff.add" },
 			GitSignsDeletePreview = { bg = "diff.delete" },
 
+			EyelinerPrimary = { style = "underline" },
+			EyelinerSecondary = { style = "underdouble" },
+
+			SpellBad = { link = "SpellRare" },
 			CursorLine = { bg = "#DEE9F6" },
 			CursorLineNr = { fg = "fg2", style = "bold" },
 			StatusLine = { fg = "#4C92E1", bg = "bg3" },

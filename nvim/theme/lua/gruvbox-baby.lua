@@ -31,6 +31,9 @@ vim.g.gruvbox_baby_highlights = {
 	GitSignsDeleteInline = { bg = colors.diff.change },
 	GitSignsChangeInline = { bg = colors.diff.change },
 
+	EyelinerPrimary = { style = "underline" },
+	EyelinerSecondary = { style = "underdouble" },
+
 	EndOfBuffer = { fg = colors.medium_gray },
 
 	MatchParen = { bg = colors.medium_gray },

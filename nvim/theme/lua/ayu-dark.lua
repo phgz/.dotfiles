@@ -49,6 +49,9 @@ require("ayu").setup({
 		GitSignsDeleteInline = { bg = light_grey },
 		GitSignsChangeInline = { bg = light_grey },
 
+		EyelinerPrimary = { underline = true },
+		EyelinerSecondary = { underdouble = true },
+
 		CursorLineNr = { fg = accent, bg = "None" },
 		WrappedLineNr = { bg = "None", fg = black },
 

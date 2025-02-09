@@ -249,6 +249,7 @@ function M.multiline_find_repeat()
 end
 
 function M.multiline_find(forward, exclusive, repeat_module)
+	require("eyeliner").highlight({ forward = forward })
 	local char = get_escaped_char()
 
 	if char == nil then

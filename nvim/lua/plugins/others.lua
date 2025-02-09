@@ -484,6 +484,17 @@ return {
 	},
 	{ "github/copilot.vim", enabled = false },
 	{
+		"jinh0/eyeliner.nvim",
+		config = function()
+			require("eyeliner").setup({
+				highlight_on_key = true,
+				default_keymaps = false,
+				-- dim = true,
+			})
+		end,
+		enabled = true,
+	},
+	{
 		"folke/flash.nvim",
 		event = "VeryLazy",
 		opts = {
