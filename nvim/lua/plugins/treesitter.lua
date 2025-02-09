@@ -26,7 +26,6 @@ return {
 
 			local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
 			local utils = require("utils")
-			local esc = vim.keycode("<esc>")
 			local gs = require("gitsigns")
 			local gs_is_open = require("gitsigns.popup").is_open
 
@@ -231,8 +230,12 @@ return {
 		]])
 
 			local get_text_object = function()
-				local info =
-					vim.inspect_pos(nil, nil, nil, { syntax = false, extmarks = false, semantic_tokens = false })
+				local info = vim.inspect_pos(
+					nil,
+					nil,
+					nil,
+					{ syntax = false, extmarks = false, semantic_tokens = false, treesitter = true }
+				)
 				local ts_info = info.treesitter[1]
 
 				if not ts_info then
@@ -266,7 +269,8 @@ return {
 							vim.diagnostic.open_float({ scope = "cursor" })
 						end, 1)
 					else
-						vim.diagnostic.goto_next({
+						vim.diagnostic.jump({
+							count = 1,
 							float = { border = "none" },
 							severity = vim.diagnostic.severity[severity],
 							wrap = false,
@@ -279,12 +283,12 @@ return {
 				end, function()
 					local diagnostic_range = utils.get_diagnostic_under_cursor_range()
 
-					vim.diagnostic.goto_prev({
+					vim.diagnostic.jump({
+						count = -1,
 						float = { border = "none" },
 						severity = vim.diagnostic.severity[severity],
 						wrap = false,
-						cursor_position = diagnostic_range
-								and { diagnostic_range.start_pos[1], diagnostic_range.start_pos[2] - 1 }
+						pos = diagnostic_range and { diagnostic_range.start_pos[1], diagnostic_range.start_pos[2] - 1 }
 							or nil,
 					})
 
@@ -297,13 +301,15 @@ return {
 
 			local pair_diagnostic_start = function(severity)
 				return ts_repeat_move.make_repeatable_move_pair(function()
-					vim.diagnostic.goto_next({
+					vim.diagnostic.jump({
+						count = 1,
 						float = { border = "none" },
 						wrap = false,
 						severity = vim.diagnostic.severity[severity],
 					})
 				end, function()
-					vim.diagnostic.goto_prev({
+					vim.diagnostic.jump({
+						count = -1,
 						float = { border = "none" },
 						wrap = false,
 						severity = vim.diagnostic.severity[severity],
@@ -328,6 +334,13 @@ return {
 					func()
 					vim.cmd("redrawstatus")
 				end
+			end
+
+			local next_hunk = function(opts)
+				return gs.nav_hunk("next", opts)
+			end
+			local prev_hunk = function(opts)
+				return gs.nav_hunk("prev", opts)
 			end
 
 			local hunk_wrapper = function(func)
@@ -395,21 +408,21 @@ return {
 					if is_on_hunk_edge_or_outside then
 						if prev then
 							local row_before_jump = api.nvim_win_get_cursor(0)[1]
-							gs.prev_hunk(opts)
+							prev_hunk(opts)
 
 							-- No prev hunk. We do not want to wrap and go to the first hunk. We want to stay still
 							if api.nvim_win_get_cursor(0)[1] == row_before_jump then
-								gs.prev_hunk()
+								prev_hunk()
 								fn.winrestview(view)
 								return
 							end
 						else
-							gs.next_hunk(opts)
+							next_hunk(opts)
 						end
 					end
 					if prev then
-						gs.prev_hunk(wrap_opts)
-						gs.next_hunk({ wrap = true })
+						prev_hunk(wrap_opts)
+						next_hunk({ wrap = true })
 					else
 						api.nvim_win_set_cursor(0, { get_cursor_hunk().vend, 0 })
 					end
@@ -420,9 +433,8 @@ return {
 				end
 			end
 
-			local next_hunk_start, prev_hunk_start =
-				ts_repeat_move.make_repeatable_move_pair(gs.next_hunk, hunk_opp(true))
-			local next_hunk_end, prev_hunk_end = ts_repeat_move.make_repeatable_move_pair(hunk_opp(false), gs.prev_hunk)
+			local next_hunk_start, prev_hunk_start = ts_repeat_move.make_repeatable_move_pair(next_hunk, hunk_opp(true))
+			local next_hunk_end, prev_hunk_end = ts_repeat_move.make_repeatable_move_pair(hunk_opp(false), prev_hunk)
 
 			local next_quote, prev_quote = ts_repeat_move.make_repeatable_move_pair(function()
 				utils.goto_quote(true)
@@ -433,6 +445,11 @@ return {
 				vim.cmd("norm! zj")
 			end, function()
 				vim.cmd("norm! zk")
+			end)
+			local next_spell, prev_spell = ts_repeat_move.make_repeatable_move_pair(function()
+				vim.cmd("norm! ]s")
+			end, function()
+				vim.cmd("norm! [s")
 			end)
 			-- local next_line, prev_line = ts_repeat_move.make_repeatable_move_pair(function()
 			-- 	vim.cmd("norm! j")
@@ -503,6 +520,8 @@ return {
 			keymap.set({ "n" }, "[%", nprev_match)
 			keymap.set({ "x" }, "]%", xnext_match)
 			keymap.set({ "x" }, "[%", xprev_match)
+			keymap.set({ "n" }, "]S", next_spell)
+			keymap.set({ "n" }, "[S", prev_spell)
 			keymap.set(
 				"n",
 				"sP",

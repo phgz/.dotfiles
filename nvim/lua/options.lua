@@ -30,6 +30,7 @@ bo.shiftwidth = 4
 bo.smartindent = true
 bo.softtabstop = 4
 bo.tabstop = 4
+bo.spellcapcheck = ""
 
 go.autochdir = true -- False to work with vim rooter, telescope-repo
 go.cmdheight = 0
@@ -57,6 +58,7 @@ go.incsearch = true
 go.cpoptions = go.cpoptions .. "y"
 
 wo.cursorline = true
+wo.spell = true
 wo.foldtext = "getline(v:foldstart+1)"
 wo.linebreak = true
 wo.number = false

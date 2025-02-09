@@ -167,6 +167,9 @@ api.nvim_create_autocmd("VimEnter", {
 -- update popups position to follow the cursor when scrolling
 api.nvim_create_autocmd("WinScrolled", {
 	callback = function()
+		if vim.bo.ft == "TelescopePrompt" then
+			return
+		end
 		vim.wo.statuscolumn = vim.wo.statuscolumn
 		local win_id = tonumber(fn.expand("<afile>"))
 		if win_id and not relative_focusable(win_id) then

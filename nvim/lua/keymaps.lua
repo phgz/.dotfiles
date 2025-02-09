@@ -55,7 +55,7 @@ end)
 keymap.set("n", "<leader><esc>", function() -- Do nothing
 end)
 keymap.set("n", "<leader>t", function() -- Toggle alternate buffer
-	vim.cmd(":b #")
+	vim.cmd("silent! buffer #")
 end)
 keymap.set("n", "<leader>v", function() -- Split vertical
 	vim.cmd("vsplit")
@@ -65,7 +65,6 @@ keymap.set("n", "<leader>h", function() -- Split horizontal
 end)
 
 keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
-	-- could use BufDelete and BufUnload autocmds
 	registry.last_deleted_buffer = fn.expand("%:p")
 	vim.cmd("bdelete")
 	local new_current_file = fn.expand("%:p")
@@ -841,6 +840,7 @@ end)
 
 keymap.set("n", "<C-[>", "<C-t>") -- Jump to older entry in the tag stack
 
+keymap.set("n", "z=", "1z=") -- Always pick 1st suggestion
 --------------------------------------------------------------------------------
 --                               Abbreviations                                --
 --------------------------------------------------------------------------------
