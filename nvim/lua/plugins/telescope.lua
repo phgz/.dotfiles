@@ -20,6 +20,30 @@ return {
 			local make_entry = require("telescope.make_entry")
 			local entry_display = require("telescope.pickers.entry_display")
 
+			local set_telescope_statusline = function()
+				local is_modifiable = fn.getbufvar(fn.bufnr("#"), "&modifiable") == 1
+				local is_modified = fn.getbufvar(fn.bufnr("#"), "&modified") == 1
+				local is_read_only = fn.getbufvar(fn.bufnr("#"), "&readonly") == 1
+				local modified = is_modifiable and (is_modified and "[+]" or "") or "[-]"
+				local read_only = is_read_only and "[RO]" or ""
+				local help = fn.getbufvar(fn.bufnr("#"), "&buftype") == "help" and "[Help]" or ""
+				local git_status = fn.getbufvar(fn.bufnr("#"), "gitsigns_status")
+				local diagnostics = require("utils").diagnostics_status_line(fn.bufnr("#"))
+				if git_status ~= "" then
+					git_status = "  " .. git_status
+				end
+				vim.wo.statusline = [[%{%expand('#:p:~')%}]]
+					.. git_status
+					.. diagnostics
+					.. [[%#GreenStatusLine#]]
+					.. ((is_modified or is_read_only) and " " or "")
+					.. help
+					.. [[%#YellowStatusLine#]]
+					.. read_only
+					.. [[%#RedStatusLine#]]
+					.. modified
+			end
+
 			require("telescope").setup({
 				defaults = {
 					mappings = {
@@ -32,9 +56,22 @@ return {
 							["<C-f>"] = actions.preview_scrolling_down,
 							["<C-j>"] = actions.results_scrolling_up,
 							["<C-k>"] = actions.results_scrolling_down,
-							["<c-d>"] = actions.delete_buffer + actions.move_to_top,
+							["<c-d>"] = function(p_bufnr)
+								require("telescope.actions").delete_buffer(p_bufnr)
+								require("telescope.actions").move_to_top(p_bufnr)
+								local results =
+									require("telescope.actions.state").get_current_picker(p_bufnr).finder.results
+								local prev = vim.iter(results):find(function(item)
+									return vim.startswith(item.indicator, "#h")
+								end)
+								if prev then
+									fn.setreg("#", vim.api.nvim_buf_get_name(prev.bufnr))
+									set_telescope_statusline()
+								end
+							end,
 							["<tab>"] = actions.move_selection_next,
 							["<S-tab>"] = actions.move_selection_previous,
+							["<C-t>"] = actions.toggle_selection + actions.move_selection_next,
 							["<C-o>"] = actions.toggle_all,
 							["<C-e>"] = function(p_bufnr)
 								require("telescope.actions").send_selected_to_qflist(p_bufnr)
@@ -86,29 +123,7 @@ return {
 
 			api.nvim_create_autocmd("FileType", {
 				pattern = "TelescopePrompt",
-				callback = function()
-					local is_modifiable = fn.getbufvar(fn.bufnr("#"), "&modifiable") == 1
-					local is_modified = fn.getbufvar(fn.bufnr("#"), "&modified") == 1
-					local is_read_only = fn.getbufvar(fn.bufnr("#"), "&readonly") == 1
-					local modified = is_modifiable and (is_modified and "[+]" or "") or "[-]"
-					local read_only = is_read_only and "[RO]" or ""
-					local help = fn.getbufvar(fn.bufnr("#"), "&buftype") == "help" and "[Help]" or ""
-					local git_status = fn.getbufvar(fn.bufnr("#"), "gitsigns_status")
-					local diagnostics = require("utils").diagnostics_status_line(fn.bufnr("#"))
-					if git_status ~= "" then
-						git_status = "  " .. git_status
-					end
-					vim.wo.statusline = [[%{%expand('#:p:~')%}]]
-						.. git_status
-						.. diagnostics
-						.. [[%#GreenStatusLine#]]
-						.. ((is_modified or is_read_only) and " " or "")
-						.. help
-						.. [[%#YellowStatusLine#]]
-						.. read_only
-						.. [[%#RedStatusLine#]]
-						.. modified
-				end,
+				callback = set_telescope_statusline,
 			})
 
 			local dropdown_theme = require("telescope.themes").get_dropdown({
