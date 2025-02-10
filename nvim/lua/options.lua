@@ -61,7 +61,8 @@ wo.cursorline = true
 wo.spell = true
 wo.foldtext = "getline(v:foldstart+1)"
 wo.linebreak = true
-wo.number = false
+wo.number = true
+wo.numberwidth = 3
 wo.signcolumn = "yes"
 -- wo.winbar = "..." -- Use winbar feature
 
