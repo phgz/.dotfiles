@@ -35,6 +35,7 @@ CTRL-A                    => insert previously inserted text
 :'<,'>g!/^$/exe "norm! f{vi}^[" | s/\%V\S\+/&, => apply to non-empty lines, chain commands with |
 :'<,'>g/./exe "norm! yf(" | %s//utils.& => for each line in range, yank a part, then global substitute that selection
 :'<,'>g/./if line(".") % 2 == 0 | {cmd} => apply command only to even lines
+:g/^/m0                   =>  reverse all lines in the current buffer
 :exe "s/" . expand("<cword>") . "/foo" => substitute the word under cursor by foo
 :<C-v>                    => insert literal
 :cd %:h                   => change to the directory of the current file
