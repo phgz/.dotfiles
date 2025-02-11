@@ -515,28 +515,6 @@ return {
 				end,
 			},
 			{
-				"l",
-				mode = { "n", "o", "x" },
-				function()
-					local forced_motion = utils.get_operator_pending_state().forced_motion
-					-- vim.cmd.normal("V")
-					local ret = require("flash").jump({
-						-- search = { forward = true, wrap = false, multi_window = false },
-						search = { multi_window = false },
-						prompt = { enabled = false },
-						label = { after = { 0, 0 }, reuse = "all" },
-						jump = { autojump = true },
-						highlight = { backdrop = false, matches = false },
-					})
-					if vim.deep_equal(ret.results, {}) then
-						api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
-						api.nvim_feedkeys(vim.keycode("<esc>"), "n", false)
-					elseif forced_motion then
-						api.nvim_feedkeys(forced_motion, "x", false)
-					end
-				end,
-			},
-			{
 				"r",
 				mode = "o",
 				function()

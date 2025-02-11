@@ -6,15 +6,6 @@ local M = {}
 
 local esc = vim.keycode("<esc>")
 
--- stylua: ignore
-local chars = { "{", "(", "~", "_", "+", "!", "@", "#", "$", ":", "?", "<", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "[", "1", "2", "3", "4", "5", "-", "`", "\\", "'", ";", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", ".", ",", "/", "=", "6", "7", "8", "9", "0", "]", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", ">", '"', "|", "%%", "^", "&", "*", ")", "}"}
-
-for k, v in pairs(chars) do
-	chars[v] = k
-end
-
-local CHARS_MIDDLE_INDEX = 48
-
 function M.abort()
 	api.nvim_feedkeys(esc, "x", false)
 	api.nvim_feedkeys(esc, "n", false)
@@ -403,8 +394,8 @@ function M.get_linechars_offset_from_cursor(char_as_nr, echo)
 
 	local height = M.virtual_win_height()
 	local win_row = fn.winline()
-	local offset =
-		M.win_row_offset_from_win_middle(win_row - (chars[fn.nr2char(char_as_nr)] - CHARS_MIDDLE_INDEX), height)
+
+	local offset = M.win_row_offset_from_win_middle(win_row - (char_as_nr - 96), height)
 	if offset == 0 or win_row + offset > height or win_row + offset < 1 then
 		return nil
 	else
@@ -651,8 +642,12 @@ function M.status_column()
 		M.virtual_win_height()
 	)
 	local highlight = vim.v.virtnum > 0 and "%#WrappedLineNr#" or ""
+	local chars = " M"
+	if vim.v.virtnum ~= offset then
+		chars = (vim.v.virtnum < offset and "h" or "l") .. string.char(math.abs(offset - vim.v.virtnum) % 30 + 96)
+	end
 
-	return highlight .. (chars[CHARS_MIDDLE_INDEX - (offset - vim.v.virtnum)] or " ")
+	return highlight .. chars
 end
 
 return M

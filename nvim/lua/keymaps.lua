@@ -511,9 +511,19 @@ keymap.set("", "l", function() -- Goto line
 end)
 
 keymap.set("", "h", function() -- Goto line
+	registry.operator_pending = utils.get_operator_pending_state()
+	local char = fn.getchar()
+	if char == 27 then
+		utils.abort()
+		return
+	end
+	vim.cmd.normal("l" .. fn.nr2char(192 - char))
 end)
---
-keymap.set("", "M", "mm") -- mark position
+
+keymap.set("", "M", function() -- Goto line
+	registry.operator_pending = utils.get_operator_pending_state()
+	vim.cmd.normal("l`")
+end)
 
 keymap.set("o", "$", function() -- Till the end
 	local cursor_pos = api.nvim_win_get_cursor(0)
@@ -687,7 +697,7 @@ keymap.set({ "n", "v" }, "<M-S-m>", function() -- Move lines
 		if first_char == 27 then
 			return
 		end
-		if first_char ~= 108 and vim.v.count == 0 then
+		if first_char ~= 77 and first_char ~= 104 and first_char ~= 108 and vim.v.count == 0 then
 			local operatorfunc = vim.go.operatorfunc
 			vim.go.operatorfunc = "{_ -> v:true}"
 			print(first_char)
