@@ -293,34 +293,12 @@ keymap.set({ "n" }, "go", function() -- open git modified files
 	end
 end, { silent = true })
 
-local function calculate_increment(first_screen_row, last_screen_row)
-	local folded_rows = {}
-
-	local row = first_screen_row
-	while row <= last_screen_row do
-		local foldclosed = fn.foldclosed(row)
-		if foldclosed ~= -1 then
-			local foldclosedend = fn.foldclosedend(row)
-			table.insert(folded_rows, foldclosedend - foldclosed)
-			row = foldclosedend + 1
-		else
-			row = row + 1
-		end
-	end
-
-	local folded_rows_sum = vim.iter(folded_rows):fold(0, function(s, number)
-		return s + number
-	end)
-
-	return math.floor((last_screen_row - (first_screen_row + folded_rows_sum) + 1) / 3)
-end
-
 keymap.set({ "n", "x" }, "k", function() -- scroll down 1/3 of screen
 	if fn.line("w$") == fn.line("$") then
 		return
 	end
 
-	local increment = calculate_increment(fn.line("w0"), fn.line("w$"))
+	local increment = math.floor(api.nvim_win_get_height(0) / 3)
 	api.nvim_feedkeys(increment .. vim.keycode("<C-e>"), "n", false)
 end, { silent = true })
 
@@ -329,7 +307,7 @@ keymap.set({ "n", "x" }, "j", function() -- scroll up 1/3 of screen
 		return
 	end
 
-	local increment = calculate_increment(fn.line("w0"), fn.line("w$"))
+	local increment = math.floor(api.nvim_win_get_height(0) / 3)
 	api.nvim_feedkeys(increment .. vim.keycode("<C-y>"), "n", false)
 end, { silent = true })
 
