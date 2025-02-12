@@ -389,6 +389,11 @@ c.keys = {
 		action = act.ShowDebugOverlay,
 	},
 	{
+		key = "w",
+		mods = "CMD",
+		action = wezterm.action.CloseCurrentPane({ confirm = true }),
+	},
+	{
 		key = "S",
 		mods = "SUPER|SHIFT",
 		action = act.QuickSelect,
