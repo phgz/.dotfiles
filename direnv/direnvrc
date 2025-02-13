@@ -2,12 +2,12 @@
 
 layout_poetry() {
     if [[ ! -f poetry.lock ]]; then
-        log_error 'No pyproject.toml found.  Use `poetry new` or `poetry init` to create one first.'
+        log_error 'No pyproject.toml found. Use `poetry new` or `poetry init` to create one first.'
         exit 2
     fi
 
     VIRTUAL_ENV=$(
-        python3.11 <<EOF
+        "$HOME"/.miniconda3/bin/python3.12 <<EOF
 import base64, hashlib, pathlib, tomllib
 
 h = base64.urlsafe_b64encode(hashlib.sha256(bytes(pathlib.Path.cwd())).digest()).decode()[:8]
