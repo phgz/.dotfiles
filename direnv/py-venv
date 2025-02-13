@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [[ -f uv.lock ]]; then
+    echo "layout uv" >.envrc
+elif [[ -f poetry.lock ]]; then
+    echo "layout poetry" >.envrc
+fi
+
+direnv allow .

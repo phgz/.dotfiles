@@ -1,8 +1,20 @@
 #!/bin/bash
 
+layout_uv() {
+    if [[ ! -f uv.lock ]]; then
+        log_error 'No uv.lock found. Generate one first.'
+        exit 2
+    fi
+
+    export VIRTUAL_ENV="$PWD/.venv"
+    VIRTUAL_ENV_PROMPT=$(basename "$PWD")
+    export VIRTUAL_ENV_PROMPT
+    PATH_add "$VIRTUAL_ENV/bin"
+}
+
 layout_poetry() {
     if [[ ! -f poetry.lock ]]; then
-        log_error 'No pyproject.toml found. Use `poetry new` or `poetry init` to create one first.'
+        log_error 'No poetry.lock found. Generate one first.'
         exit 2
     fi
 
