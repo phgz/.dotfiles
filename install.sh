@@ -8,8 +8,8 @@ arch=$(uname -m)
 GLOW_VERSION=1.5.1
 FISH_SHELL_VERSION=3.6.1
 NODE_VERSION=v20.5.1
-POETRY_VERSION=1.6.1
-PYTHON_VERSION=3.11
+POETRY_VERSION=1.7.1
+PYTHON_VERSION=3.12
 TMUX_VERSION=3.3a
 
 mkdir -p "$HOME"/.local/bin
@@ -153,6 +153,7 @@ if [ ! -d "$HOME"/.miniconda3 ]; then
     rm miniconda.sh
     "$HOME"/.miniconda3/bin/conda install --yes python="$PYTHON_VERSION" --channel conda-forge
     "$HOME"/.miniconda3/bin/conda create --yes --name neovim python="$PYTHON_VERSION" --channel conda-forge
+    "$HOME"/.miniconda3/bin/conda create --yes --name py313 python=3.13 --channel conda-forge
     "$HOME"/.miniconda3/envs/neovim/bin/pip install pynvim
 fi
 
@@ -168,6 +169,8 @@ fi
 #------------------------------------------------------------------------------#
 if [ ! -f "$HOME"/.local/bin/direnv ]; then
     curl -sfL https://direnv.net/install.sh | bin_path=~/.local/bin bash
+    cp "$HOME"/.dotfiles/direnv/poetry-env "$HOME"/.local/bin/
+    chmod +x "$HOME"/.local/bin/poetry-env
 fi
 
 #------------------------------------------------------------------------------#
