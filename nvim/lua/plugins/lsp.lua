@@ -67,10 +67,17 @@ return {
 			},
 		}, -- LSP and completion
 		config = function()
-			local get_poetry_venv = function(project_root)
+			local get_venv = function(lock_file_path)
+				local project_root = vim.fs.dirname(lock_file_path)
+				local tool = vim.startswith(vim.fs.basename(lock_file_path), "uv") and "uv" or "poetry"
+
+				if tool == "uv" then
+					return project_root .. "/.venv"
+				end
+
 				return require("plenary.job")
 					:new({
-						command = "python3.11",
+						command = os.getenv("HOME") .. "/.miniconda3/bin/python3.12",
 						args = {
 							"-c",
 							[[import base64, hashlib, pathlib, tomllib; h = base64.urlsafe_b64encode(hashlib.sha256(bytes(pathlib.Path.cwd())).digest()).decode()[:8]; p = tomllib.load(open("pyproject.toml", "rb"))["tool"]["poetry"]["name"].replace(".", "-").replace("_", "-"); cache = ".cache" if "$(uname -s)" == "Linux" else "Library/Caches"; virtualenvs = (pathlib.Path.home() / cache / "pypoetry/virtualenvs").iterdir(); env_name = next(dir for dir in virtualenvs if str(dir.name).startswith(p + "-" + h)); print(env_name)
@@ -179,18 +186,30 @@ return {
 						on_attach = on_attach,
 						capabilities = capabilities(),
 						before_init = function(_, config)
-							local venv = vim.env.VIRTUAL_ENV
-
-							if not venv then
-								local is_poetry = vim.fs.find(
-									{ "poetry.lock" },
-									{ upward = true, path = config.root_dir, type = "file", stop = vim.env.HOME }
-								)[1] ~= nil
-
-								if is_poetry then
-									local venv_path = get_poetry_venv(config.root_dir)
+							if not vim.env.VIRTUAL_ENV then
+								local find_lock_file = function(path)
+									return vim.fs.find(
+										{ "uv.lock", "poetry.lock" },
+										{ upward = true, path = path, type = "file", stop = vim.env.HOME }
+									)[1]
+								end
+								local lock_file_path = find_lock_file(fn.expand("%:p:h"))
+								if lock_file_path ~= nil then
+									local venv_path = get_venv(lock_file_path)
 									vim.env.VIRTUAL_ENV = venv_path
 									config.settings.python.pythonPath = vim.env.VIRTUAL_ENV .. "/bin/python3"
+									api.nvim_create_autocmd("BufEnter", {
+										callback = function(event_args)
+											if event_args.file ~= "" then
+												local new_lock_file_path = find_lock_file(event_args.file)
+												if new_lock_file_path ~= lock_file_path then
+													vim.env.VIRTUAL_ENV = nil
+													vim.cmd("LspRestart")
+													return true --return a truthy value (not false or nil) to delete the autocommand.
+												end
+											end
+										end,
+									})
 								end
 							end
 						end,
