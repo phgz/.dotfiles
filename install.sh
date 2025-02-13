@@ -169,8 +169,8 @@ fi
 #------------------------------------------------------------------------------#
 if [ ! -f "$HOME"/.local/bin/direnv ]; then
     curl -sfL https://direnv.net/install.sh | bin_path=~/.local/bin bash
-    cp "$HOME"/.dotfiles/direnv/poetry-env "$HOME"/.local/bin/
-    chmod +x "$HOME"/.local/bin/poetry-env
+    cp "$HOME"/.dotfiles/direnv/py-venv "$HOME"/.local/bin/
+    chmod +x "$HOME"/.local/bin/py-venv
 fi
 
 #------------------------------------------------------------------------------#
