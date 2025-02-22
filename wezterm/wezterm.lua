@@ -74,6 +74,11 @@ for host, config in pairs(wezterm.enumerate_ssh_hosts()) do
 	})
 end
 
+wezterm.on('gui-startup', function(cmd) -- set startup Window position
+  local tab, pane, window = mux.spawn_window(cmd or{})
+  window:gui_window():set_position(300, 165)
+end)
+
 wezterm.on("open-uri", function(window, pane, uri)
 	local is_url = uri:match([[^https?://]])
 	if not is_url then
@@ -221,6 +226,8 @@ c.term = "wezterm"
 c.underline_position = "-4pt"
 c.use_fancy_tab_bar = false
 c.use_resize_increments = true
+c.initial_cols = 125
+c.initial_rows = 36
 c.window_decorations = "RESIZE"
 -- c.window_background_opacity = 0.9
 -- c.text_background_opacity = 0.5
