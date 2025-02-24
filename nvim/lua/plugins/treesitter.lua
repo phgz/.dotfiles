@@ -5,25 +5,228 @@ local keymap = vim.keymap
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		event = { "BufReadPost", "BufNewFile" },
-		dependencies = {
-			"andymass/vim-matchup",
-			"RRethy/nvim-treesitter-endwise", -- Add Delimiters for Pascal-like languages
-			"nvim-treesitter/nvim-treesitter-textobjects", -- More text motions
-			"nvim-treesitter/nvim-treesitter-refactor", -- Highlight definitions, Rename
-		},
+		version = false,
+		-- event = { "BufReadPost", "BufNewFile" },
+		-- event = { "VeryLazy" },
 		build = function()
 			vim.cmd("TSUpdate")
 			vim.cmd("TSInstall all")
 		end,
-		config = function()
-			vim.g.matchup_matchparen_offscreen = {}
-			vim.g.matchup_matchparen_deferred = 0
-			vim.g.matchup_motion_cursor_end = 0
-			vim.g.matchup_text_obj_linewise_operators = { "d", "y" } -- "c"?
-			vim.g.matchup_matchparen_pumvisible = 0
-			vim.g.matchup_matchparen_nomode = "i"
+		init = function(plugin)
+			-- PERF: add nvim-treesitter queries to the rtp and it's custom query predicates early
+			-- This is needed because a bunch of plugins no longer `require("nvim-treesitter")`, which
+			-- no longer trigger the **nvim-treesitter** module to be loaded in time.
+			-- Luckily, the only things that those plugins need are the custom queries, which we make available
+			-- during startup.
+			require("lazy.core.loader").add_to_rtp(plugin)
+			require("nvim-treesitter.query_predicates")
+		end,
+		cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
+		opts = {
 
+			highlight = {
+				enable = true,
+				additional_vim_regex_highlighting = { "python" },
+			},
+			indent = {
+				enable = false,
+			},
+			incremental_selection = {
+				enable = false,
+				keymaps = {
+					node_incremental = ";",
+					node_decremental = ",",
+				},
+			},
+			refactor = {
+				smart_rename = {
+					enable = false,
+					keymaps = {
+						smart_rename = "<localleader>r",
+					},
+				},
+				navigation = {
+					enable = true,
+					keymaps = {
+						goto_definition = "<leader>J",
+						list_definitions = false,
+						list_definitions_toc = false,
+						goto_next_usage = "<a-*>",
+						goto_previous_usage = "<a-#>",
+					},
+				},
+			},
+			textobjects = {
+				select = {
+					enable = true,
+
+					-- Automatically jump forward to textobj, similar to targets.vim
+					lookahead = true,
+
+					keymaps = {
+						-- You can use the capture groups defined in textobjects.scm
+						["aa"] = "@assignment.lhs",
+						["ia"] = "@assignment.lhs",
+						["av"] = "@assignment.rhs",
+						["iv"] = "@assignment.rhs",
+						["abe"] = "@binary.outer",
+						["ibl"] = "@binary.lhs",
+						["ibr"] = "@binary.rhs",
+						["abo"] = "@boolean",
+						["ak"] = "@call.outer",
+						["ik"] = "@call.inner",
+						["aC"] = "@class.outer",
+						["iC"] = "@class.inner",
+						["aK"] = "@comment.outer",
+						["iK"] = "@comment.outer",
+						["ac"] = "@conditional.outer",
+						["ic"] = "@conditional.inner",
+						["ad"] = "@dictionary.outer",
+						["af"] = "@function.outer",
+						["if"] = "@function.inner",
+						["al"] = "@loop.outer",
+						["il"] = "@loop.inner",
+						["aL"] = "@list.outer",
+						["an"] = "@number.inner",
+						["in"] = "@number.inner",
+						["ap"] = "@parameter.outer",
+						["ip"] = "@parameter.inner",
+						["ar"] = "@return.outer",
+						["ir"] = "@return.inner",
+						["as"] = "@string.outer",
+						["is"] = "@string.inner",
+					},
+					include_surrounding_whitespace = false,
+					selection_modes = {
+						-- 	['@parameter.outer'] = 'v', -- charwise
+						-- ["@function.outer"] = "V", -- linewise
+						-- 	['@class.outer'] = '<c-v>', -- blockwise
+					},
+				},
+				swap = {
+					enable = true,
+				},
+				move = {
+					enable = true,
+					set_jumps = true, -- whether to set jumps in the jumplist
+					goto_next_start = {
+						["]be"] = "@binary.outer",
+						["]bl"] = "@binary.lhs",
+						["]br"] = "@binary.rhs",
+						["]bo"] = "@boolean",
+						["]a"] = "@assignment.lhs",
+						["]v"] = "@assignment.rhs",
+						["]k"] = "@call.outer",
+						["]C"] = "@class.outer",
+						["]K"] = "@comment.outer",
+						["]c"] = "@conditional.outer",
+						["]d"] = "@dictionary.outer",
+						["]f"] = "@function.outer",
+						["]l"] = "@loop.outer",
+						["]L"] = "@list.outer",
+						["]n"] = "@number.inner",
+						["]p"] = "@parameter.inner",
+						["]r"] = "@return.outer",
+						["]s"] = "@string.outer",
+					},
+					goto_next_end = {
+						["]gbe"] = "@binary.outer",
+						["]gbl"] = "@binary.lhs",
+						["]gbr"] = "@binary.rhs",
+						["]gbo"] = "@boolean",
+						["]ga"] = "@assignment.lhs",
+						["]gv"] = "@assignment.rhs",
+						["]gk"] = "@call.outer",
+						["]gC"] = "@class.outer",
+						["]gK"] = "@comment.outer",
+						["]gc"] = "@conditional.outer",
+						["]gd"] = "@dictionary.outer",
+						["]gf"] = "@function.outer",
+						["]gl"] = "@loop.outer",
+						["]gL"] = "@list.outer",
+						["]gn"] = "@number.inner",
+						["]gp"] = "@parameter.inner",
+						["]gr"] = "@return.outer",
+						["]gs"] = "@string.outer",
+					},
+					goto_previous_start = {
+						["[be"] = "@binary.outer",
+						["[bl"] = "@binary.lhs",
+						["[br"] = "@binary.rhs",
+						["[bo"] = "@boolean",
+						["[a"] = "@assignment.lhs",
+						["[v"] = "@assignment.rhs",
+						["[k"] = "@call.outer",
+						["[C"] = "@class.outer",
+						["[K"] = "@comment.outer",
+						["[c"] = "@conditional.outer",
+						["[d"] = "@dictionary.outer",
+						["[f"] = "@function.outer",
+						["[l"] = "@loop.outer",
+						["[L"] = "@list.outer",
+						["[n"] = "@number.inner",
+						["[p"] = "@parameter.inner",
+						["[r"] = "@return.outer",
+						["[s"] = "@string.outer",
+					},
+					goto_previous_end = {
+						["[gbe"] = "@binary.outer",
+						["[gbl"] = "@binary.lhs",
+						["[gbr"] = "@binary.rhs",
+						["[gbo"] = "@boolean",
+						["[ga"] = "@assignment.lhs",
+						["[gv"] = "@assignment.rhs",
+						["[gk"] = "@call.outer",
+						["[gC"] = "@class.outer",
+						["[gK"] = "@comment.outer",
+						["[gc"] = "@conditional.outer",
+						["[gd"] = "@dictionary.outer",
+						["[gf"] = "@function.outer",
+						["[gL"] = "@list.outer",
+						["[gn"] = "@number.inner",
+						["[gp"] = "@parameter.inner",
+						["[gr"] = "@return.outer",
+						["[gs"] = "@string.outer",
+					},
+				},
+				lsp_interop = {
+					enable = true,
+					floating_preview_opts = { max_height = 9 },
+				},
+			},
+			query_linter = {
+				enable = false,
+				use_virtual_text = true,
+				lint_events = { "BufWrite", "CursorHold" },
+			},
+			matchup = {
+				enable = false, -- mandatory, false will disable the whole extension
+				enable_quotes = true,
+				-- disable = { },  -- optional, list of language that will be disabled
+				-- [options]
+				-- do not use virtual text to highlight the virtual end of a block,
+				-- for languages without explicit end markers
+				disable_virtual_text = true,
+				-- include_match_words = {''},
+			},
+		},
+		config = function(_, opts)
+			require("nvim-treesitter.configs").setup(opts)
+			vim.cmd([[
+		highlight! TSDefinition gui=underline
+		highlight! TSDefinitionUsage gui=bold
+
+		highlight! link TreesitterContext CursorLine
+		]])
+			-- Change syntax to vim.api?
+			-- api.nvim_set_hl(0, "GitSignsDeleteLn", { default = true, link = "DiffDelete" })
+		end,
+	},
+	{
+		"nvim-treesitter/nvim-treesitter-textobjects", -- More text motions
+		-- event = "VeryLazy",
+		dependencies = "nvim-treesitter/nvim-treesitter",
+		config = function()
 			local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
 			local utils = require("utils")
 			local gs = require("gitsigns")
@@ -31,203 +234,6 @@ return {
 
 			local gs_cache = require("gitsigns.cache")
 			local Hunks = require("gitsigns.hunks")
-
-			require("nvim-treesitter.configs").setup({
-				highlight = {
-					enable = true,
-					additional_vim_regex_highlighting = { "python" },
-				},
-				indent = {
-					enable = false,
-				},
-				incremental_selection = {
-					enable = false,
-					keymaps = {
-						node_incremental = ";",
-						node_decremental = ",",
-					},
-				},
-				refactor = {
-					smart_rename = {
-						enable = false,
-						keymaps = {
-							smart_rename = "<localleader>r",
-						},
-					},
-					navigation = {
-						enable = true,
-						keymaps = {
-							goto_definition = "<leader>J",
-							list_definitions = false,
-							list_definitions_toc = false,
-							goto_next_usage = "<a-*>",
-							goto_previous_usage = "<a-#>",
-						},
-					},
-				},
-				textobjects = {
-					select = {
-						enable = true,
-
-						-- Automatically jump forward to textobj, similar to targets.vim
-						lookahead = true,
-
-						keymaps = {
-							-- You can use the capture groups defined in textobjects.scm
-							["aa"] = "@assignment.lhs",
-							["ia"] = "@assignment.lhs",
-							["av"] = "@assignment.rhs",
-							["iv"] = "@assignment.rhs",
-							["abe"] = "@binary.outer",
-							["ibl"] = "@binary.lhs",
-							["ibr"] = "@binary.rhs",
-							["abo"] = "@boolean",
-							["ak"] = "@call.outer",
-							["ik"] = "@call.inner",
-							["aC"] = "@class.outer",
-							["iC"] = "@class.inner",
-							["aK"] = "@comment.outer",
-							["iK"] = "@comment.outer",
-							["ac"] = "@conditional.outer",
-							["ic"] = "@conditional.inner",
-							["ad"] = "@dictionary.outer",
-							["af"] = "@function.outer",
-							["if"] = "@function.inner",
-							["al"] = "@loop.outer",
-							["il"] = "@loop.inner",
-							["aL"] = "@list.outer",
-							["an"] = "@number.inner",
-							["in"] = "@number.inner",
-							["ap"] = "@parameter.outer",
-							["ip"] = "@parameter.inner",
-							["ar"] = "@return.outer",
-							["ir"] = "@return.inner",
-							["as"] = "@string.outer",
-							["is"] = "@string.inner",
-						},
-						include_surrounding_whitespace = false,
-						selection_modes = {
-							-- 	['@parameter.outer'] = 'v', -- charwise
-							-- ["@function.outer"] = "V", -- linewise
-							-- 	['@class.outer'] = '<c-v>', -- blockwise
-						},
-					},
-					swap = {
-						enable = true,
-					},
-					move = {
-						enable = true,
-						set_jumps = true, -- whether to set jumps in the jumplist
-						goto_next_start = {
-							["]be"] = "@binary.outer",
-							["]bl"] = "@binary.lhs",
-							["]br"] = "@binary.rhs",
-							["]bo"] = "@boolean",
-							["]a"] = "@assignment.lhs",
-							["]v"] = "@assignment.rhs",
-							["]k"] = "@call.outer",
-							["]C"] = "@class.outer",
-							["]K"] = "@comment.outer",
-							["]c"] = "@conditional.outer",
-							["]d"] = "@dictionary.outer",
-							["]f"] = "@function.outer",
-							["]l"] = "@loop.outer",
-							["]L"] = "@list.outer",
-							["]n"] = "@number.inner",
-							["]p"] = "@parameter.inner",
-							["]r"] = "@return.outer",
-							["]s"] = "@string.outer",
-						},
-						goto_next_end = {
-							["]gbe"] = "@binary.outer",
-							["]gbl"] = "@binary.lhs",
-							["]gbr"] = "@binary.rhs",
-							["]gbo"] = "@boolean",
-							["]ga"] = "@assignment.lhs",
-							["]gv"] = "@assignment.rhs",
-							["]gk"] = "@call.outer",
-							["]gC"] = "@class.outer",
-							["]gK"] = "@comment.outer",
-							["]gc"] = "@conditional.outer",
-							["]gd"] = "@dictionary.outer",
-							["]gf"] = "@function.outer",
-							["]gl"] = "@loop.outer",
-							["]gL"] = "@list.outer",
-							["]gn"] = "@number.inner",
-							["]gp"] = "@parameter.inner",
-							["]gr"] = "@return.outer",
-							["]gs"] = "@string.outer",
-						},
-						goto_previous_start = {
-							["[be"] = "@binary.outer",
-							["[bl"] = "@binary.lhs",
-							["[br"] = "@binary.rhs",
-							["[bo"] = "@boolean",
-							["[a"] = "@assignment.lhs",
-							["[v"] = "@assignment.rhs",
-							["[k"] = "@call.outer",
-							["[C"] = "@class.outer",
-							["[K"] = "@comment.outer",
-							["[c"] = "@conditional.outer",
-							["[d"] = "@dictionary.outer",
-							["[f"] = "@function.outer",
-							["[l"] = "@loop.outer",
-							["[L"] = "@list.outer",
-							["[n"] = "@number.inner",
-							["[p"] = "@parameter.inner",
-							["[r"] = "@return.outer",
-							["[s"] = "@string.outer",
-						},
-						goto_previous_end = {
-							["[gbe"] = "@binary.outer",
-							["[gbl"] = "@binary.lhs",
-							["[gbr"] = "@binary.rhs",
-							["[gbo"] = "@boolean",
-							["[ga"] = "@assignment.lhs",
-							["[gv"] = "@assignment.rhs",
-							["[gk"] = "@call.outer",
-							["[gC"] = "@class.outer",
-							["[gK"] = "@comment.outer",
-							["[gc"] = "@conditional.outer",
-							["[gd"] = "@dictionary.outer",
-							["[gf"] = "@function.outer",
-							["[gL"] = "@list.outer",
-							["[gn"] = "@number.inner",
-							["[gp"] = "@parameter.inner",
-							["[gr"] = "@return.outer",
-							["[gs"] = "@string.outer",
-						},
-					},
-					lsp_interop = {
-						enable = true,
-						floating_preview_opts = { max_height = 9 },
-					},
-				},
-				query_linter = {
-					enable = false,
-					use_virtual_text = true,
-					lint_events = { "BufWrite", "CursorHold" },
-				},
-				endwise = {
-					enable = true,
-				},
-				matchup = {
-					enable = false, -- mandatory, false will disable the whole extension
-					enable_quotes = true,
-					-- disable = { },  -- optional, list of language that will be disabled
-					-- [options]
-					-- do not use virtual text to highlight the virtual end of a block,
-					-- for languages without explicit end markers
-					disable_virtual_text = true,
-					-- include_match_words = {''},
-				},
-			})
-			vim.cmd([[
-		highlight! TSDefinition gui=underline
-		highlight! TSDefinitionUsage gui=bold
-
-		highlight! link TreesitterContext CursorLine
-		]])
 
 			local get_text_object = function()
 				local info = vim.inspect_pos(
@@ -346,7 +352,6 @@ return {
 			local hunk_wrapper = function(func)
 				return function()
 					func()
-					vim.cmd("redrawstatus")
 					vim.defer_fn(function()
 						local winid = gs_is_open("hunk")
 						if winid then
@@ -451,30 +456,6 @@ return {
 			end, function()
 				vim.cmd("norm! [s")
 			end)
-			-- local next_line, prev_line = ts_repeat_move.make_repeatable_move_pair(function()
-			-- 	vim.cmd("norm! j")
-			-- end, function()
-			-- 	vim.cmd("norm! k")
-			-- end)
-			-- local next_col, prev_col = ts_repeat_move.make_repeatable_move_pair(function()
-			-- 	vim.cmd("norm! l")
-			-- end, function()
-			-- 	vim.cmd("norm! h")
-			-- end)
-			local next_tab, prev_tab = ts_repeat_move.make_repeatable_move_pair(function()
-				require("tabtree").next()
-			end, function()
-				require("tabtree").previous()
-			end)
-			local find_unmatched = function(visual, forward)
-				return function()
-					fn["matchup#motion#find_unmatched"](visual, forward)
-				end
-			end
-			local nnext_match, nprev_match =
-				ts_repeat_move.make_repeatable_move_pair(find_unmatched(0, 1), find_unmatched(0, 0))
-			local xnext_match, xprev_match =
-				ts_repeat_move.make_repeatable_move_pair(find_unmatched(1, 1), find_unmatched(1, 0))
 
 			local rhs =
 				"<cmd>lua require('multiline_ft').multiline_find(%s,%s,require('nvim-treesitter.textobjects.repeatable_move'))<cr>"
@@ -510,16 +491,6 @@ return {
 			keymap.set({ "n", "x", "o" }, "[q", prev_quote)
 			keymap.set({ "n", "x", "o" }, "]z", next_fold)
 			keymap.set({ "n", "x", "o" }, "[z", prev_fold)
-			-- keymap.set({ "n", "x", "o" }, "]<cr>", next_line)
-			-- keymap.set({ "n", "x", "o" }, "[<cr>", prev_line)
-			-- keymap.set({ "n", "x", "o" }, "]<space>", next_col)
-			-- keymap.set({ "n", "x", "o" }, "[<space>", prev_col)
-			keymap.set({ "n", "x", "o" }, "]<tab>", next_tab)
-			keymap.set({ "n", "x", "o" }, "[<tab>", prev_tab)
-			keymap.set({ "n" }, "]%", nnext_match)
-			keymap.set({ "n" }, "[%", nprev_match)
-			keymap.set({ "x" }, "]%", xnext_match)
-			keymap.set({ "x" }, "[%", xprev_match)
 			keymap.set({ "n" }, "]S", next_spell)
 			keymap.set({ "n" }, "[S", prev_spell)
 			keymap.set(

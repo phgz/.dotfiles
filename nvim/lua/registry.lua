@@ -6,6 +6,9 @@ M.operator_pending = nil
 M.last_deleted_buffer = nil
 M.register = nil
 M.keymaps = {}
+M.ddc_native_ui_not_loaded = true
+M.has_registered_scroll_preview_keymaps = false
+M.motion_back_char = "b"
 
 local position = nil
 M.set_position = function(pos)

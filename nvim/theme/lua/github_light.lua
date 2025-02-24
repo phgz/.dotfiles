@@ -66,6 +66,7 @@ require("github-theme").setup({
 			GitSignsChangeInline = { bg = "sel1" },
 			GitSignsAddPreview = { bg = "diff.add" },
 			GitSignsDeletePreview = { bg = "diff.delete" },
+			GitSignsDeleteLn = { link = "DiffDelete" },
 
 			EyelinerPrimary = { style = "underline" },
 			EyelinerSecondary = { style = "underdouble" },

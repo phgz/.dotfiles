@@ -1,10 +1,8 @@
 local api = vim.api
 local fn = vim.fn
 local registry = require("registry")
-
-local M = {}
-
 local esc = vim.keycode("<esc>")
+local M = {}
 
 function M.abort()
 	api.nvim_feedkeys(esc, "x", false)
@@ -69,10 +67,9 @@ function M.get_operator_pending_state()
 	return { is_active = is_active, forced_motion = is_active and forced_motion or nil }
 end
 
-local motion_back_char = "b"
 function M.motion_back(lowercase)
 	local char = lowercase and "b" or "B"
-	motion_back_char = char
+	registry.motion_back_char = char
 	local operator
 	if vim.v.operator == "g@" and vim.go.operatorfunc == "v:lua.require'utils'.motion_back" then
 		operator = registry.operator_pending
@@ -84,15 +81,15 @@ function M.motion_back(lowercase)
 		char = char,
 		operator = operator,
 		operator_pending_registry = registry.operator_pending,
-		motion_back_char = motion_back_char,
+		motion_back_char = registry.motion_back_char,
 	})
 	M.abort()
 	local col = fn.col(".")
 	local chars_after_cursor = api.nvim_get_current_line():sub(col, col + 1)
 	if #chars_after_cursor == 1 or chars_after_cursor:match("[^%w_]") then
-		api.nvim_feedkeys(motion_back_char .. operator .. (operator == "y" and "e" or "w"), "n", false)
+		api.nvim_feedkeys(registry.motion_back_char .. operator .. (operator == "y" and "e" or "w"), "n", false)
 	else
-		vim.cmd.normal({ operator .. motion_back_char, bang = true })
+		vim.cmd.normal({ operator .. registry.motion_back_char, bang = true })
 	end
 	vim.go.operatorfunc = "{_ -> v:true}"
 	if operator ~= "c" then
@@ -192,41 +189,6 @@ function M.get_range(range)
 	return start_row, start_col, end_row, end_col
 end
 
--- Textobject for adjacent commented lines
-function M.adj_commented()
-	local utils = require("Comment.utils")
-	local current_line = api.nvim_win_get_cursor(0)[1] -- current line
-	local range = { srow = current_line, scol = 0, erow = current_line, ecol = 0 }
-	local ctx = {
-		ctype = utils.ctype.linewise,
-		range = range,
-	}
-	local cstr = require("Comment.ft").calculate(ctx) or vim.bo.commentstring
-	local ll, rr = utils.unwrap_cstr(cstr)
-	local padding = true
-	local is_commented = utils.is_commented(ll, rr, padding)
-
-	local line = api.nvim_buf_get_lines(0, current_line - 1, current_line, false)
-	if next(line) == nil or not is_commented(line[1]) then
-		api.nvim_feedkeys(esc, "n", false)
-		return
-	end
-
-	local rs, re = current_line, current_line -- range start and end
-	repeat
-		rs = rs - 1
-		line = api.nvim_buf_get_lines(0, rs - 1, rs, false)
-	until next(line) == nil or not is_commented(line[1])
-	rs = rs + 1
-	repeat
-		re = re + 1
-		line = api.nvim_buf_get_lines(0, re - 1, re, false)
-	until next(line) == nil or not is_commented(line[1])
-	re = re - 1
-
-	M.update_selection(true, "V", rs, 0, re, 0)
-end
-
 -- The autocmd does not work with custom register (`".` for example)
 function M.paste(lowercase)
 	local char = lowercase and "p" or "P"
@@ -263,24 +225,6 @@ function M.duplicate(visual_motion)
 	end
 end
 
-function M.yank_comment_paste()
-	local start_row = api.nvim_buf_get_mark(0, "[")[1]
-	local end_row = api.nvim_buf_get_mark(0, "]")[1]
-	local lines = api.nvim_buf_get_lines(0, start_row - 1, end_row, false)
-	local range = end_row - start_row + 1
-
-	-- Copying the block
-	api.nvim_buf_set_lines(0, end_row, end_row, true, lines)
-
-	-- Doing the comment
-	require("Comment.api").comment.linewise.count(range)
-
-	-- Move the cursor
-	local pre_motion_row, pre_motion_col = unpack(registry.get_position())
-	registry.set_position({})
-	api.nvim_win_set_cursor(0, { pre_motion_row + range, pre_motion_col })
-end
-
 function M.virtual_win_height()
 	local first_row_in_win = fn.line("w0")
 	local last_row_in_win = fn.line("w$")
@@ -314,7 +258,7 @@ function M.cursor_is_punctuation()
 	local col = api.nvim_win_get_cursor(0)[2] + 1
 	local cursor_char = api.nvim_get_current_line():sub(col, col)
 	local extra_punct = { "/", "'", '"', "." }
-	print(is_punct or vim.list_contains(extra_punct, cursor_char))
+	vim.notify(is_punct or vim.list_contains(extra_punct, cursor_char))
 	return is_punct or vim.list_contains(extra_punct, cursor_char)
 end
 
@@ -385,7 +329,26 @@ function M.get_diagnostic_under_cursor_range()
 	end
 end
 
-function M.get_linechars_offset_from_cursor(char_as_nr, echo)
+function M.get_offset_from_cursor()
+	local char = fn.getchar()
+	if char ~= 104 and char ~= 108 and char ~= 77 then
+		M.abort()
+		return
+	end
+
+	if char == 104 then
+		local next_char = fn.getchar()
+		if next_char == 27 then
+			M.abort()
+			return
+		end
+		return M.get_linechars_offset_from_cursor(192 - next_char)
+	else
+		return M.get_linechars_offset_from_cursor(char == 77 and 96 or nil)
+	end
+end
+
+function M.get_linechars_offset_from_cursor(char_as_nr)
 	char_as_nr = char_as_nr or fn.getchar()
 
 	if char_as_nr == 27 then
@@ -399,9 +362,6 @@ function M.get_linechars_offset_from_cursor(char_as_nr, echo)
 	if offset == 0 or win_row + offset > height or win_row + offset < 1 then
 		return nil
 	else
-		if echo then
-			vim.notify(fn.nr2char(char_as_nr))
-		end
 		return offset
 	end
 end
@@ -413,7 +373,6 @@ function M.replace()
 	local to_insert = vim.split(quote_reg, "\n")
 
 	if #to_insert > 1 then
-		-- vim.print(to_insert)
 		local old_indent = quote_reg:match("^%s*")
 		local new_indent = api.nvim_get_current_line():match("^%s*")
 		to_insert = vim.iter(to_insert)
@@ -422,8 +381,6 @@ function M.replace()
 				return formatted
 			end)
 			:totable()
-		-- vim.print(to_insert)
-		-- print(old_indent .. "-" .. new_indent)
 	end
 
 	to_insert[1] = to_insert[1]:gsub("^%s*", "")
@@ -617,6 +574,11 @@ function M.mk_repeatable(func)
 
 		api.nvim_feedkeys("g@l", "n", false)
 	end
+end
+
+function M.reset_errmsg()
+	vim.v.errmsg = ""
+	return ""
 end
 
 function M.diagnostics_status_line(bufnr)

@@ -75,3 +75,31 @@ opt.shortmess:append({
 	W = true,
 	s = true,
 })
+
+vim.diagnostic.config({
+	virtual_text = false, -- is false by default
+	underline = true,
+	update_in_insert = false,
+	severity_sort = true,
+	virtual_lines = false,
+	signs = {
+		text = {
+			[vim.diagnostic.severity.WARN] = "",
+			[vim.diagnostic.severity.INFO] = "",
+			[vim.diagnostic.severity.HINT] = "",
+			[vim.diagnostic.severity.ERROR] = "",
+		},
+		numhl = {
+			[vim.diagnostic.severity.ERROR] = "DiagnosticLineNrError",
+			[vim.diagnostic.severity.WARN] = "DiagnosticLineNrWarn",
+			[vim.diagnostic.severity.INFO] = "DiagnosticLineNrInfo",
+			[vim.diagnostic.severity.HINT] = "DiagnosticLineNrHint",
+		},
+	},
+	float = {
+		focusable = true,
+		style = "minimal",
+		border = "none",
+		winblend = 30,
+	},
+})

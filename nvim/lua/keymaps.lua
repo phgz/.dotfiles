@@ -5,7 +5,7 @@ local keymap = vim.keymap
 local api = vim.api
 local fn = vim.fn
 
--- Remove buitin mappings added by neovim devs
+-- Remove builtin mappings added by neovim devs
 vim.keymap.del("", "gcc")
 vim.keymap.del("", "gc")
 vim.keymap.del("n", "grn")
@@ -62,6 +62,14 @@ keymap.set("n", "<leader>v", function() -- Split vertical
 end)
 keymap.set("n", "<leader>h", function() -- Split horizontal
 	vim.cmd("split")
+end)
+keymap.set("n", "n", function() -- Split horizontal
+	local ok, err = pcall(vim.cmd, "norm! n")
+	if not ok then
+		vim.v.errmsg = string.match(err, "Vim[^:]*:(.*)")
+		vim.cmd.redrawstatus()
+		vim.v.errmsg = ""
+	end
 end)
 
 keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
@@ -225,7 +233,7 @@ keymap.set("n", "<up>", "<nop>") -- do nothing with arrows
 keymap.set("n", "<down>", "<nop>") -- do nothing with arrows
 keymap.set("", "gh", "h") -- move left
 keymap.set("", "gl", "l") -- move right
-keymap.set("o", "ibu", function() -- scroll  left
+keymap.set("o", "ibu", function() -- inner buffer
 	local view = fn.winsaveview()
 	api.nvim_win_set_cursor(0, { 1, 0 })
 	vim.cmd.normal({ "Vo", bang = true })
@@ -235,8 +243,8 @@ keymap.set("o", "ibu", function() -- scroll  left
 			fn.winrestview(view)
 		end, 0)
 	end
-end) -- buffer motion
-keymap.set("o", "abu", function() -- scroll  left
+end)
+keymap.set("o", "abu", function() -- A buffer
 	local view = fn.winsaveview()
 	api.nvim_win_set_cursor(0, { 1, 0 })
 	vim.cmd.normal({ "Vo", bang = true })
@@ -246,7 +254,7 @@ keymap.set("o", "abu", function() -- scroll  left
 			fn.winrestview(view)
 		end, 0)
 	end
-end) -- buffer motion
+end)
 keymap.set("", "zj", function() -- scroll  left
 	local count = math.floor(api.nvim_win_get_width(0) / 3)
 	vim.cmd.normal({ count .. "zh", bang = true })
@@ -353,7 +361,7 @@ keymap.set("o", "/", function() -- select next diagnostic
 end)
 keymap.set("n", "Z", function() -- Write buffer
 	vim.cmd("silent write!")
-	vim.notify("buffer written")
+	print("buffer written")
 end)
 keymap.set("n", "Q", function() -- Quit no write buffer
 	vim.cmd("quit!")
@@ -464,7 +472,6 @@ keymap.set("v", "+", function() -- get tabular stats
 		str = str .. name .. ": " .. stat .. "  "
 	end
 	vim.notify(str)
-	vim.wo.statusline = vim.wo.statusline
 end)
 
 keymap.set("", "l", function() -- Goto line
@@ -510,7 +517,7 @@ end)
 
 keymap.set("o", "\\", function() -- {motion} linewise remote
 	local operator = vim.v.operator
-	local offset = utils.get_linechars_offset_from_cursor()
+	local offset = utils.get_offset_from_cursor()
 
 	if not offset then
 		return
@@ -539,15 +546,13 @@ keymap.set("o", "R", function() -- {motion} linewise range remote
 		return
 	end
 
-	local first_line_offset = utils.get_linechars_offset_from_cursor(nil, true)
+	local first_line_offset = utils.get_offset_from_cursor()
 
 	if not first_line_offset then
 		return
 	end
 
-	vim.cmd("redrawstatus")
-
-	local second_line_offset = utils.get_linechars_offset_from_cursor()
+	local second_line_offset = utils.get_offset_from_cursor()
 
 	if not second_line_offset then
 		return
@@ -653,8 +658,8 @@ keymap.set("n", "<C-g>", function() -- Show file stats
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	local line_count = api.nvim_buf_line_count(0)
 	local relative = math.floor(row / line_count * 100 + 0.5)
-	vim.wo.statusline = vim.wo.statusline
-	vim.notify(row .. ":" .. col + 1 .. "; " .. line_count .. " lines --" .. relative .. "%--")
+	local message = row .. ":" .. col + 1 .. "; " .. line_count .. " lines --" .. relative .. "%--"
+	vim.notify(message)
 end)
 
 -- broken with folds
@@ -678,7 +683,6 @@ keymap.set({ "n", "v" }, "<M-S-m>", function() -- Move lines
 		if first_char ~= 77 and first_char ~= 104 and first_char ~= 108 and vim.v.count == 0 then
 			local operatorfunc = vim.go.operatorfunc
 			vim.go.operatorfunc = "{_ -> v:true}"
-			print(first_char)
 			api.nvim_feedkeys("g@" .. fn.nr2char(first_char), "x!", false)
 			local start_row = api.nvim_buf_get_mark(0, "<")[1]
 			local end_row = api.nvim_buf_get_mark(0, ">")[1]
@@ -691,13 +695,22 @@ keymap.set({ "n", "v" }, "<M-S-m>", function() -- Move lines
 	end
 
 	local cursor_pos = api.nvim_win_get_cursor(0)
-	local offset = utils.get_linechars_offset_from_cursor(first_char)
+	local offset
+	if first_char == 104 then
+		local next_char = fn.getchar()
+		if next_char == 27 then
+			M.abort()
+			return
+		end
+		offset = utils.get_linechars_offset_from_cursor(192 - next_char)
+	else
+		offset = utils.get_linechars_offset_from_cursor(first_char == 77 and 96 or nil)
+	end
 
 	if not offset then
 		api.nvim_win_set_cursor(0, original_cursor_pos)
 		return
 	end
-
 	if visual_state.is_active then
 		api.nvim_feedkeys(esc, "x", false)
 	end
@@ -710,7 +723,7 @@ end)
 
 -- broken with folds
 keymap.set("n", "<M-S-w>", function() -- Swap line
-	local offset = utils.get_linechars_offset_from_cursor()
+	local offset = utils.get_offset_from_cursor()
 	local cursor_row = api.nvim_win_get_cursor(0)[1]
 	local to_swap_row = cursor_row + offset
 	local cursor_line = api.nvim_buf_get_lines(0, cursor_row - 1, cursor_row, true)
@@ -773,7 +786,6 @@ end)
 
 keymap.set("n", "<C-l>", function() -- Clear message
 	vim.cmd.echo([["\u00A0"]])
-	vim.wo.statusline = vim.wo.statusline
 	vim.cmd.mes("clear")
 end)
 
@@ -815,7 +827,6 @@ keymap.set("x", "<C-g>", function() -- Show rows/cols stats
 	local row_range = math.abs(start_row - end_row) + 1
 	local col_range = math.abs(start_col - end_col) + 1
 	vim.notify(row_range > 1 and (row_range .. " selected rows.") or (col_range .. " selected cols."))
-	vim.cmd("redrawstatus")
 end)
 
 keymap.set("", "<M-x>", function() -- Delete character after cursor
