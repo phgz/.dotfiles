@@ -4,7 +4,6 @@ export class Config extends BaseConfig {
   override config(args: ConfigArguments): Promise<void> {
     args.contextBuilder.patchGlobal({
       ui: "inline",
-      // sources: ["lsp", "look", "around"],
       sources: ["lsp", "around"],
       autoCompleteEvents: [
         "InsertEnter",
@@ -21,15 +20,6 @@ export class Config extends BaseConfig {
         around: {
           enabledIf: "luaeval('vim.tbl_count(vim.lsp.get_clients()) == 0')",
         },
-        look: {
-          enabledIf: "luaeval('vim.tbl_count(vim.lsp.get_clients()) == 0')",
-          matchers: [
-              {
-                name: "matcher_fuzzy",
-                params: {splitMode: "char"}
-              }
-          ]
-        },
         lsp: {
           forceCompletionPattern: "\\.\\w*|::\\w*|->\\w*",
           sorters: ["sorter_lsp-kind"],
@@ -38,12 +28,10 @@ export class Config extends BaseConfig {
       },
       sourceParams: {
         lsp: {
-          // snippetEngine: "vim.snippet", not implemented
           enableResolveItem: true,
           enableAdditionalTextEdit: true,
         },
             },
-      // postFilters:["sorter_rank"],
       postFilters:["sorter_fuzzy"],
       filterParams: {
         matcher_fuzzy: {
@@ -53,9 +41,11 @@ export class Config extends BaseConfig {
           priority: [["Variable", "Text", "Method", "Function"]]
         },
       },
-      // uiParams: {
-      //     inline: {}
-      // },
+      uiParams: {
+          inline: {
+            highlight : "NonText"
+          },
+      },
       backspaceCompletion: true,
     });
   }
