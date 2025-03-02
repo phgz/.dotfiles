@@ -71,7 +71,7 @@ require("github-theme").setup({
 			EyelinerPrimary = { style = "underline" },
 			EyelinerSecondary = { style = "underdouble" },
 
-			SpellBad = { link = "SpellRare" },
+			SpellBad = { style = "underline", sp = "diag.info" },
 			CursorLine = { bg = "#DEE9F6" },
 			CursorLineNr = { fg = "fg2", style = "bold" },
 			StatusLine = { fg = "#4C92E1", bg = "bg3" },
