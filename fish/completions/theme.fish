@@ -1,2 +1,2 @@
-complete -c theme -fa "day twilight evening night"
+complete -c theme -fa "day evening night"
 complete -c theme -l force -s f

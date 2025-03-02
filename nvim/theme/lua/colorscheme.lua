@@ -1,6 +1,6 @@
 local dotfiles_path = os.getenv("HOME") .. "/.dotfiles"
 local current_path = dotfiles_path .. "/theme/current"
-local colorschemes_mapping = { night = "ayu-dark", day = "github_light", twilight = "paper", evening = "gruvbox-baby" }
+local colorschemes_mapping = { night = "ayu-dark", day = "github_light", evening = "gruvbox-baby" }
 
 local initialized = {}
 

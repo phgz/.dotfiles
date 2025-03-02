@@ -47,7 +47,7 @@ local accepted_extensions = {
 local file_regex =
 	string.format([[([a-zA-Z0-9_\-/.~]+\.(?:%s)\b)(?:.*line (\d+))?]], table.concat(accepted_extensions, "|"))
 
-local color_scheme_mapping = { night = "ayu", day = "github-light", twilight = "paper", evening = "gruvbox-dark" }
+local color_scheme_mapping = { night = "ayu", day = "github-light", evening = "gruvbox-dark" }
 
 local function get_color_scheme()
 	local current

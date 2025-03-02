@@ -1,6 +1,5 @@
 function theme
     if test "$argv" = day
-        or test "$argv" = twilight
         or test "$argv" = evening
         or test "$argv" = night
         echo $argv >$HOME/.dotfiles/theme/current
@@ -22,7 +21,6 @@ function theme
     set -f coordinates "@45.5031824 -73.5698065"
     set -f info (sunshine -f %s "$coordinates")
     set -f evening_start (string split ' ' $info[2])[2]
-    set -f twilight_start (math $evening_start - 3600)
 
     set -f cycle
 
@@ -30,11 +28,8 @@ function theme
         and test $current_time -lt $day_start
         set cycle night
     else if test $current_time -ge $day_start
-        and test $current_time -lt $twilight_start
-        set cycle day
-    else if test $current_time -ge $twilight_start
         and test $current_time -lt $evening_start
-        set cycle twilight
+        set cycle day
     else
         set cycle evening
     end
