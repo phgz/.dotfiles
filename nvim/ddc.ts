@@ -13,7 +13,6 @@ export class Config extends BaseConfig {
       sourceOptions: {
         _: {
           matchers: ["matcher_fuzzy"],
-          // sorters: ["sorter_rank"],
           converters: ["converter_remove_overlap"],
           minAutoCompleteLength : 1,
         },
