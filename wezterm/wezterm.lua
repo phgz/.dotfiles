@@ -59,6 +59,17 @@ end
 
 wezterm.add_to_config_reload_watch_list(current_path)
 
+-- A custom function to URL encode a string
+local function urlencode(str)
+	if str then
+		str = str:gsub("\n", " "):gsub("([^%w%-%.%_%~ ])", function(c)
+			return string.format("%%%02X", string.byte(c))
+		end)
+		return str:gsub(" ", "%%20")
+	end
+	return ""
+end
+
 local ssh_domains = {}
 local remote_server = "ai-dev-0"
 
@@ -74,9 +85,9 @@ for host, config in pairs(wezterm.enumerate_ssh_hosts()) do
 	})
 end
 
-wezterm.on('gui-startup', function(cmd) -- set startup Window position
-  local tab, pane, window = mux.spawn_window(cmd or{})
-  window:gui_window():set_position(300, 165)
+wezterm.on("gui-startup", function(cmd) -- set startup Window position
+	local tab, pane, window = mux.spawn_window(cmd or {})
+	window:gui_window():set_position(300, 165)
 end)
 
 wezterm.on("open-uri", function(window, pane, uri)
@@ -367,6 +378,17 @@ c.keys = {
 		end),
 	},
 	{
+		key = "g",
+		mods = "SUPER",
+		action = wezterm.action_callback(function(window, pane)
+			local selection = window:get_selection_text_for_pane(pane)
+			if selection and selection ~= "" then
+				local url = "https://www.google.com/search?q=" .. urlencode(selection)
+				wezterm.open_with(url)
+			end
+		end),
+	},
+	{
 		key = "v",
 		mods = "SUPER",
 		action = wezterm.action_callback(function(window, pane)
@@ -581,5 +603,5 @@ c.keys = {
 		}),
 	},
 }
-
+-- ctrl-shift-x activates copy mode
 return c
