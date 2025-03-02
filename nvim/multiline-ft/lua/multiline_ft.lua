@@ -276,7 +276,11 @@ function M.multiline_find(forward, exclusive, repeat_module)
 	}
 
 	M.set_registry(opts)
-	repeat_module.set_last_move(M.goto_pos_multiline, vim.tbl_extend("error", opts, { repeat_motion = true }))
+	repeat_module.last_move = {
+		func = M.goto_pos_multiline,
+		opts = vim.tbl_extend("error", opts, { repeat_motion = true }),
+		additional_args = {},
+	}
 
 	-- if not modes.operator_pending then
 	M.goto_pos_multiline(opts)
