@@ -1,28 +1,37 @@
 set -g fish_greeting
 string match -q (uname -ms) "Darwin arm64" && fish_add_path /opt/homebrew/bin
-fish_add_path $HOME/.local/bin $HOME/.cargo/bin $HOME/.local/node/bin $HOME/.local/wezterm/usr/bin $HOME/.local/nvim/bin $HOME/.miniconda/bin
+fish_add_path $HOME/.local/bin $HOME/.cargo/bin $HOME/.local/nvim/bin $HOME/.miniconda3/bin
 set -gx MANPATH $HOME/.local/share/man /usr/share/man $MANPATH
 set -gx DIRENV_LOG_FORMAT ""
 
 set -gx STARSHIP_CONFIG ~/.config/starship/config.toml
 set -gx EDITOR nvim
 set -gx PYTHONBREAKPOINT pdbr.set_trace
-### "bat" as manpager
+# "bat" as manpager
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 
 set fish_vi_force_cursor 1
 set fish_cursor_default line
 fish_vi_cursor
 
-bind \ca beginning-of-buffer
-bind \ce end-of-buffer
-bind \c_ kill-line
-bind \ck kill-word
-bind \ed kill-bigword
-bind \cc cancel-commandline
-bind \cg expand-abbr
-bind \e\[1\;2A history-search-backward # shift up
-bind \e\[1\;2B history-search-forward # Shift down
+bind ctrl-a beginning-of-buffer
+bind ctrl-e end-of-buffer
+bind ctrl-_ kill-line
+bind ctrl-k kill-word
+bind alt-d kill-bigword
+# bind ctrl-c cancel-commandline # now defaults to clear commandline
+# ctrl-x copies text to the clipboard
+# alt-e to edit command in $EDITOR
+# ctrl-space to not expand abbr
+# alt-# toggle line commenting
+# alt-u uppercase-word
+# alt-s toggle sudo
+# alt-w what is under cursor
+# alt-o open preview of file
+# ctrl-z undo typing
+bind ctrl-g expand-abbr
+bind shift-up history-search-backward # shift up
+bind shift-down history-search-forward # Shift down
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
