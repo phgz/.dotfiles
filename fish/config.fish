@@ -50,6 +50,7 @@ abbr -ag gcl git clone
 abbr -ag gc --set-cursor "git commit -m \"%\""
 abbr -ag gd git diff
 abbr -ag gds git diff --staged
+abbr -ag gdg --set-cursor "git diff --name-only -G \"%\""
 abbr -ag gf git fetch
 abbr -ag gfp git fetch --prune
 abbr -ag gl git log
