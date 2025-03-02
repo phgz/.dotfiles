@@ -389,6 +389,8 @@ end)
 
 keymap.set("o", "b", function() -- inclusive motion back
 	utils.motion_back(true)
+	-- utils.abort()
+	-- vim.cmd("norm! " .. vim.v.operator .. "vb")
 end)
 
 keymap.set("o", "B", function() -- inclusive motion BACK

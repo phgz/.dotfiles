@@ -87,10 +87,9 @@ function M.get_operator_pending_state()
 	return { is_active = is_active, forced_motion = is_active and forced_motion or nil }
 end
 
-local motion_back_char = "b"
 function M.motion_back(lowercase)
 	local char = lowercase and "b" or "B"
-	motion_back_char = char
+	registry.motion_back_char = char
 	local operator
 	if vim.v.operator == "g@" and vim.go.operatorfunc == "v:lua.require'utils'.motion_back" then
 		operator = registry.operator_pending
@@ -98,19 +97,13 @@ function M.motion_back(lowercase)
 		operator = vim.v.operator
 	end
 	registry.operator_pending = operator
-	vim.print({
-		char = char,
-		operator = operator,
-		operator_pending_registry = registry.operator_pending,
-		motion_back_char = motion_back_char,
-	})
 	M.abort()
 	local col = fn.col(".")
 	local chars_after_cursor = api.nvim_get_current_line():sub(col, col + 1)
 	if #chars_after_cursor == 1 or chars_after_cursor:match("[^%w_]") then
-		api.nvim_feedkeys(motion_back_char .. operator .. (operator == "y" and "e" or "w"), "n", false)
+		api.nvim_feedkeys(registry.motion_back_char .. operator .. (operator == "y" and "e" or "w"), "n", false)
 	else
-		vim.cmd.normal({ operator .. motion_back_char, bang = true })
+		vim.cmd.normal({ operator .. registry.motion_back_char, bang = true })
 	end
 	vim.go.operatorfunc = "{_ -> v:true}"
 	if operator ~= "c" then
