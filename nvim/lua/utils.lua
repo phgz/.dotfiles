@@ -1,7 +1,7 @@
 local api = vim.api
 local fn = vim.fn
 local registry = require("registry")
-
+local esc = vim.keycode("<esc>")
 local M = {}
 
 function vim.notify(mes, level, opts)
@@ -343,7 +343,26 @@ function M.get_diagnostic_under_cursor_range()
 	end
 end
 
-function M.get_linechars_offset_from_cursor(char_as_nr, echo)
+function M.get_offset_from_cursor()
+	local char = fn.getchar()
+	if char ~= 104 and char ~= 108 and char ~= 77 then
+		M.abort()
+		return
+	end
+
+	if char == 104 then
+		local next_char = fn.getchar()
+		if next_char == 27 then
+			M.abort()
+			return
+		end
+		return M.get_linechars_offset_from_cursor(192 - next_char)
+	else
+		return M.get_linechars_offset_from_cursor(char == 77 and 96 or nil)
+	end
+end
+
+function M.get_linechars_offset_from_cursor(char_as_nr)
 	char_as_nr = char_as_nr or fn.getchar()
 
 	if char_as_nr == 27 then
@@ -357,9 +376,6 @@ function M.get_linechars_offset_from_cursor(char_as_nr, echo)
 	if offset == 0 or win_row + offset > height or win_row + offset < 1 then
 		return nil
 	else
-		if echo then
-			vim.notify(fn.nr2char(char_as_nr))
-		end
 		return offset
 	end
 end
