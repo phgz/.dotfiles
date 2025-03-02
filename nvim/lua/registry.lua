@@ -6,6 +6,7 @@ M.operator_pending = nil
 M.last_deleted_buffer = nil
 M.register = nil
 M.keymaps = {}
+M.message = ""
 
 local position = nil
 M.set_position = function(pos)

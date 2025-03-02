@@ -64,6 +64,16 @@ keymap.set("n", "<leader>h", function() -- Split horizontal
 	vim.cmd("split")
 end)
 
+local search_mappings = { "n", "N", "*", "#", "g*", "g#" }
+for _, abbr in ipairs(search_mappings) do
+	keymap.set("n", abbr, function()
+		local ok, _ = pcall(vim.cmd, "norm! " .. abbr)
+		if ok then
+			vim.notify(utils.searchcount())
+		end
+	end)
+end
+
 keymap.set("n", "<leader>d", function() -- delete buffer and set alternate file
 	registry.last_deleted_buffer = fn.expand("%:p")
 	vim.cmd("bdelete")

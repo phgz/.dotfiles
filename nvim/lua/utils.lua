@@ -4,7 +4,25 @@ local registry = require("registry")
 
 local M = {}
 
-local esc = vim.keycode("<esc>")
+function vim.notify(mes, level, opts)
+	-- vim.log.levels: DEBUG ERROR INFO TRACE WARN OFF
+	local levels = vim.log.levels
+	local highlight = "%#GreyStatusLine#"
+	if level == levels.DEBUG then
+		highlight = "%#BlueStatusLine#"
+	elseif level == levels.ERROR then
+		highlight = "%#RedStatusLine#"
+	elseif level == levels.WARN then
+		highlight = "%#YellowStatusLine#"
+	end
+	registry.message = highlight .. tostring(mes)
+	vim.cmd("redrawstatus")
+end
+
+function vim.notify_once(mes, level, opts)
+	registry.message = "NOTIFY ONCE called with: " .. mes
+	vim.cmd("redrawstatus")
+end
 
 function M.abort()
 	api.nvim_feedkeys(esc, "x", false)
@@ -314,7 +332,7 @@ function M.cursor_is_punctuation()
 	local col = api.nvim_win_get_cursor(0)[2] + 1
 	local cursor_char = api.nvim_get_current_line():sub(col, col)
 	local extra_punct = { "/", "'", '"', "." }
-	print(is_punct or vim.list_contains(extra_punct, cursor_char))
+	vim.notify(is_punct or vim.list_contains(extra_punct, cursor_char))
 	return is_punct or vim.list_contains(extra_punct, cursor_char)
 end
 
@@ -616,6 +634,15 @@ function M.mk_repeatable(func)
 		end
 
 		api.nvim_feedkeys("g@l", "n", false)
+	end
+end
+
+function M.searchcount()
+	local entries = fn.searchcount({ maxcount = 0 })
+	if next(entries) ~= nil then
+		if entries.current > 0 then
+			return fn.getreg("/") .. " [" .. entries.current .. "/" .. entries.total .. "]"
+		end
 	end
 end
 
