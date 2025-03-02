@@ -3,14 +3,10 @@
 platform=$(uname -s)
 arch=$(uname -m)
 
-# Linux sudo requirements: bison build-essential cmake libevent-dev libncurses5-dev libssl-dev pkg-config
-
-GLOW_VERSION=1.5.1
-FISH_SHELL_VERSION=3.6.1
-NODE_VERSION=v20.5.1
+NODE_VERSION=v22.14.0
 POETRY_VERSION=1.7.1
 PYTHON_VERSION=3.12
-TMUX_VERSION=3.3a
+TMUX_VERSION=3.5a
 
 mkdir -p "$HOME"/.local/bin
 
@@ -36,56 +32,37 @@ if [ "$platform" == "Darwin" ]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    $brew install fish node glow fontconfig wget python@"$PYTHON_VERSION" wezterm helix brave-browser dbeaver-community firefox postman rectangle slack subler transmission vlc zoom tokei luajit sshs
+    $brew install fish node fontconfig wget python@"$PYTHON_VERSION" wezterm helix dbeaver-community firefox postman rectangle slack subler transmission vlc zoom tokei luajit
     $brew tap finestructure/Hummingbird
     $brew install finestructure/hummingbird/hummingbird
     # brew upgrade --greedy
 
     curl -LJO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-arm64.tar.gz
-    xattr -c ./nvim-macos-arm64.tar
-    tar xzvf nvim-macos-arm64.tar
+    xattr -c ./nvim-macos-arm64.tar.gz
+    tar xzvf nvim-macos-arm64.tar.gz
     mv ./nvim-macos-arm64 "$HOME"/.local/nvim
-    "$HOME"/.local/nvim/bin/nvim -u NORC -c "source https://raw.githubusercontent.com/nvim-neorocks/rocks.nvim/master/installer.lua"
 
 #------------------------------------------------------------------------------#
 #                                    Linux                                     #
 #------------------------------------------------------------------------------#
+# Linux apt-get install build-essential cmake libssl-dev pkg-config
+
 elif [ "$platform" == "Linux" ]; then
 
     #------------------------------------------------------------------------------#
     #                                     Fish                                     #
     #------------------------------------------------------------------------------#
-    curl -LJO https://github.com/fish-shell/fish-shell/releases/download/"$FISH_SHELL_VERSION"/fish-"$FISH_SHELL_VERSION".tar.xz
-    tar -xf fish-"$FISH_SHELL_VERSION".tar.xz && rm fish-"$FISH_SHELL_VERSION".tar.xz
-    pushd fish-"$FISH_SHELL_VERSION" || exit
-    mkdir build
-    pushd build || exit
-    cmake -DCMAKE_INSTALL_PREFIX="$HOME"/.local ..
-    make && make install && popd || exit
-    popd || exit
-
-    rm -rf fish-"$FISH_SHELL_VERSION"
+    apt-add-repository ppa:fish-shell/release-4
+    apt update
+    apt install fish
 
     #------------------------------------------------------------------------------#
     #                                     TMUX                                     #
     #------------------------------------------------------------------------------#
-    curl -LJO https://github.com/tmux/tmux/releases/download/"$TMUX_VERSION"/tmux-"$TMUX_VERSION".tar.gz
-    tar -xf tmux-*.tar.gz && rm tmux-"$TMUX_VERSION".tar.gz
-    pushd tmux-*/ || exit
-    ./configure --prefix="$HOME"/.local --enable-static
-    make && make install && popd || exit
-
-    rm -rf tmux-*/
+    apt install tmux
 
     # Add Terminfo for tmux:
     curl https://gist.githubusercontent.com/nicm/ea9cf3c93f22e0246ec858122d9abea1/raw/37ae29fc86e88b48dbc8a674478ad3e7a009f357/tmux-256color | /usr/bin/tic -x -
-
-    #------------------------------------------------------------------------------#
-    #                                     Glow                                     #
-    #------------------------------------------------------------------------------#
-    curl -LJO https://github.com/charmbracelet/glow/releases/download/"$GLOW_VERSION"/glow_Linux_x86_64.tar.gz
-    tar -xf glow_Linux_x86_64.tar.gz && rm glow_Linux_x86_64.tar.gz
-    mv ./glow "$HOME"/.local/bin/glow
 
     #------------------------------------------------------------------------------#
     #                                    Neovim                                    #
@@ -132,7 +109,7 @@ if [ ! -d "$HOME"/.cargo ]; then
 
     curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
     cargo=$HOME/.cargo/bin/cargo
-    PATH=/opt/homebrew/bin:$PATH $cargo install --locked eza ripgrep sd bat fd-find du-dust starship || exit
+    PATH=/opt/homebrew/bin:$PATH $cargo install --locked eza ripgrep sd bat fd-find du-dust starship tree-sitter-cli || exit
 
     git clone https://github.com/crescentrose/sunshine
     pushd sunshine || exit
