@@ -66,6 +66,7 @@ require("github-theme").setup({
 			GitSignsChangeInline = { bg = "sel1" },
 			GitSignsAddPreview = { bg = "diff.add" },
 			GitSignsDeletePreview = { bg = "diff.delete" },
+			GitSignsDeleteLn = { link = "DiffDelete" },
 
 			EyelinerPrimary = { style = "underline" },
 			EyelinerSecondary = { style = "underdouble" },
@@ -76,7 +77,7 @@ require("github-theme").setup({
 			StatusLine = { fg = "#4C92E1", bg = "bg3" },
 			YellowStatusLine = { fg = "diag.warn", bg = "bg3" },
 			GreenStatusLine = { fg = "git.add", bg = "bg3" },
-			BlueStatusLine = { fg = "git.changed", bg = "bg3" },
+			BlueStatusLine = { fg = "diag.info", bg = "bg3" },
 			RedStatusLine = { fg = "git.removed", bg = "bg3" },
 			GreyStatusLine = { fg = "grey", bg = "bg3" },
 

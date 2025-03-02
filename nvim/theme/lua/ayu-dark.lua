@@ -48,6 +48,7 @@ require("ayu").setup({
 		GitSignsAddInline = { bg = light_grey },
 		GitSignsDeleteInline = { bg = light_grey },
 		GitSignsChangeInline = { bg = light_grey },
+		GitSignsDeleteLn = { link = "DiffDelete" },
 
 		EyelinerPrimary = { underline = true },
 		EyelinerSecondary = { underdouble = true },
