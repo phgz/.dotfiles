@@ -41,6 +41,7 @@ CTRL-A                    => insert previously inserted text
 :cd %:h                   => change to the directory of the current file
 :write ++p                => creates parent directories
 :<C-R>_<C-W>              => insert the Word under the cursor.
+:<C-R>_<C-A>              => insert the WORD under the cursor.
 :<C-f>                    => open command-line window
 :ascii                    => print ascii value of char under cursor
 :let @/ = "the"           => set the search register to "the"
