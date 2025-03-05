@@ -281,10 +281,12 @@ keymap.set("n", "mM", function() -- Duplicate line above
 	api.nvim_feedkeys("k", "n", false)
 end)
 keymap.set( -- Duplicate a motion
-	"n",
+	{ "n", "x" },
 	"m",
 	[[<cmd>lua require'registry'.set_position(vim.fn.getpos("."))<cr><cmd>let &operatorfunc = "v:lua.require'utils'.duplicate"<cr>g@]]
 )
+keymap.set("n", "<localleader>t", "<cmd>Inspect<cr>")
+keymap.set("n", "<localleader>T", "<cmd>InspectTree<cr>")
 keymap.set({ "n" }, "go", function() -- open git modified files
 	local current_file = fn.expand("%:p")
 	local p_git_diff = vim.system({ "git", "diff", "--name-only" }, { text = true })
@@ -336,6 +338,8 @@ keymap.set("o", "L", function() -- select line from first char to end
 	local visual_mode = operator_pending_state.forced_motion or "v"
 	vim.cmd.normal({ visual_mode .. "g_o^", bang = true })
 end)
+
+keymap.set("n", "L", vim.diagnostic.open_float, { silent = true })
 keymap.set("o", "?", function() -- select prev diagnostic
 	local forced_motion = utils.get_operator_pending_state().forced_motion
 	local diagnostic_range = utils.get_diagnostic_under_cursor_range()
@@ -662,7 +666,7 @@ keymap.set("n", "<C-g>", function() -- Show file stats
 	local row, col = unpack(api.nvim_win_get_cursor(0))
 	local line_count = api.nvim_buf_line_count(0)
 	local relative = math.floor(row / line_count * 100 + 0.5)
-	local message = row .. ":" .. col + 1 .. "; " .. line_count .. " lines --" .. relative .. "%--"
+	local message = row .. ":" .. col + 1 .. "; " .. line_count .. " lines --" .. relative .. "%%--"
 	vim.notify(message)
 end)
 
@@ -763,6 +767,10 @@ end)
 
 keymap.set("n", "<M-S-o>", function() -- New line up
 	utils.new_lines(false, vim.v.count1)
+end)
+
+keymap.set("i", "<S-cr>", function()
+	api.nvim_feedkeys(esc .. "O", "t", false)
 end)
 
 keymap.set("i", "<C-esc>", function() -- Go to normal mode one char right
