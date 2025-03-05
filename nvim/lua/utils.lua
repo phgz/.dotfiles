@@ -4,24 +4,61 @@ local registry = require("registry")
 local esc = vim.keycode("<esc>")
 local M = {}
 
+function api.nvim_echo(chunks, history, opts)
+	local default_hl = opts.err and "ErrorMsg" or "GreyStatusLine"
+	local message = ""
+	registry.message = ""
+	local occupied_cells = api.nvim_strwidth(vim.trim(api.nvim_eval_statusline(vim.wo.statusline, {}).str))
+	local remaining_cells = vim.v.echospace - occupied_cells
+
+	for _, chunk in ipairs(chunks) do
+		local text, hl = unpack(chunk)
+		local hl_block = "%#" .. (hl or default_hl) .. "#"
+		if #hl_block > remaining_cells then
+			history = true
+			break
+		end
+		message = message .. hl_block .. text
+		remaining_cells = remaining_cells - #text
+	end
+
+	if history or remaining_cells < 0 then
+		for _, chunk in ipairs(chunks) do
+			local text, hl = unpack(chunk)
+			vim.cmd("echohl " .. (hl or default_hl) .. ' | echomsg "' .. vim.fn.strtrans(text) .. '" | echohl None')
+		end
+	end
+
+	if remaining_cells >= 0 then
+		registry.message = message
+		vim.cmd("redrawstatus")
+	end
+end
+
 function vim.notify(mes, level, opts)
 	-- vim.log.levels: DEBUG ERROR INFO TRACE WARN OFF
 	local levels = vim.log.levels
-	local highlight = "%#GreyStatusLine#"
+	local highlight = "GreyStatusLine"
 	if level == levels.DEBUG then
-		highlight = "%#BlueStatusLine#"
+		highlight = "BlueStatusLine"
 	elseif level == levels.ERROR then
-		highlight = "%#RedStatusLine#"
+		highlight = "RedStatusLine"
 	elseif level == levels.WARN then
-		highlight = "%#YellowStatusLine#"
+		highlight = "YellowStatusLine"
 	end
-	registry.message = highlight .. tostring(mes)
-	vim.cmd("redrawstatus")
+	api.nvim_echo({ { mes, highlight } }, false, {})
 end
 
 function vim.notify_once(mes, level, opts)
 	registry.message = "NOTIFY ONCE called with: " .. mes
 	vim.cmd("redrawstatus")
+end
+
+M.callable = function(func, ...)
+	local opts = { ... }
+	return function()
+		func(unpack(opts))
+	end
 end
 
 function M.abort()
@@ -276,8 +313,35 @@ function M.cursor_is_punctuation()
 	return is_punct or vim.list_contains(extra_punct, cursor_char)
 end
 
-function M.goto_quote(fwd)
-	fn.search([[\("\|'\)]], "W" .. (fwd and "" or "b"))
+function M.goto_quote(opts)
+	fn.search([[\("\|'\)]], "W" .. (opts.forward and "" or "b"))
+end
+
+function M.goto_fold(opts)
+	if opts.forward then
+		vim.cmd("norm! zj")
+	else
+		vim.cmd("norm! zk")
+	end
+end
+
+function M.goto_spell(opts)
+	if opts.forward then
+		vim.cmd("norm! ]s")
+	else
+		vim.cmd("norm! [s")
+	end
+end
+
+function M.goto_diagnostic(severity)
+	return function(opts)
+		vim.diagnostic.jump({
+			count = opts.forward and 1 or -1,
+			float = { border = "none" },
+			wrap = false,
+			severity = vim.diagnostic.severity[severity],
+		})
+	end
 end
 
 function M.compare_pos(pos_1, pos_2, opts)
@@ -322,23 +386,8 @@ function M.get_diagnostic_under_cursor_range()
 	end)
 
 	if nearest_diagnostic_under_cursor == nil then
-		vim.print({ vim.diagnostic.get_next({ wrap = false }) }, {
-			vim.diagnostic.get_prev({
-				wrap = false,
-			}),
-		})
 		return nil
 	else
-		local start_pos, end_pos =
-			nearest_diagnostic_under_cursor[1].start_pos, nearest_diagnostic_under_cursor[1].end_pos
-
-		vim.print({ vim.diagnostic.get_next({ cursor_position = { end_pos[1], end_pos[2] + 1 }, wrap = false }) }, {
-			vim.diagnostic.get_prev({
-				cursor_position = { start_pos[1], start_pos[2] - 1 },
-				wrap = false,
-			}),
-		})
-		-- local asd = adsf
 		return nearest_diagnostic_under_cursor[1]
 	end
 end
@@ -597,6 +646,31 @@ function M.searchcount()
 			return fn.getreg("/") .. " [" .. entries.current .. "/" .. entries.total .. "]"
 		end
 	end
+end
+
+M.get_text_object = function()
+	local info =
+		vim.inspect_pos(nil, nil, nil, { syntax = false, extmarks = false, semantic_tokens = false, treesitter = true })
+	local ts_info = info.treesitter[1]
+
+	if not ts_info then
+		return
+	end
+
+	local lang = ts_info.lang
+	local query = vim.treesitter.query.get(lang, "textobjects")
+	local node = vim.treesitter.get_node({ bufnr = 0, pos = { info.row, info.col + 1 } })
+
+	while not query.captures[query:iter_captures(node, info.buffer)()] do
+		node = node:parent()
+	end
+
+	local capture_id = vim.iter(query:iter_captures(node, 0)):find(function(id, _, _)
+		local name = query.captures[id] -- name of the capture in the query
+		return name ~= "block.outer"
+	end)
+
+	return "@" .. query.captures[capture_id]
 end
 
 function M.diagnostics_status_line(bufnr)
