@@ -86,6 +86,11 @@ api.nvim_create_autocmd("CmdwinEnter", {
 
 vim.api.nvim_create_autocmd("FileType", {
 	callback = function(event)
+		if event.match == "sshconfig" then
+			event.match = "ssh_config"
+		elseif event.match == "sh" then
+			event.match = "bash"
+		end
 		if vim.treesitter.language.add(event.match) then
 			vim.treesitter.start()
 			-- if event.match == "python" then
@@ -101,8 +106,8 @@ api.nvim_create_autocmd("FileType", {
 	-- after closing
 	-- command = [[nnoremap <buffer><silent> q :close<cr> | let &stc=""]],
 
-	callback = function()
-		keymap.set("n", "q", "<cmd>close<cr>", { buffer = true })
+	callback = function(event)
+		keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf })
 		vim.wo.stc = ""
 	end,
 })
