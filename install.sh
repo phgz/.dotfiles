@@ -39,8 +39,9 @@ if [ "$platform" == "Darwin" ]; then
 
     curl -LJO https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-arm64.tar.gz
     xattr -c ./nvim-macos-arm64.tar.gz
-    tar xzvf nvim-macos-arm64.tar.gz
+    tar xzf nvim-macos-arm64.tar.gz
     mv ./nvim-macos-arm64 "$HOME"/.local/nvim
+    rm ./nvim-macos-arm64.tar.gz
 
 #------------------------------------------------------------------------------#
 #                                    Linux                                     #
