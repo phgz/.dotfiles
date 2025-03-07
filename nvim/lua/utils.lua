@@ -31,7 +31,7 @@ function api.nvim_echo(chunks, history, opts)
 
 	if remaining_cells >= 0 then
 		registry.message = message
-		vim.cmd("redrawstatus")
+		vim.api.nvim__redraw({ statusline = true })
 	end
 end
 
@@ -51,7 +51,7 @@ end
 
 function vim.notify_once(mes, level, opts)
 	registry.message = "NOTIFY ONCE called with: " .. mes
-	vim.cmd("redrawstatus")
+	api.nvim_echo({ { mes } }, false, {})
 end
 
 M.callable = function(func, ...)

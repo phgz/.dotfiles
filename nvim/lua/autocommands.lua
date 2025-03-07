@@ -59,9 +59,10 @@ api.nvim_create_autocmd("BufReadPost", {
 			api.nvim_win_set_cursor(0, { row, col })
 			api.nvim_feedkeys("zz", "n", false)
 		end
+		-- for git signs to show up
 		vim.defer_fn(function()
-			vim.cmd("redrawstatus")
-		end, 200)
+			vim.api.nvim__redraw({ statusline = true })
+		end, 300)
 	end,
 })
 
@@ -120,7 +121,7 @@ api.nvim_create_autocmd("InsertLeavePre", {
 
 api.nvim_create_autocmd("DiagnosticChanged", {
 	callback = function()
-		pcall(vim.cmd.redrawstatus)
+		vim.api.nvim__redraw({ statusline = true })
 	end,
 })
 
