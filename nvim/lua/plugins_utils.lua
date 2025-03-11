@@ -182,19 +182,19 @@ function M.mason_lspconfig_setup_handlers()
 							local venv_path = get_venv(lock_file_path)
 							vim.env.VIRTUAL_ENV = venv_path
 							config.settings.python.pythonPath = vim.env.VIRTUAL_ENV .. "/bin/python3"
-							api.nvim_create_autocmd("BufEnter", {
-								callback = function(event_args)
-									if event_args.file ~= "" then
-										local new_lock_file_path = find_lock_file(event_args.file)
-										if new_lock_file_path ~= lock_file_path then
-											vim.env.VIRTUAL_ENV = nil
-											vim.cmd("LspRestart")
-											return true --return a truthy value (not false or nil) to delete the autocommand.
-										end
-									end
-								end,
-							})
 						end
+						api.nvim_create_autocmd("BufEnter", {
+							callback = function(event_args)
+								if event_args.file ~= "" then
+									local new_lock_file_path = find_lock_file(event_args.file)
+									if new_lock_file_path ~= lock_file_path then
+										vim.env.VIRTUAL_ENV = nil
+										vim.cmd("LspRestart")
+										return true --return a truthy value (not false or nil) to delete the autocommand.
+									end
+								end
+							end,
+						})
 					end
 				end,
 			})
