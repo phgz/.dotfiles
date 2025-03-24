@@ -32,7 +32,7 @@ if [ "$platform" == "Darwin" ]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
 
-    $brew install fish node fontconfig wget python@"$PYTHON_VERSION" wezterm helix dbeaver-community firefox postman rectangle slack subler transmission vlc zoom tokei luajit
+    $brew install fish node fontconfig wget python@"$PYTHON_VERSION" wezterm helix dbeaver-community firefox postman rectangle slack subler transmission vlc zoom tokei luajit stats
     $brew tap finestructure/Hummingbird
     $brew install finestructure/hummingbird/hummingbird
     # brew upgrade --greedy
