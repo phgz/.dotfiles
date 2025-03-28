@@ -353,6 +353,14 @@ return {
 		},
 	},
 	{
+		"trimclain/builder.nvim",
+		opts = {
+			commands = {
+				python = "python %",
+			},
+		},
+	},
+	{
 		"mrjones2014/smart-splits.nvim", -- smart window navigation
 		dependencies = {
 			"kwkarlwang/bufresize.nvim", -- keep windows proportions
