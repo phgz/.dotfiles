@@ -47,6 +47,7 @@ abbr -ag ga git add
 abbr -ag gb git branch
 abbr -ag gco git checkout
 abbr -ag gcl git clone
+abbr -ag gcp git cherry-pick
 abbr -ag gc --set-cursor "git commit -m \"%\""
 abbr -ag gd git diff
 abbr -ag gds git diff --staged

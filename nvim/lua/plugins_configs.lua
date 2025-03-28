@@ -384,15 +384,15 @@ return {
 		"williamboman/mason-lspconfig.nvim", -- bridge between mason and nvim-lspconfig
 		build = function()
 			local servers = {
-				"bashls",
-				"dockerls",
-				"jsonls",
-				"lua_ls",
+				"bash-language-server",
+				"dockerfile-language-server",
+				"json-lsp",
+				"lua-language-server",
 				"pyright",
 				"taplo",
-				"vimls",
-				"yamlls",
-				"denols",
+				"vim-language-server",
+				"yaml-language-server",
+				"deno",
 				-- "azure_pipelines_ls",
 			}
 
