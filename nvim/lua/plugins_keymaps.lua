@@ -244,8 +244,7 @@ end)
 --------------------------------------------------------------------------------
 --                                 telescope                                  --
 --------------------------------------------------------------------------------
-local builtin = require("telescope.builtin")
-local dropdown_theme = require("telescope.themes").get_dropdown({
+local dropdown_theme = {
 	layout_config = {
 		width = function(_, max_columns, _)
 			return math.min(max_columns, 98)
@@ -255,44 +254,52 @@ local dropdown_theme = require("telescope.themes").get_dropdown({
 			return math.min(max_lines, 12)
 		end,
 	},
-})
+}
 
 keymap.set("n", "<leader><M-f>", function()
-	builtin.find_files(dropdown_theme)
+	require("telescope.builtin").find_files(require("telescope.themes").get_dropdown(dropdown_theme))
 end)
 keymap.set("n", "<leader>F", function()
 	local _, _, p_root = fn.expand("%:p"):find(string.format("(%s", os.getenv("HOME")) .. "/[^/]+/)")
-	builtin.find_files(vim.tbl_extend("error", dropdown_theme, { cwd = p_root }))
+	require("telescope.builtin").find_files(
+		vim.tbl_extend("error", require("telescope.themes").get_dropdown(dropdown_theme), { cwd = p_root })
+	)
 end)
 keymap.set("n", "<leader>f", function()
-	builtin.git_files(dropdown_theme)
+	require("telescope.builtin").git_files(require("telescope.themes").get_dropdown(dropdown_theme))
 end)
 keymap.set("n", "<leader>g", function()
-	builtin.live_grep(dropdown_theme)
+	require("telescope.builtin").live_grep(require("telescope.themes").get_dropdown(dropdown_theme))
 end)
 keymap.set("n", "<leader>G", function()
-	builtin.grep_string(dropdown_theme)
+	require("telescope.builtin").grep_string(require("telescope.themes").get_dropdown(dropdown_theme))
 end)
 keymap.set("n", "<leader>b", function()
-	builtin.buffers(vim.tbl_extend("error", dropdown_theme, {
-		cwd_only = true,
-		sort_buffers = function(bufnr_a, bufnr_b)
-			return api.nvim_buf_get_name(bufnr_a) < api.nvim_buf_get_name(bufnr_b)
-		end,
-	}))
+	require("telescope.builtin").buffers(
+		vim.tbl_extend("error", require("telescope.themes").get_dropdown(dropdown_theme), {
+			cwd_only = true,
+			sort_buffers = function(bufnr_a, bufnr_b)
+				return api.nvim_buf_get_name(bufnr_a) < api.nvim_buf_get_name(bufnr_b)
+			end,
+		})
+	)
 end)
 keymap.set("n", "<leader>B", function()
-	builtin.buffers(vim.tbl_extend("error", dropdown_theme, {
-		sort_buffers = function(bufnr_a, bufnr_b)
-			return api.nvim_buf_get_name(bufnr_a) < api.nvim_buf_get_name(bufnr_b)
-		end,
-	}))
+	require("telescope.builtin").buffers(
+		vim.tbl_extend("error", require("telescope.themes").get_dropdown(dropdown_theme), {
+			sort_buffers = function(bufnr_a, bufnr_b)
+				return api.nvim_buf_get_name(bufnr_a) < api.nvim_buf_get_name(bufnr_b)
+			end,
+		})
+	)
 end)
 keymap.set("n", "<leader>l", function()
-	builtin.lsp_document_symbols(dropdown_theme)
+	require("telescope.builtin").lsp_document_symbols(require("telescope.themes").get_dropdown(dropdown_theme))
 end)
 keymap.set("n", "<leader>L", function()
-	builtin.lsp_document_symbols(vim.tbl_extend("error", dropdown_theme, { symbols = "function" }))
+	require("telescope.builtin").lsp_document_symbols(
+		vim.tbl_extend("error", require("telescope.themes").get_dropdown(dropdown_theme), { symbols = "function" })
+	)
 end)
 
 keymap.set("n", "<leader>N", function()
@@ -302,11 +309,13 @@ end)
 keymap.set("n", "<leader>s", function() --
 	local opened_projects = plugins_utils.get_opened_projects()
 
-	require("telescope").extensions.repo.list(vim.tbl_extend("error", dropdown_theme, {
-		search_dirs = vim.tbl_isempty(opened_projects) and { "" } or opened_projects,
-		post_action = plugins_utils.post_action_fn,
-		prompt = " (opened projects)",
-	}))
+	require("telescope").extensions.repo.list(
+		vim.tbl_extend("error", require("telescope.themes").get_dropdown(dropdown_theme), {
+			search_dirs = vim.tbl_isempty(opened_projects) and { "" } or opened_projects,
+			post_action = plugins_utils.post_action_fn,
+			prompt = " (opened projects)",
+		})
+	)
 end)
 
 keymap.set("n", "<leader>S", function() -- Toggle with last opened project
@@ -326,23 +335,25 @@ end)
 
 keymap.set("n", "<leader>R", function() --
 	vim.go.autochdir = false
-	require("telescope").extensions.repo.list(vim.tbl_extend("error", dropdown_theme, {
-		post_action = function(prefix)
-			vim.cmd.cd(prefix)
-		end,
-		prompt = " (cd into a repo)",
-	}))
+	require("telescope").extensions.repo.list(
+		vim.tbl_extend("error", require("telescope.themes").get_dropdown(dropdown_theme), {
+			post_action = function(prefix)
+				vim.cmd.cd(prefix)
+			end,
+			prompt = " (cd into a repo)",
+		})
+	)
 end)
 
 keymap.set("n", "<leader>r", function()
 	vim.go.autochdir = false
-	require("telescope").extensions.repo.list(dropdown_theme)
+	require("telescope").extensions.repo.list(require("telescope.themes").get_dropdown(dropdown_theme))
 end)
 keymap.set("n", "<leader>u", function()
-	require("telescope").extensions.undo.undo(dropdown_theme)
+	require("telescope").extensions.undo.undo(require("telescope.themes").get_dropdown(dropdown_theme))
 end)
 keymap.set("n", "<leader>m", function()
-	plugins_utils.yaml_symbols(dropdown_theme)
+	plugins_utils.yaml_symbols(require("telescope.themes").get_dropdown(dropdown_theme))
 end)
 
 --------------------------------------------------------------------------------

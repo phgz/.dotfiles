@@ -114,10 +114,12 @@ return {
 	"junegunn/vim-easy-align", -- Align text based on pattern
 	{
 		"Wansmer/treesj", -- split/join blocks of code like arrays, dicts, ...
+		event = "VeryLazy",
 		opts = { use_default_keymaps = false },
 	},
 	{
 		"ckolkey/ts-node-action", -- Treesitter based node transformer (quote, bool, etc.)
+		event = "VeryLazy",
 		config = function()
 			local actions = require("ts-node-action.actions")
 			-- to get the node type under cursor: `vim.treesitter.get_node({ bufnr = 0 }):type()`
@@ -175,6 +177,7 @@ return {
 	},
 	{
 		"mhartington/formatter.nvim", -- format runner
+		event = "VeryLazy",
 		config = function()
 			require("formatter").setup({
 				logging = false,
@@ -362,6 +365,7 @@ return {
 	},
 	{
 		"mrjones2014/smart-splits.nvim", -- smart window navigation
+		event = "VeryLazy",
 		dependencies = {
 			"kwkarlwang/bufresize.nvim", -- keep windows proportions
 			opts = {},
@@ -390,6 +394,7 @@ return {
 	},
 	{
 		"williamboman/mason-lspconfig.nvim", -- bridge between mason and nvim-lspconfig
+		event = "VeryLazy",
 		build = function()
 			local servers = {
 				"bash-language-server",
@@ -411,6 +416,7 @@ return {
 		end,
 		config = function()
 			require("plugins_utils").mason_lspconfig_setup_handlers()
+			vim.cmd("LspStart")
 		end,
 	},
 	{
@@ -470,7 +476,7 @@ return {
 	},
 	{
 		"nvim-telescope/telescope.nvim", --  fuzzy finder over lists
-		event = "VeryLazy",
+		lazy = true,
 		config = function()
 			local actions = require("telescope.actions")
 
@@ -621,6 +627,7 @@ return {
 	},
 	{
 		"andymass/vim-matchup", -- highlight extended pairs of delimiters like function() end
+		event = "VeryLazy",
 		config = function()
 			vim.g.matchup_matchparen_offscreen = {}
 			vim.g.matchup_matchparen_deferred = 0
@@ -711,7 +718,7 @@ return {
 	},
 	{
 		"phgz/nvim-surround", -- surround motion with delimiters
-		enabled = true,
+		event = "VeryLazy",
 		config = function()
 			require("nvim-surround").setup({
 				move_cursor = "sticky",
