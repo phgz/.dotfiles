@@ -16,7 +16,9 @@ end, { silent = true })
 --------------------------------------------------------------------------------
 --                                  builder                                   --
 --------------------------------------------------------------------------------
-keymap.set("n", "<localleader>B", require("builder").build)
+keymap.set("n", "<localleader>B", function()
+	require("builder").build()
+end)
 
 --------------------------------------------------------------------------------
 --                                 substitute                                 --
@@ -32,10 +34,18 @@ keymap.set("n", "sxn", function()
 	end
 end, { noremap = true })
 
-keymap.set("n", "sxx", require("substitute").line, { noremap = true })
-keymap.set("n", "sX", require("substitute").eol, { noremap = true })
-keymap.set("n", "cx", require("substitute.exchange").operator, { noremap = true })
-keymap.set("x", "CX", require("substitute.exchange").operator, { noremap = true })
+keymap.set("n", "sxx", function()
+	require("substitute").line()
+end, { noremap = true })
+keymap.set("n", "sX", function()
+	require("substitute").eol()
+end, { noremap = true })
+keymap.set("n", "cx", function()
+	require("substitute.exchange").operator()
+end, { noremap = true })
+keymap.set("x", "CX", function()
+	require("substitute.exchange").operator()
+end, { noremap = true })
 
 --------------------------------------------------------------------------------
 --                                 bufresize                                  --
@@ -51,20 +61,44 @@ end)
 --                                smart-splits                                --
 --------------------------------------------------------------------------------
 -- moving between splits
-keymap.set({ "i", "n", "o", "v" }, "<S-left>", require("smart-splits").move_cursor_left)
-keymap.set({ "i", "n", "o", "v" }, "<S-down>", require("smart-splits").move_cursor_down)
-keymap.set({ "i", "n", "o", "v" }, "<S-up>", require("smart-splits").move_cursor_up)
-keymap.set({ "i", "n", "o", "v" }, "<S-right>", require("smart-splits").move_cursor_right)
+keymap.set({ "i", "n", "o", "v" }, "<S-left>", function()
+	require("smart-splits").move_cursor_left()
+end)
+keymap.set({ "i", "n", "o", "v" }, "<S-down>", function()
+	require("smart-splits").move_cursor_down()
+end)
+keymap.set({ "i", "n", "o", "v" }, "<S-up>", function()
+	require("smart-splits").move_cursor_up()
+end)
+keymap.set({ "i", "n", "o", "v" }, "<S-right>", function()
+	require("smart-splits").move_cursor_right()
+end)
 -- resizing splits
-keymap.set({ "i", "n", "o", "v" }, "<C-S-left>", require("smart-splits").resize_left)
-keymap.set({ "i", "n", "o", "v" }, "<C-S-down>", require("smart-splits").resize_down)
-keymap.set({ "i", "n", "o", "v" }, "<C-S-up>", require("smart-splits").resize_up)
-keymap.set({ "i", "n", "o", "v" }, "<C-S-right>", require("smart-splits").resize_right)
+keymap.set({ "i", "n", "o", "v" }, "<C-S-left>", function()
+	require("smart-splits").resize_left()
+end)
+keymap.set({ "i", "n", "o", "v" }, "<C-S-down>", function()
+	require("smart-splits").resize_down()
+end)
+keymap.set({ "i", "n", "o", "v" }, "<C-S-up>", function()
+	require("smart-splits").resize_up()
+end)
+keymap.set({ "i", "n", "o", "v" }, "<C-S-right>", function()
+	require("smart-splits").resize_right()
+end)
 -- swapping buffers between windows
-keymap.set({ "i", "n", "o", "v" }, "<S-M-left>", require("smart-splits").swap_buf_left)
-keymap.set({ "i", "n", "o", "v" }, "<S-M-down>", require("smart-splits").swap_buf_down)
-keymap.set({ "i", "n", "o", "v" }, "<S-M-up>", require("smart-splits").swap_buf_up)
-keymap.set({ "i", "n", "o", "v" }, "<S-M-right>", require("smart-splits").swap_buf_right)
+keymap.set({ "i", "n", "o", "v" }, "<S-M-left>", function()
+	require("smart-splits").swap_buf_left()
+end)
+keymap.set({ "i", "n", "o", "v" }, "<S-M-down>", function()
+	require("smart-splits").swap_buf_down()
+end)
+keymap.set({ "i", "n", "o", "v" }, "<S-M-up>", function()
+	require("smart-splits").swap_buf_up()
+end)
+keymap.set({ "i", "n", "o", "v" }, "<S-M-right>", function()
+	require("smart-splits").swap_buf_right()
+end)
 
 --------------------------------------------------------------------------------
 --                                  comment                                   --
@@ -189,26 +223,26 @@ end, silent_noremap_expr)
 --------------------------------------------------------------------------------
 --                                   neogen                                   --
 --------------------------------------------------------------------------------
-vim.keymap.set("n", "<leader>a", require("neogen").generate, { silent = true })
+vim.keymap.set("n", "<leader>a", function()
+	require("neogen").generate()
+end, { silent = true })
 
 --------------------------------------------------------------------------------
 --                                  gitsigns                                  --
 --------------------------------------------------------------------------------
-local gs = package.loaded.gitsigns
-
 -- Actions
-keymap.set("n", "gr", gs.reset_hunk)
+keymap.set("n", "gr", require("gitsigns").reset_hunk)
 keymap.set("v", "gr", function()
-	gs.reset_hunk({ vim.fn.line("v"), vim.fn.line(".") })
+	require("gitsigns").reset_hunk({ vim.fn.line("v"), vim.fn.line(".") })
 end)
-keymap.set("n", "ga", gs.stage_hunk)
+keymap.set("n", "ga", require("gitsigns").stage_hunk)
 keymap.set("v", "ga", function()
-	gs.stage_hunk({ vim.fn.line("v"), vim.fn.line(".") })
+	require("gitsigns").stage_hunk({ vim.fn.line("v"), vim.fn.line(".") })
 end)
-keymap.set("n", "gA", gs.stage_buffer)
-keymap.set("n", "gR", gs.reset_buffer)
+keymap.set("n", "gA", require("gitsigns").stage_buffer)
+keymap.set("n", "gR", require("gitsigns").reset_buffer)
 keymap.set("n", "gd", function()
-	gs.preview_hunk()
+	require("gitsigns").preview_hunk()
 	local winid = require("gitsigns.popup").is_open("hunk")
 	if winid then
 		local filetype = vim.bo.filetype
@@ -220,25 +254,25 @@ keymap.set("n", "gd", function()
 	end
 end)
 keymap.set("n", "gb", function()
-	gs.blame_line({ ignore_whitespace = true })
+	require("gitsigns").blame_line({ ignore_whitespace = true })
 end)
 keymap.set("n", "gc", function()
 	local input = vim.fn.input("Compare to: ")
 	if input ~= "" then
-		gs.diffthis(input)
+		require("gitsigns").diffthis(input)
 	end
 end)
 
 -- hunk objects
-keymap.set("o", "ih", gs.select_hunk)
-keymap.set("o", "ah", gs.select_hunk)
+keymap.set("o", "ih", require("gitsigns").select_hunk)
+keymap.set("o", "ah", require("gitsigns").select_hunk)
 keymap.set("x", "ih", function()
 	vim.api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
-	gs.select_hunk()
+	require("gitsigns").select_hunk()
 end)
 keymap.set("x", "ah", function()
 	vim.api.nvim_feedkeys(vim.keycode("<esc>"), "x", false)
-	gs.select_hunk()
+	require("gitsigns").select_hunk()
 end)
 
 --------------------------------------------------------------------------------
@@ -418,13 +452,19 @@ end)
 --------------------------------------------------------------------------------
 --                                sibling-swap                                --
 --------------------------------------------------------------------------------
-keymap.set("n", "<C-.>", require("sibling-swap")["swap_with_right_with_opp"])
-keymap.set("n", "<C-,>", require("sibling-swap")["swap_with_left_with_opp"])
+keymap.set("n", "<C-.>", function()
+	require("sibling-swap")["swap_with_right_with_opp"]()
+end)
+keymap.set("n", "<C-,>", function()
+	require("sibling-swap")["swap_with_left_with_opp"]()
+end)
 
 --------------------------------------------------------------------------------
 --                                  lsplinks                                  --
 --------------------------------------------------------------------------------
-keymap.set("n", "gx", require("lsplinks").gx)
+keymap.set("n", "gx", function()
+	require("lsplinks").gx()
+end)
 
 --------------------------------------------------------------------------------
 --                               vim-easy-align                               --
@@ -448,10 +488,6 @@ end, { desc = "Trigger Node Action" })
 --------------------------------------------------------------------------------
 --                        nvim-treesitter-textobjects                         --
 --------------------------------------------------------------------------------
-local ts_move = require("nvim-treesitter-textobjects.move")
-local ts_swap = require("nvim-treesitter-textobjects.swap")
-local ts_select = require("nvim-treesitter-textobjects.select")
-
 local move_mappings = {
 	["be"] = "@binary.outer",
 	["bl"] = "@binary.lhs",
@@ -474,16 +510,16 @@ local move_mappings = {
 }
 for abbr, query in pairs(move_mappings) do
 	keymap.set({ "n" }, "[g" .. abbr, function()
-		ts_move.goto_previous_end(query, "textobjects")
+		require("nvim-treesitter-textobjects.move").goto_previous_end(query, "textobjects")
 	end)
 	keymap.set({ "n" }, "[" .. abbr, function()
-		ts_move.goto_previous_start(query, "textobjects")
+		require("nvim-treesitter-textobjects.move").goto_previous_start(query, "textobjects")
 	end)
 	keymap.set({ "n" }, "]g" .. abbr, function()
-		ts_move.goto_next_end(query, "textobjects")
+		require("nvim-treesitter-textobjects.move").goto_next_end(query, "textobjects")
 	end)
 	keymap.set({ "n" }, "]" .. abbr, function()
-		ts_move.goto_next_start(query, "textobjects")
+		require("nvim-treesitter-textobjects.move").goto_next_start(query, "textobjects")
 	end)
 end
 
@@ -491,7 +527,7 @@ keymap.set(
 	"n",
 	"sP",
 	utils.mk_repeatable(function()
-		ts_swap.swap_previous(utils.get_text_object())
+		require("nvim-treesitter-textobjects.swap").swap_previous(utils.get_text_object())
 	end),
 	{ silent = true }
 )
@@ -500,7 +536,7 @@ keymap.set(
 	"n",
 	"sN",
 	utils.mk_repeatable(function()
-		ts_swap.swap_next(utils.get_text_object())
+		require("nvim-treesitter-textobjects.swap").swap_next(utils.get_text_object())
 	end),
 	{ silent = true }
 )
@@ -541,15 +577,17 @@ local select_mappings = {
 
 for abbr, query in pairs(select_mappings) do
 	vim.keymap.set({ "x", "o" }, abbr, function()
-		ts_select.select_textobject(query, "textobjects")
+		require("nvim-treesitter-textobjects.select").select_textobject(query, "textobjects")
 	end)
 end
 
-local ts_repeat_move = require("nvim-treesitter-textobjects.repeatable_move")
-local make_repeatable_move = ts_repeat_move.make_repeatable_move
 -- Repeat movement with ; and ,
-vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move)
-vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_opposite)
+vim.keymap.set({ "n", "x", "o" }, ";", function()
+	require("nvim-treesitter-textobjects.repeatable_move").repeat_last_move()
+end)
+vim.keymap.set({ "n", "x", "o" }, ",", function()
+	require("nvim-treesitter-textobjects.repeatable_move").repeat_last_move_opposite()
+end)
 local rhs =
 	"<cmd>lua require('multiline_ft').multiline_find(%s,%s,require('nvim-treesitter-textobjects.repeatable_move'))<cr>"
 keymap.set({ "n", "x" }, "f", string.format(rhs, "true", "false"))
@@ -557,26 +595,148 @@ keymap.set({ "n", "x" }, "F", string.format(rhs, "false", "false"))
 keymap.set({ "n", "x" }, "t", string.format(rhs, "true", "true"))
 keymap.set({ "n", "x" }, "T", string.format(rhs, "false", "true"))
 
-keymap.set({ "n", "x" }, "]h", utils.callable(make_repeatable_move(plugins_utils.goto_hunk), { forward = true }))
-keymap.set({ "n", "x" }, "[h", utils.callable(make_repeatable_move(plugins_utils.goto_hunk), { forward = false }))
+keymap.set(
+	{ "n", "x" },
+	"]h",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(plugins_utils.goto_hunk),
+		{ forward = true }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"[h",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(plugins_utils.goto_hunk),
+		{ forward = false }
+	)
+)
 
-keymap.set({ "n", "x" }, "]q", utils.callable(make_repeatable_move(utils.goto_quote), { forward = true }))
-keymap.set({ "n", "x" }, "[q", utils.callable(make_repeatable_move(utils.goto_quote), { forward = false }))
-keymap.set({ "n", "x" }, "]z", utils.callable(make_repeatable_move(utils.goto_fold), { forward = true }))
-keymap.set({ "n", "x" }, "[z", utils.callable(make_repeatable_move(utils.goto_fold), { forward = false }))
-keymap.set({ "n", "x" }, "]S", utils.callable(make_repeatable_move(utils.goto_spell), { forward = true }))
-keymap.set({ "n", "x" }, "[S", utils.callable(make_repeatable_move(utils.goto_spell), { forward = false }))
-keymap.set({ "n", "x" }, "]d", utils.callable(make_repeatable_move(utils.goto_diagnostic()), { forward = true }))
-keymap.set({ "n", "x" }, "[d", utils.callable(make_repeatable_move(utils.goto_diagnostic()), { forward = false }))
-keymap.set({ "n", "x" }, "]H", utils.callable(make_repeatable_move(utils.goto_diagnostic("HINT")), { forward = true }))
-keymap.set({ "n", "x" }, "[H", utils.callable(make_repeatable_move(utils.goto_diagnostic("HINT")), { forward = false }))
-keymap.set({ "n", "x" }, "]I", utils.callable(make_repeatable_move(utils.goto_diagnostic("INFO")), { forward = true }))
-keymap.set({ "n", "x" }, "[I", utils.callable(make_repeatable_move(utils.goto_diagnostic("INFO")), { forward = false }))
-keymap.set({ "n", "x" }, "]W", utils.callable(make_repeatable_move(utils.goto_diagnostic("WARN")), { forward = true }))
-keymap.set({ "n", "x" }, "[W", utils.callable(make_repeatable_move(utils.goto_diagnostic("WARN")), { forward = false }))
-keymap.set({ "n", "x" }, "]E", utils.callable(make_repeatable_move(utils.goto_diagnostic("ERROR")), { forward = true }))
+keymap.set(
+	{ "n", "x" },
+	"]q",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_quote),
+		{ forward = true }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"[q",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_quote),
+		{ forward = false }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"]z",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_fold),
+		{ forward = true }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"[z",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_fold),
+		{ forward = false }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"]S",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_spell),
+		{ forward = true }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"[S",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_spell),
+		{ forward = false }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"]d",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_diagnostic()),
+		{ forward = true }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"[d",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_diagnostic()),
+		{ forward = false }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"]H",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_diagnostic("HINT")),
+		{ forward = true }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"[H",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_diagnostic("HINT")),
+		{ forward = false }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"]I",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_diagnostic("INFO")),
+		{ forward = true }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"[I",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_diagnostic("INFO")),
+		{ forward = false }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"]W",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_diagnostic("WARN")),
+		{ forward = true }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"[W",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_diagnostic("WARN")),
+		{ forward = false }
+	)
+)
+keymap.set(
+	{ "n", "x" },
+	"]E",
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_diagnostic("ERROR")),
+		{ forward = true }
+	)
+)
 keymap.set(
 	{ "n", "x" },
 	"[E",
-	utils.callable(make_repeatable_move(utils.goto_diagnostic("ERROR")), { forward = false })
+	utils.callable(
+		require("nvim-treesitter-textobjects.repeatable_move").make_repeatable_move(utils.goto_diagnostic("ERROR")),
+		{ forward = false }
+	)
 )

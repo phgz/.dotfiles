@@ -25,15 +25,22 @@ return {
 	},
 	{
 		dir = "~/.dotfiles/nvim/multiline-ft", -- multiline find/repeat
+		event = "VeryLazy",
 		config = function()
 			require("multiline_ft")
 		end,
 	},
-	"atusy/treemonkey.nvim", -- label-based node selection
-	"HiPhish/rainbow-delimiters.nvim", -- "Enclosers" coloring
+	{ "atusy/treemonkey.nvim", event = "VeryLazy" }, -- label-based node selection
+	{
+		"HiPhish/rainbow-delimiters.nvim",
+		event = "VeryLazy",
+		config = function()
+			require("rainbow-delimiters").enable(0)
+		end,
+	}, -- "Enclosers" coloring
 	{
 		"RRethy/vim-illuminate", -- highlight other uses of the word under the cursor
-		enabled = true,
+		event = "VeryLazy",
 		config = function()
 			-- default configuration
 			require("illuminate").configure({
@@ -76,6 +83,7 @@ return {
 	{
 		"nvim-treesitter/nvim-treesitter", -- TS parsers and queries
 		branch = "main",
+		event = "VeryLazy",
 		build = function()
 			-- currently installing about 360 parsers. Maybe install a smaller subset for faster bootstrapping
 			-- Default directory where parsers and queries are installed is vim.fn.stdpath('data') .. '/site'
@@ -92,11 +100,13 @@ return {
 	},
 	{
 		"nvim-treesitter/nvim-treesitter-textobjects", -- TS textobjects
+		event = "VeryLazy",
 		branch = "main",
 		opts = {},
 	},
 	{
 		"Wansmer/sibling-swap.nvim", -- Swap sibling treesitter nodes
+		event = "VeryLazy",
 		config = function()
 			require("sibling-swap").setup({
 				use_default_keymaps = false,
@@ -105,10 +115,12 @@ return {
 	},
 	{
 		"gbprod/stay-in-place.nvim", -- prevent the cursor from moving when using shift and filter actions
+		event = "VeryLazy",
 		opts = {},
 	},
 	{
 		"icholy/lsplinks.nvim", -- extends the behaviour of `gx` to support LSP document links
+		event = "VeryLazy",
 		opts = {},
 	},
 	"junegunn/vim-easy-align", -- Align text based on pattern
@@ -229,6 +241,7 @@ return {
 	},
 	{
 		"gbprod/substitute.nvim", -- operator motions to perform quick substitutions and exchange
+		event = "VeryLazy",
 		opts = {
 			on_substitute = nil,
 			yank_substituted_text = false,
@@ -274,7 +287,7 @@ return {
 			"Shougo/ddc-converter_remove_overlap",
 			"Shougo/ddc-source-around",
 			"Shougo/ddc-source-lsp",
-			"Shougo/ddc-ui-inline",
+			{ "Shougo/ddc-ui-inline", commit = "67761d84eac5f617970996af6d0d8dc4485e79f3" },
 			"Shougo/ddc-ui-native",
 			"tani/ddc-fuzzy",
 			{
@@ -297,6 +310,7 @@ return {
 	},
 	{
 		"danymat/neogen", -- create annotation template
+		event = "VeryLazy",
 		opts = {
 			input_after_comment = true,
 			languages = {
@@ -308,9 +322,10 @@ return {
 			},
 		},
 	},
-	"ThePrimeagen/refactoring.nvim", -- extract block in new function
+	{ "ThePrimeagen/refactoring.nvim", event = "VeryLazy" }, -- extract block in new function
 	{
 		"numToStr/Comment.nvim", -- treesitter based commenting
+		event = "VeryLazy",
 		opts = {
 			toggler = {
 				--Line-comment toggle keymap
@@ -337,6 +352,7 @@ return {
 	},
 	{
 		"s1n7ax/nvim-comment-frame", -- write comments in frames
+		event = "VeryLazy",
 		opts = {
 			-- if true, <leader>cf keymap will be disabled
 			disable_default_keymap = false,
@@ -357,6 +373,7 @@ return {
 	},
 	{
 		"trimclain/builder.nvim",
+		event = "VeryLazy",
 		opts = {
 			commands = {
 				python = "python %",
@@ -386,10 +403,11 @@ return {
 			},
 		},
 	},
-	"neovim/nvim-lspconfig", -- basic lsp configurations
-	"SmiteshP/nvim-navic", -- a whereami-in-code util
+	{ "neovim/nvim-lspconfig", event = "VeryLazy" }, -- basic lsp configurations
+	{ "SmiteshP/nvim-navic", event = "VeryLazy" }, -- a whereami-in-code util
 	{
 		"williamboman/mason.nvim", -- neovim package manager
+		event = "VeryLazy",
 		opts = { ui = { keymaps = { uninstall_package = "x" } } },
 	},
 	{
@@ -421,6 +439,7 @@ return {
 	},
 	{
 		"lewis6991/gitsigns.nvim", -- deep buffer integration for Git
+		event = "VeryLazy",
 		opts = {
 			signs = {
 				add = { text = "│" },
@@ -550,7 +569,7 @@ return {
 	},
 	{
 		"folke/noice.nvim", -- Notification system
-		enabled = true,
+		event = "VeryLazy",
 		dependencies = {
 			"MunifTanjim/nui.nvim",
 		},
@@ -627,7 +646,6 @@ return {
 	},
 	{
 		"andymass/vim-matchup", -- highlight extended pairs of delimiters like function() end
-		event = "VeryLazy",
 		config = function()
 			vim.g.matchup_matchparen_offscreen = {}
 			vim.g.matchup_matchparen_deferred = 0
@@ -784,6 +802,7 @@ return {
 	},
 	{
 		"jinh0/eyeliner.nvim", -- highlight strategic positions for f/F/t/T
+		event = "VeryLazy",
 		config = function()
 			require("eyeliner").setup({
 				highlight_on_key = true,
@@ -810,6 +829,7 @@ return {
 	},
 	{
 		"ibhagwan/smartyank.nvim", -- sync system clipboard with nvim
+		event = "VeryLazy",
 		opts = {
 			highlight = {
 				enabled = true, -- highlight yanked text
