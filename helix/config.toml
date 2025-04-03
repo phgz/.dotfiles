@@ -1,0 +1,34 @@
+theme = "gruvbox"
+
+[editor]
+mouse = false
+cursorline = true
+
+[editor.statusline]
+center = ["version-control"]
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[keys.normal]
+Z = ":w"
+"{" = "goto_prev_paragraph"
+"}" = "goto_next_paragraph"
+q = "move_next_sub_word_end"
+Q = "move_prev_sub_word_end"
+"A-]" = [
+    "extend_to_line_bounds",
+    "delete_selection",
+    "paste_after",
+]
+"A-[" = [
+    "extend_to_line_bounds",
+    "delete_selection",
+    "move_line_up",
+    "paste_before",
+]
+
+[keys.normal.g]
+q = ":q!"
