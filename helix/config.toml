@@ -1,4 +1,4 @@
-theme = "gruvbox"
+theme = "default"
 
 [editor]
 mouse = false
@@ -44,7 +44,14 @@ skip-levels = 1
 
 [editor.soft-wrap]
 enable = true
-max-wrap =  0
+max-wrap = 0
+max-indent-retain = 0
+
+[editor.smart-tab]
+enable = false
+
+[editor.inline-diagnostics]
+cursor-line = "hint"
 
 [keys.normal]
 0 = "extend_line"
@@ -77,6 +84,7 @@ A-l = "move_char_right"
     "move_line_up",
     "paste_before",
 ]
-C-g = ":echo \"%{cursor_line}:%{cursor_column}; %sh{cat %{buffer_name} | wc -l | tr -d ' '} lines --%sh{python -c \"\"print(round(%{cursor_line} / $(cat %{buffer_name} | wc -l | tr -d ' ') * 100))\"\"}%%--\""
+C-g = ''':echo "%{cursor_line}:%{cursor_column}; %sh{cat %{buffer_name} | wc -l | tr -d ' '} lines --%sh{python -c ""print(round(%{cursor_line} / $(cat %{buffer_name} | wc -l | tr -d ' ') * 100))""}%%--"'''
+
 [keys.normal.g]
 q = ":quit!"

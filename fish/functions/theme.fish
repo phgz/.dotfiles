@@ -39,11 +39,9 @@ function theme
         end
         echo $cycle >$HOME/.dotfiles/theme/current
         # Helix
-        set -f day github_light
-        set -f evening gruvbox
-        set -f night ayu_dark
-        nu -c "open $HOME/.dotfiles/helix/config.toml | update theme $$cycle | save -f $HOME/.dotfiles/helix/config.toml"
+        nu -c "open $HOME/.dotfiles/helix/config.toml | update theme $(_random_helix_theme $cycle) | save -f $HOME/.dotfiles/helix/config.toml"
         pkill -USR1 hx
     end
+    echo $cycle
 
 end
