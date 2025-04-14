@@ -1,3 +1,7 @@
 [[language]]
 name = "python"
 auto-format = true
+
+[[language]]
+name = "markdown"
+comment-tokens = ["-", "+", "*", "- [ ]", ">"]

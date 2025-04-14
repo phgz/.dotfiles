@@ -43,6 +43,9 @@ direnv hook fish | source
 
 abbr -ag nv nvim
 
+abbr -a --position anywhere -- --help '--help | bat -plhelp'
+abbr -a --position anywhere -- -h '-h | bat -plhelp'
+
 abbr -ag ga git add
 abbr -ag gb git branch
 abbr -ag gco git checkout

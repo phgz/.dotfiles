@@ -83,7 +83,6 @@ return {
 	{
 		"nvim-treesitter/nvim-treesitter", -- TS parsers and queries
 		branch = "main",
-		event = "VeryLazy",
 		build = function()
 			-- currently installing about 360 parsers. Maybe install a smaller subset for faster bootstrapping
 			-- Default directory where parsers and queries are installed is vim.fn.stdpath('data') .. '/site'

@@ -98,9 +98,9 @@ wezterm.on("open-uri", function(window, pane, uri)
 		local line_number = uri:match([[>(%d+)$]])
 		if line_number then
 			-- vim "+call cursor(<LINE>, <COLUMN>)"
-			pane:send_text(" nvim '+ call cursor(" .. line_number .. ",1)' " .. file .. "\x0A")
+			pane:send_text(" hx " .. file .. ":" .. line_number .. "\x0A")
 		else
-			pane:send_text("nvim " .. file .. "\x0A")
+			pane:send_text("hx " .. file .. "\x0A")
 		end
 		-- prevent the default action from opening in a browser
 		return false
@@ -218,18 +218,20 @@ c.color_scheme = get_color_scheme()
 c.cursor_blink_rate = 0
 c.cursor_thickness = 1
 c.font = wezterm.font("FantasqueSansM Nerd Font")
-c.font_size = 19
+c.font_size = 18
 c.front_end = "WebGpu"
 c.hide_tab_bar_if_only_one_tab = false
 c.enable_tab_bar = false
 c.show_tabs_in_tab_bar = false
-c.line_height = 1.15
+c.line_height = 1.2
+c.cell_width = 0.9
 c.mouse_wheel_scrolls_tabs = false
 c.native_macos_fullscreen_mode = true
 -- c.pane_focus_follows_mouse = true
 c.show_new_tab_button_in_tab_bar = false
 c.show_update_window = false
 c.ssh_domains = ssh_domains --
+c.enable_kitty_keyboard = true
 -- c.status_update_interval = 20000
 c.switch_to_last_active_tab_when_closing_tab = true
 c.tab_bar_at_bottom = true
