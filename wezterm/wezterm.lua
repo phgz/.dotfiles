@@ -1,6 +1,5 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
-local mux = wezterm.mux
 local dotfiles_path = wezterm.home_dir .. "/.dotfiles"
 local current_path = dotfiles_path .. "/theme/current"
 local accepted_extensions = {
@@ -71,23 +70,8 @@ local function urlencode(str)
 	return ""
 end
 
-local ssh_domains = {}
-local remote_server = "ai-dev-0"
-
-for host, config in pairs(wezterm.enumerate_ssh_hosts()) do
-	-- Since April 2023, no longer needed, but could be faster to manually define?
-	-- edit remote: `/etc/ssh/sshd_config`, `sudo /usr/sbin/sshd -t`
-	-- then `sudo systemctl restart ssh`
-	table.insert(ssh_domains, {
-		-- the name can be anything you want; we're just using the hostname
-		name = host,
-		-- remote_address must be set to `host` for the ssh config to apply to it
-		remote_address = host,
-	})
-end
-
 wezterm.on("gui-startup", function(cmd) -- set startup Window position
-	local tab, pane, window = mux.spawn_window(cmd or {})
+	local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
 	window:gui_window():set_position(300, 165)
 end)
 
@@ -116,15 +100,8 @@ wezterm.on("update-status", function(window, pane)
 
 	window:set_right_status(wezterm.format({
 		{ Foreground = { AnsiColor = "Yellow" } },
-		-- { Attribute = { Intensity = "Half" } },
-		-- ▏ split char
 		{
-			Text = "domain: "
-				.. pane:get_domain_name():gsub("SSH to", "")
-				.. ", workspace: "
-				.. window:active_workspace()
-				.. ", time: "
-				.. date,
+			Text = ", time: " .. date,
 		},
 	}))
 end)
@@ -155,61 +132,6 @@ local get_tab_title = function(tab, reserved)
 	return formatted_path
 end
 
-wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-	local cwd = tab:active_pane():get_current_working_dir().file_path
-	local formatted_path = cwd
-	local home = cwd:match(wezterm.home_dir)
-	if home then
-		local rel_dir = cwd:match(home .. "/(.*)")
-		if rel_dir then
-			formatted_path = rel_dir:match("[^/]+") -- project root
-		else
-			formatted_path = "~" -- home
-		end
-	end
-	local is_first = tab.tab_index == 0
-	local is_last = tab.tab_index == #tabs - 1
-
-	local pad_left = is_first and "" or "  "
-	local pad_right = is_last and "" or "  "
-	local active = tab.is_active and "*" or ""
-	local zoomed = tab.active_pane.is_zoomed and "Z" or ""
-	local active_zoomed_pad = active .. zoomed == "" and "" or " "
-	local has_separator = is_last and 0 or 1
-	local separator = is_last and "" or ""
-	local tab_index = tab.tab_index + 1 .. " "
-	local reserved = #tab_index + #pad_left + #pad_right + #zoomed + #active + #active_zoomed_pad + has_separator
-	local path_max_width = config.tab_max_width - reserved
-	local too_large = #formatted_path > path_max_width
-	if too_large then
-		while #formatted_path + 4 > path_max_width do
-			formatted_path = formatted_path:match("(.*)/")
-		end
-		formatted_path = formatted_path .. "/..."
-	end
-	local title = pad_left
-		.. tab_index
-		.. active
-		.. zoomed
-		.. active_zoomed_pad
-		.. formatted_path
-		.. pad_right
-		.. separator
-	local output = {
-		{ Text = title },
-	}
-	if not tab.is_active then
-		for _, pane in ipairs(tab.panes) do
-			if pane.has_unseen_output then
-				output[1], output[2] = { Foreground = { Color = "Yellow" } }, output[1]
-				break
-			end
-		end
-	end
-
-	return output
-end)
-
 local c = wezterm.config_builder()
 
 c.adjust_window_size_when_changing_font_size = false
@@ -231,7 +153,7 @@ c.native_macos_fullscreen_mode = true
 c.show_new_tab_button_in_tab_bar = false
 c.show_update_window = false
 c.ssh_domains = ssh_domains --
-c.enable_kitty_keyboard = true
+c.enable_kitty_keyboard = false
 -- c.status_update_interval = 20000
 c.switch_to_last_active_tab_when_closing_tab = true
 c.tab_bar_at_bottom = true
@@ -291,21 +213,6 @@ c.keys = {
 			win:set_config_overrides(overrides)
 		end),
 	},
-	-- {
-	-- 	key = "E",
-	-- 	mods = "CTRL|SHIFT",
-	-- 	action = act.PromptInputLine({
-	-- 		description = "Enter new name for tab",
-	-- 		action = wezterm.action_callback(function(window, pane, line)
-	-- 			-- line will be `nil` if they hit escape without entering anything
-	-- 			-- An empty string if they just hit enter
-	-- 			-- Or the actual line of text they wrote
-	-- 			if line then
-	-- 				window:active_tab():set_title(line)
-	-- 			end
-	-- 		end),
-	-- 	}),
-	-- },
 	{
 		key = "a",
 		mods = "SUPER",
@@ -317,58 +224,11 @@ c.keys = {
 		action = wezterm.action_callback(function(win, pane)
 			local mux_win = win:mux_window()
 
-			for _, tab in ipairs(mux_win:tabs()) do
-				tab:set_title(get_tab_title(tab))
-			end
+			-- for _, tab in ipairs(mux_win:tabs()) do
+			-- 	tab:set_title(get_tab_title(tab))
+			-- end
 
 			win:perform_action(act.ShowTabNavigator, pane)
-		end),
-	},
-	{ key = "d", mods = "SUPER", action = act.DetachDomain("CurrentPaneDomain") },
-	{
-		key = "0",
-		mods = "CTRL|SHIFT",
-		action = act.SwitchToWorkspace({
-			name = "remote",
-			spawn = {
-				domain = { DomainName = remote_server },
-			},
-		}),
-	},
-	{
-		key = "0",
-		mods = "CTRL",
-		action = wezterm.action_callback(function(win, pane)
-			win:perform_action(
-				act.SwitchToWorkspace({
-					name = "remote",
-					spawn = { domain = { DomainName = remote_server } },
-				}),
-				pane
-			)
-			local domain = mux.get_domain(remote_server)
-			while domain:state() == "Detached" do
-				wezterm.sleep_ms(80)
-			end
-			print(domain:state())
-			wezterm.sleep_ms(80)
-			local wanted
-			local wins = mux.all_windows()
-			for _, mux_window in ipairs(wins) do
-				print(mux_window:tabs())
-				if mux_window:get_workspace() == "remote" then
-					wanted = mux_window
-					win = mux_window:gui_window()
-					break
-				end
-			end
-			--
-			local tabs = wanted:tabs()
-			print(tabs)
-			if #tabs > 1 then
-				win:perform_action(act.CloseCurrentTab({ confirm = false }), win:active_pane())
-			end
-			win:perform_action(act.ActivateTab(0), win:active_pane())
 		end),
 	},
 	{
@@ -594,6 +454,11 @@ c.keys = {
 		action = act.PaneSelect({
 			mode = "SwapWithActive",
 		}),
+	},
+	{
+		key = "[",
+		mods = "META",
+		action = act.SendKey({ key = "\\", mods = "META" }),
 	},
 	{ key = "j", mods = "SUPER", action = act.ScrollByPage(-0.3) },
 	{ key = "k", mods = "SUPER", action = act.ScrollByPage(0.3) },
