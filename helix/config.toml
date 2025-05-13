@@ -1,4 +1,4 @@
-theme = "base16_default_light"
+theme = "catppuccin_latte"
 
 [editor]
 mouse = false
@@ -102,3 +102,9 @@ B = ":echo %sh{git blame -L %{cursor_line},+1 %{buffer_name}}"
 
 [keys.normal.g]
 q = ":quit!"
+
+[keys.select]
+"{" = "goto_prev_paragraph"
+"}" = "goto_next_paragraph"
+h = "goto_first_nonwhitespace"
+l = "goto_line_end"
