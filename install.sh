@@ -110,7 +110,7 @@ if [ ! -d "$HOME"/.cargo ]; then
 
     curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
     cargo=$HOME/.cargo/bin/cargo
-    PATH=/opt/homebrew/bin:$PATH $cargo install --locked eza ripgrep sd bat fd-find du-dust starship tree-sitter-cli || exit
+    PATH=/opt/homebrew/bin:$PATH $cargo install --locked eza ripgrep sd bat fd-find du-dust starship tree-sitter-cli git-delta || exit
 
     git clone https://github.com/crescentrose/sunshine
     pushd sunshine || exit
@@ -194,6 +194,13 @@ for folder in "$HOME"/*/; do
 done
 
 sed "s/<<EMAIL>>/$(git log | head -2 | "$HOME"/.cargo/bin/rg Author | sed -r 's/.*<(.*)>.*/\1/')/" "$HOME"/.dotfiles/git/gitconfig >"$HOME"/.gitconfig
+
+git config --global core.pager delta
+git config --global interactive.diffFilter 'delta --color-only'
+git config --global delta.navigate true
+git config --global merge.conflictStyle zdiff3
+git config --global delta.side-by-side true
+git config --global delta.line-numbers true
 
 #------------------------------------------------------------------------------#
 #                                    Theme                                     #
