@@ -1,4 +1,4 @@
 *.bak
 fish/fish_variables
-lazy-lock.json
+helix/runtime/
 /theme/current
