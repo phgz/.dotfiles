@@ -19,7 +19,7 @@ layout_poetry() {
     fi
 
     VIRTUAL_ENV=$(
-        "$HOME"/.miniconda3/bin/python3.12 <<EOF
+        python3.12 <<EOF
 import base64, hashlib, pathlib, tomllib
 
 h = base64.urlsafe_b64encode(hashlib.sha256(bytes(pathlib.Path.cwd())).digest()).decode()[:8]

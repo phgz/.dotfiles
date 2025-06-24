@@ -5,7 +5,9 @@ set -gx MANPATH $HOME/.local/share/man /usr/share/man $MANPATH
 set -gx DIRENV_LOG_FORMAT ""
 
 set -gx STARSHIP_CONFIG ~/.config/starship/config.toml
-set -gx EDITOR nvim
+set -gx EDITOR hx
+set -gx ZELLIJ_AUTO_ATTACH true
+set -gx ZELLIJ_AUTO_EXIT true
 set -gx PYTHONBREAKPOINT pdbr.set_trace
 # "bat" as manpager
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
@@ -87,4 +89,4 @@ abbr -ag ll ezal
 abbr -ag la ezal -a
 abbr -ag grep rg
 
-test -t 0 && initialize_tmux
+test -t 0 && initialize_zellij
