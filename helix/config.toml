@@ -82,6 +82,7 @@ A-h = "move_char_left"
 A-j = "move_visual_line_down"
 A-k = "move_visual_line_up"
 A-l = "move_char_right"
+A-t = ":theme %sh{fish -c \"_random_helix_theme (theme)\"}"
 "A-]" = [
     "extend_to_line_bounds",
     "delete_selection",

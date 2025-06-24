@@ -8,6 +8,7 @@ set -gx STARSHIP_CONFIG ~/.config/starship/config.toml
 set -gx EDITOR hx
 set -gx ZELLIJ_AUTO_ATTACH true
 set -gx ZELLIJ_AUTO_EXIT true
+set -gx ZELLIJ_CONFIG_DIR $HOME/.dotfiles/zellij
 set -gx PYTHONBREAKPOINT pdbr.set_trace
 # "bat" as manpager
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"

@@ -39,8 +39,13 @@ function theme
         end
         echo $cycle >$HOME/.dotfiles/theme/current
         # Helix
-        nu -c "open $HOME/.dotfiles/helix/config.toml | update theme $(_random_helix_theme $cycle) | save -f $HOME/.dotfiles/helix/config.toml"
-        pkill -USR1 hx
+        # change config, then
+        # pkill -USR1 hx
+        # Zellij
+        set night solarized-dark
+        set day iceberg-light
+        set evening gruvbox-dark
+        sd "^theme\s.*" "theme \"$$cycle\"" $HOME/.dotfiles/zellij/config.kdl
     end
     echo $cycle
 
