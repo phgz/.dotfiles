@@ -110,7 +110,7 @@ if [ ! -d "$HOME"/.cargo ]; then
 
     curl https://sh.rustup.rs -sSf | sh -s -- -y --no-modify-path
     cargo=$HOME/.cargo/bin/cargo
-    PATH=/opt/homebrew/bin:$PATH $cargo install --locked eza ripgrep sd bat fd-find du-dust starship tree-sitter-cli git-delta || exit
+    PATH=/opt/homebrew/bin:$PATH $cargo install --locked eza ripgrep sd bat fd-find du-dust starship tree-sitter-cli git-delta zellij || exit
 
     git clone https://github.com/crescentrose/sunshine
     pushd sunshine || exit
