@@ -2,38 +2,23 @@
 mouse = false
 cursorline = true
 scrolloff = 0
-gutters = [
-    "diff",
-    "diagnostics",
-    "line-numbers",
-    "spacer",
-]
+gutters = ["diff", "diagnostics", "line-numbers", "spacer"]
 preview-completion-insert = false
 auto-info = true
 bufferline = "multiple"
 
 [editor.statusline]
 left = [
-    "file-name",
-    "version-control",
-    "spacer",
-    "diagnostics",
-    "read-only-indicator",
-    "file-modification-indicator",
+  "file-name",
+  "version-control",
+  "spacer",
+  "diagnostics",
+  "read-only-indicator",
+  "file-modification-indicator",
 ]
 center = []
-right = [
-    "spinner",
-    "register",
-    "primary-selection-length",
-    "selections",
-]
-diagnostics = [
-    "hint",
-    "info",
-    "warning",
-    "error",
-]
+right = ["spinner", "register", "primary-selection-length", "selections"]
+diagnostics = ["hint", "info", "warning", "error"]
 
 [editor.cursor-shape]
 insert = "bar"
@@ -52,11 +37,9 @@ enable = true
 max-wrap = 0
 max-indent-retain = 0
 
-[editor.smart-tab]
-enable = false
+# [editor.smart-tab]
+# enable = false
 
-[editor.inline-diagnostics]
-cursor-line = "hint"
 
 [keys.normal]
 L = ":! git diff %{buffer_name}"
@@ -64,10 +47,7 @@ L = ":! git diff %{buffer_name}"
 0 = ":buffer-close-others"
 x = "extend_line"
 Z = ":write"
-esc = [
-    "collapse_selection",
-    "keep_primary_selection",
-]
+esc = ["collapse_selection", "keep_primary_selection"]
 tab = ":buffer-next"
 S-tab = ":buffer-previous"
 "{" = "goto_prev_paragraph"
@@ -83,16 +63,12 @@ A-j = "move_visual_line_down"
 A-k = "move_visual_line_up"
 A-l = "move_char_right"
 A-t = ":theme %sh{fish -c \"_random_helix_theme (theme)\"}"
-"A-]" = [
-    "extend_to_line_bounds",
-    "delete_selection",
-    "paste_after",
-]
+"A-]" = ["extend_to_line_bounds", "delete_selection", "paste_after"]
 'A-\' = [
-    "extend_to_line_bounds",
-    "delete_selection",
-    "move_line_up",
-    "paste_before",
+  "extend_to_line_bounds",
+  "delete_selection",
+  "move_line_up",
+  "paste_before",
 ]
 C-g = ''':echo "%{cursor_line}:%{cursor_column}; %sh{cat %{buffer_name} | wc -l | tr -d ' '} lines --%sh{python -c ""print(round(%{cursor_line} / $(cat %{buffer_name} | wc -l | tr -d ' ') * 100))""}%%--"'''
 

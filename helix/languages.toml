@@ -1,9 +1,19 @@
 [[language]]
 name = "python"
 auto-format = true
-language-servers = ["pyright", "jedi"]
+language-servers = ["pyright"]
 formatter = { command = "black", args = ["--quiet", "-"] }
 
 [[language]]
 name = "markdown"
 comment-tokens = ["-", "+", "*", "- [ ]", ">"]
+
+[[language]]
+name = "toml"
+formatter = { command = "taplo", args = ["format", "-"] }
+auto-format = true
+
+[language-server.taplo]
+# Workaround for nonsense of being nonfunctional outside git directories
+# (https://github.com/helix-editor/helix/issues/3897#issuecomment-2361674437)
+config = {}

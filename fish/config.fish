@@ -22,6 +22,7 @@ bind ctrl-e end-of-buffer
 bind ctrl-_ kill-line
 bind ctrl-k kill-word
 bind alt-d kill-bigword
+bind alt-a history-search-backward beginning-of-buffer kill-bigword
 # bind ctrl-c cancel-commandline # now defaults to clear commandline
 # ctrl-x copies text to the clipboard
 # alt-e to edit command in $EDITOR
