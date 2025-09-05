@@ -214,7 +214,10 @@ plugins {
     tab-bar location="zellij:tab-bar"
     status-bar location="zellij:status-bar"
     strider location="zellij:strider"
-    compact-bar location="zellij:compact-bar"
+    // compact-bar location="zellij:compact-bar"
+    compact-bar location="zellij:compact-bar" {
+    tooltip "F1" // keybinding to toggle the hints
+    }
     session-manager location="zellij:session-manager"
     welcome-screen location="zellij:session-manager" {
         welcome_screen true
@@ -323,7 +326,7 @@ ui {
 // Choose the theme that is specified in the themes section.
 // Default: default
 //
-theme "iceberg-light"
+theme "gruvbox-dark"
 
 // The name of the default layout to load on startup
 // Default: "default"
