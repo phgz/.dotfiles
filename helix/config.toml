@@ -6,6 +6,7 @@ gutters = ["diff", "diagnostics", "line-numbers", "spacer"]
 preview-completion-insert = false
 auto-info = true
 bufferline = "multiple"
+end-of-line-diagnostics = "disable"
 
 [editor.statusline]
 left = [
@@ -27,6 +28,12 @@ select = "underline"
 
 [editor.search]
 wrap-around = false
+
+[editor.inline-diagnostics]
+cursor-line = "disable"
+
+[editor.lsp]
+# display-inlay-hints = true
 
 [editor.indent-guides]
 render = false
@@ -83,3 +90,7 @@ q = ":quit!"
 "}" = "goto_next_paragraph"
 h = "goto_first_nonwhitespace"
 l = "goto_line_end"
+q = "move_next_sub_word_end"
+Q = "move_prev_sub_word_end"
+A-h = "move_char_left"
+A-l = "move_char_right"
